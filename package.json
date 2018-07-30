@@ -1,0 +1,11 @@
+{
+  "name": "sony-visca",
+  "version": "0.0.1",
+  "description": "Module to control PTZ cameras with Sony Visca protocol over IP",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Per Roine",
+  "license": "MIT"
+}
