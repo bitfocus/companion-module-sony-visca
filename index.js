@@ -2,7 +2,7 @@ var instance_skel = require('../../instance_skel');
 var udp           = require('../../udp');
 var debug;
 var log;
-var packet_counter = 0;
+
 
 var IRIS = [
 	{ id: '15', label: 'F2.8 OPEN' },
@@ -62,6 +62,53 @@ var SHUTTER = [
 	{ id: '03', label: '1/8 | 1/6' }
 ];
 
+var PRESET = [
+	{ id: '0F', label: 'Preset 16' },
+	{ id: '0E', label: 'Preset 15' },
+	{ id: '0D', label: 'Preset 14' },
+	{ id: '0C', label: 'Preset 13' },
+	{ id: '0B', label: 'Preset 12' },
+	{ id: '0A', label: 'Preset 11' },
+	{ id: '09', label: 'Preset 10' },
+	{ id: '08', label: 'Preset 9' },
+	{ id: '07', label: 'Preset 8' },
+	{ id: '06', label: 'Preset 7' },
+	{ id: '05', label: 'Preset 6' },
+	{ id: '04', label: 'Preset 5' },
+	{ id: '03', label: 'Preset 4' },
+	{ id: '02', label: 'Preset 3' },
+	{ id: '01', label: 'Preset 2' },
+	{ id: '00', label: 'Preset 1' }
+];
+
+	var SPEED = [
+		{ id: '18', label: 'Speed 24 (Fast)' },
+		{ id: '17', label: 'Speed 23' },
+		{ id: '16', label: 'Speed 22' },
+		{ id: '15', label: 'Speed 21' },
+		{ id: '14', label: 'Speed 20' },
+		{ id: '13', label: 'Speed 19' },
+		{ id: '12', label: 'Speed 18' },
+		{ id: '11', label: 'Speed 17' },
+		{ id: '10', label: 'Speed 16' },
+		{ id: '0F', label: 'Speed 15' },
+		{ id: '0E', label: 'Speed 14' },
+		{ id: '0D', label: 'Speed 13' },
+		{ id: '0C', label: 'Speed 12' },
+		{ id: '0B', label: 'Speed 11' },
+		{ id: '0A', label: 'Speed 10' },
+		{ id: '09', label: 'Speed 09' },
+		{ id: '08', label: 'Speed 08' },
+		{ id: '07', label: 'Speed 07' },
+		{ id: '06', label: 'Speed 06' },
+		{ id: '05', label: 'Speed 05' },
+		{ id: '04', label: 'Speed 04' },
+		{ id: '03', label: 'Speed 03' },
+		{ id: '02', label: 'Speed 02' },
+		{ id: '01', label: 'Speed 01 (Slow)' }
+	];
+
+
 function hex2str(hexdata) {
 		var result = '';
 		for (var i = 0; i < hexdata.length; i += 2) {
@@ -71,7 +118,7 @@ function hex2str(hexdata) {
 		return result;
 };
 
- instance.prototype.sendVISCACommand = function(payload) {
+instance.prototype.sendVISCACommand = function(payload) {
 	var self = this;
 	var buf = new Buffer(32);
 
@@ -79,10 +126,10 @@ function hex2str(hexdata) {
 		buf[0] = 0x01;
 		buf[1] = 0x00;
 
-		packet_counter = (packet_counter + 1) % 0xFFFFFFFF;
+		self.packet_counter = (self.packet_counter + 1) % 0xFFFFFFFF;
 
 		buf.writeUInt16BE(payload.length, 2);
-		buf.writeUInt32BE(packet_counter, 4);
+		buf.writeUInt32BE(self.packet_counter, 4);
 
 		if (typeof payload == 'string') {
 				buf.write(payload, 8, 'binary');
@@ -99,6 +146,34 @@ function hex2str(hexdata) {
 
 };
 
+
+ instance.prototype.sendControlCommand = function(payload) {
+	var self = this;
+	var buf = new Buffer(32);
+
+	// 0x01 0x00 = VISCA Command
+	buf[0] = 0x02;
+	buf[1] = 0x00;
+
+	self.packet_counter = (self.packet_counter + 1) % 0xFFFFFFFF;
+
+	buf.writeUInt16BE(payload.length, 2);
+	buf.writeUInt32BE(self.packet_counter, 4);
+
+	if (typeof payload == 'string') {
+			buf.write(payload, 8, 'binary');
+	} else if (typeof payload == 'object' && payload instanceof Buffer) {
+			payload.copy(buf, 8);
+	}
+
+	var newbuf = buf.slice(0, 8 + payload.length);
+
+	// udp.send(newbuf);
+
+	debug('sending',newbuf,"to",self.udp.host);
+	self.udp.send(newbuf);
+
+};
 
 function instance(system, id, config) {
 	var self = this;
@@ -124,8 +199,15 @@ instance.prototype.init_udp = function() {
 	if (self.config.host !== undefined) {
 		self.udp = new udp(self.config.host, 52381);
 
+		// Reset sequence number
+		self.sendControlCommand('\x01');
+		self.packet_counter = 0;
+
 		self.udp.on('status_change', function (status, message) {
 			self.status(status, message);
+		});
+		self.udp.on('data', function (data) {
+			console.log("Data from SONY VISCA: ", data);
 		});
 	debug(self.udp.host,':52381');
 	}
@@ -136,6 +218,8 @@ instance.prototype.init = function() {
 
 	debug = self.debug;
 	log = self.log;
+	self.ptSpeed = '0C';
+	self.ptSpeedIndex = 12;
 
 	self.status(self.STATUS_UNKNOWN);
 	self.init_udp();
@@ -153,7 +237,7 @@ instance.prototype.updateConfig = function(config) {
 	self.status(self.STATUS_UNKNOWN);
 
 	if (self.config.host !== undefined) {
-		self.udp = new udp(self.config.host, 7000);
+		self.udp = new udp(self.config.host, 52381);
 
 		self.udp.on('status_change', function (status, message) {
 			self.status(status, message);
@@ -161,14 +245,17 @@ instance.prototype.updateConfig = function(config) {
 	}
 };
 
-
-
-
-
 // Return config fields for web config
 instance.prototype.config_fields = function () {
 	var self = this;
 	return [
+		{
+			type: 'text',
+			id: 'info',
+			width: 12,
+			label: 'Information',
+			value: 'This module controls PTZ cameras with VISCA over IP protocol'
+		},
 		{
 			type: 'textinput',
 			id: 'host',
@@ -206,7 +293,30 @@ instance.prototype.actions = function(system) {
 		'downRight':      { label: 'Down Right' },
 		'stop':           { label: 'P/T Stop' },
 		'home':           { label: 'P/T Home' },
-		'ptSlow':         { label: 'P/T Slow Mode' },
+		'ptSpeedS':       {
+			label: 'P/T Speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'speed setting',
+					id: 'speed',
+					choices: SPEED
+				}
+			]
+		},
+		'ptSpeedU':       { label: 'P/T Speed Up'},
+		'ptSpeedD':       { label: 'P/T Speed Down'},
+		'ptSlow':         {
+			label: 'P/T Slow Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Slow Mode On/Off',
+					id: 'bol',
+					choices: [ { id: '1', label: 'Off' }, { id: '0', label: 'On' } ]
+				}
+			]
+		 },
 		'zoomI':          { label: 'Zoom In' },
 		'zoomO':          { label: 'Zoom Out' },
 		'zoomS':          { label: 'Zoom Stop' },
@@ -292,12 +402,56 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'savePset':       { label: 'Save Preset' },
-		'recallPset':     { label: 'Recall Preset' },
-		'speedPset':      { label: 'Preset Drive Speed' },
-		'tally':          { label: 'Tally on/off' }
-
-
+		'savePset':       {
+			label: 'Save Preset',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Nr.',
+					id: 'val',
+					choices: PRESET
+				}
+			]
+		},
+		'recallPset':     {
+			label: 'Recall Preset',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Nr.',
+					id: 'val',
+					choices: PRESET
+				}
+			]
+		},
+		'speedPset':      {
+			label: 'Preset Drive Speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Nr.',
+					id: 'val',
+					choices: PRESET
+				},
+				{
+					type: 'dropdown',
+					label: 'speed setting',
+					id: 'speed',
+					choices: SPEED
+				}
+			]
+		},
+		'tally':          {
+			label: 'Tally on/off',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On / Off',
+					id: 'bol',
+					choices: [ { id: '0', label: 'Off' }, { id: '1', label: 'On' } ]
+				}
+			]
+		}
 	});
 }
 
@@ -306,50 +460,52 @@ instance.prototype.action = function(action) {
 	var opt = action.options;
 	var cmd = ''
 
+
+
 	switch (action.action) {
 
 		case 'left':
-			cmd = '\x80\x01\x06\x01\x09\x09\x01\x03\xFF';
+			cmd = '\x80\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'right':
-			cmd = '\x80\x01\x06\x01\x09\x09\x02\x03\xFF';
+			cmd = '\x80\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'up':
-			cmd = '\x80\x01\x06\x01\x09\x09\x03\x01\xFF';
+			cmd = '\x80\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'down':
-			cmd = '\x80\x01\x06\x01\x09\x09\x03\x02\xFF';
+			cmd = '\x80\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'upLeft':
-			cmd = '\x80\x01\x06\x01\x09\x09\x01\x01\xFF';
+			cmd = '\x80\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'upRight':
-			cmd = '\x80\x01\x06\x01\x09\x09\x01\x01\xFF';
+			cmd = '\x80\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'downLeft':
-			cmd = '\x80\x01\x06\x01\x09\x09\x01\x02\xFF';
+			cmd = '\x80\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'downRight':
-			cmd = '\x80\x01\x06\x01\x09\x09\x02\x02\xFF';
+			cmd = '\x80\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'stop':
-			cmd = '\x80\x01\x06\x01\x09\x09\x03\x03\xFF';
+			cmd = '\x80\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
@@ -359,8 +515,51 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'ptSlow':
-
+			if (opt.bol == '0') {
+				cmd = '\x80\x01\x06\x44\x02\xFF';
+			}
+			if (opt.bol == '1') {
+				cmd = '\x80\x01\x06\x44\x03\xFF';
+			}
+			self.sendVISCACommand(cmd);
 			break;
+
+		case 'ptSpeedS':
+			self.ptSpeed = opt.speed;
+
+			var idx = -1;
+			for (var i = 0; i < SPEED.length; ++i) {
+				if (SPEED[i].id == self.ptSpeed) {
+					idx = i;
+					break;
+				}
+			}
+			if (idx > -1) {
+				self.ptSpeedIndex = idx;
+			}
+			debug(self.ptSpeed + ' == ' + self.ptSpeedIndex)
+			break;
+
+		case 'ptSpeedD':
+			if (self.ptSpeedIndex == 23) {
+				self.ptSpeedIndex = 23;
+			}
+			else if (self.ptSpeedIndex < 23) {
+				self.ptSpeedIndex ++;
+			}
+			self.ptSpeed = SPEED[self.ptSpeedIndex].id
+			break;
+
+		case 'ptSpeedU':
+			if (self.ptSpeedIndex == 0) {
+				self.ptSpeedIndex = 0;
+			}
+			else if (self.ptSpeedIndex > 0) {
+				self.ptSpeedIndex--;
+			}
+			self.ptSpeed = SPEED[self.ptSpeedIndex].id
+			break;
+
 
 		case 'zoomI':
 			cmd = '\x80\x01\x04\x07\x02\xFF';
@@ -380,10 +579,10 @@ instance.prototype.action = function(action) {
 		case 'ciZoom':
 			if (opt.bol == 0){
 				cmd = '\x80\x01\x04\x06\x03\xFF';
-			};
+			}
 			if (opt.bol == 1){
 				cmd = '\x80\x01\x04\x06\x04\xFF';
-			};
+			}
 			self.sendVISCACommand(cmd);
 			break;
 
@@ -403,13 +602,13 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'focusM':
-				if (opt.bol == 0){
-					cmd = '\x80\x01\x04\x38\x02\xFF';
-				};
-				if (opt.bol == 1){
-					cmd = '\x80\x01\x04\x38\x03\xFF';
-				};
-				self.sendVISCACommand(cmd);
+			if (opt.bol == 0){
+				cmd = '\x80\x01\x04\x38\x02\xFF';
+			}
+			if (opt.bol == 1){
+				cmd = '\x80\x01\x04\x38\x03\xFF';
+			}
+			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusOpaf':
@@ -420,22 +619,22 @@ instance.prototype.action = function(action) {
 		case 'expM':
 			if (opt.val == 0){
 				cmd = '\x80\x01\x04\x39\x00\xFF';
-			};
+			}
 			if (opt.val == 1){
 				cmd = '\x80\x01\x04\x39\x03\xFF';
-			};
+			}
 			if (opt.val == 2){
 				cmd = '\x80\x01\x04\x39\x0A\xFF';
-			};
+			}
 			if (opt.val == 3){
 				cmd = '\x80\x01\x04\x39\x0B\xFF';
-			};
+			}
 			if (opt.val == 4){
 				cmd = '\x80\x01\x04\x39\x0E\xFF';
-			};
+			}
 			self.sendVISCACommand(cmd);
-		break;
 			break;
+
 
 		case 'gainU':
 			cmd = '\x80\x01\x04\x0C\x02\xFF';
@@ -448,7 +647,11 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'gainS':
-
+			var cmd = Buffer.from('\x80\x01\x04\x4C\x00\x00\x00\x00\xFF', 'binary');
+			cmd.writeUInt8((parseInt(opt.val,16) & 0xF0) >> 4, 6);
+			cmd.writeUInt8(parseInt(opt.val,16) & 0x0F, 7);
+			self.sendVISCACommand(cmd);
+			debug('cmd=',cmd);
 			break;
 
 		case 'irisU':
@@ -462,7 +665,11 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'irisS':
-
+			var cmd = Buffer.from('\x80\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary');
+			cmd.writeUInt8((parseInt(opt.val,16) & 0xF0) >> 4, 6);
+			cmd.writeUInt8(parseInt(opt.val,16) & 0x0F, 7);
+			self.sendVISCACommand(cmd);
+			debug('cmd=',cmd);
 			break;
 
 		case 'shutU':
@@ -476,23 +683,36 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'shutS':
-
+			var cmd = Buffer.from('\x80\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary');
+			cmd.writeUInt8((parseInt(opt.val,16) & 0xF0) >> 4, 6);
+			cmd.writeUInt8(parseInt(opt.val,16) & 0x0F, 7);
+			self.sendVISCACommand(cmd);
+			debug('cmd=',cmd);
 			break;
 
 		case 'savePset':
-
+			cmd ='\x80\x01\x04\x3F\x01' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + '\xFF';
+			self.sendVISCACommand(cmd);
 			break;
 
 		case 'recallPset':
-
+			cmd ='\x80\x01\x04\x3F\x02' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + '\xFF';
+			self.sendVISCACommand(cmd);
 			break;
 
 		case 'speedPset':
-
+			cmd ='\x80\x01\x7E\x01\x0B' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + String.fromCharCode(parseInt(opt.speed,16) & 0xFF) + '\xFF';
+			self.sendVISCACommand(cmd);
 			break;
 
 		case 'tally':
-
+			if (opt.bol == 0){
+				cmd = '\x80\x01\x7E\x01\x0A\x00\x03\xFF';
+			}
+			if (opt.bol == 1){
+				cmd = '\x80\x01\x7E\x01\x0A\x00\x02\xFF';
+			}
+			self.sendVISCACommand(cmd);
 			break;
 	}
 };
