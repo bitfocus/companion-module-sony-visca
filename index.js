@@ -354,7 +354,7 @@ instance.prototype.actions = function(system) {
 					label: 'Mode setting',
 					id: 'val',
 					choices: [
-						{ id: '0', label: 'Full autoload' },
+						{ id: '0', label: 'Full auto' },
 						{ id: '1', label: 'Manual' },
 						{ id: '2', label: 'Shutter Pri' },
 						{ id: '3', label: 'Iris Pri' },
