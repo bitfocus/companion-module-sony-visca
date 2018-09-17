@@ -182,6 +182,7 @@ function instance(system, id, config) {
 	instance_skel.apply(this, arguments);
 
 	self.actions(); // export actions
+	self.init_presets();
 
 	return self;
 }
@@ -223,11 +224,13 @@ instance.prototype.init = function() {
 
 	self.status(self.STATUS_UNKNOWN);
 	self.init_udp();
+	self.init_presets();
 };
 
 instance.prototype.updateConfig = function(config) {
 	var self = this;
 	self.config = config;
+	self.init_presets();
 
 	if (self.udp !== undefined) {
 		self.udp.destroy();
@@ -275,6 +278,1176 @@ instance.prototype.destroy = function() {
 	}
 	debug("destroy", self.id);
 };
+
+instance.prototype.init_presets = function () {
+	var self = this;
+	var presets = [];
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'UP',
+			bank: {
+				style: 'text',
+				text: 'UP',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'up',
+				}
+			],
+			release_actions: [
+				{
+					action: 'stop',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'DOWN',
+			bank: {
+				style: 'text',
+				text: 'DOWN',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'down',
+				}
+			],
+			release_actions: [
+				{
+					action: 'stop',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'LEFT',
+			bank: {
+				style: 'text',
+				text: 'LEFT',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'left',
+				}
+			],
+			release_actions: [
+				{
+					action: 'stop',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'RIGHT',
+			bank: {
+				style: 'text',
+				text: 'RIGHT',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'right',
+				}
+			],
+			release_actions: [
+				{
+					action: 'stop',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'UP RIGHT',
+			bank: {
+				style: 'text',
+				text: 'UP\\nRIGHT',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'upRight',
+				}
+			],
+			release_actions: [
+				{
+					action: 'stop',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'UP LEFT',
+			bank: {
+				style: 'text',
+				text: 'UP\\nLEFT',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'upLeft',
+				}
+			],
+			release_actions: [
+				{
+					action: 'stop',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'DOWN LEFT',
+			bank: {
+				style: 'text',
+				text: 'DOWN\\nLEFT',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'downLeft',
+				}
+			],
+			release_actions: [
+				{
+					action: 'stop',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'DOWN RIGHT',
+			bank: {
+				style: 'text',
+				text: 'DOWN\\nRIGHT',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'downRight',
+				}
+			],
+			release_actions: [
+				{
+					action: 'stop',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'Home',
+			bank: {
+				style: 'text',
+				text: 'HOME',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'home',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'Speed Up',
+			bank: {
+				style: 'text',
+				text: 'SPEED\\nUP',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'ptSpeedU',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Pan/Tilt',
+			label: 'Speed Down',
+			bank: {
+				style: 'text',
+				text: 'SPEED\\nDOWN',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'ptSpeedD',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Lens',
+			label: 'Zoom In',
+			bank: {
+				style: 'text',
+				text: 'ZOOM\\nIN',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'zoomI',
+				}
+			],
+			release_actions: [
+				{
+					action: 'zoomS',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Lens',
+			label: 'Zoom Out',
+			bank: {
+				style: 'text',
+				text: 'ZOOM\\nOUT',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0)
+			},
+			actions: [
+				{
+					action: 'zoomO',
+				}
+			],
+			release_actions: [
+				{
+					action: 'zoomS',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Lens',
+			label: 'CI Zoom',
+			bank: {
+				style: 'text',
+				text: 'CI\\nZOOM',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+				latch: true
+			},
+			actions: [
+				{
+					action: 'ciZoom',
+					options: {
+						bol: 1,
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'ciZoom',
+					options: {
+						bol: 0,
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Lens',
+			label: 'Focus Near',
+			bank: {
+				style: 'text',
+				text: 'FOCUS\\nNEAR',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'focusN',
+				}
+			],
+			release_actions: [
+				{
+					action: 'focusS',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Lens',
+			label: 'Focus Far',
+			bank: {
+				style: 'text',
+				text: 'FOCUS\\nFAR',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'focusF',
+				}
+			],
+			release_actions: [
+				{
+					action: 'focusS',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Lens',
+			label: 'Auto Focus',
+			bank: {
+				style: 'text',
+				text: 'AUTO\\nFOCUS',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+				latch: true
+			},
+			actions: [
+				{
+					action: 'focusM',
+					options: {
+						bol: 0,
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'focusM',
+					options: {
+						bol: 1,
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Lens',
+			label: 'One Push Auto Focus',
+			bank: {
+				style: 'text',
+				text: 'O.P.\\nAF',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'focusOpaf',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Exposure',
+			label: 'Exposure Mode',
+			bank: {
+				style: 'text',
+				text: 'EXP\\nMODE',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+				latch: true
+			},
+			actions: [
+				{
+					action: 'expM',
+					options: {
+						bol: 0,
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'expM',
+					options: {
+						bol: 1,
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Exposure',
+			label: 'Gain Up',
+			bank: {
+				style: 'text',
+				text: 'GAIN\\nUP',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'gainU',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Exposure',
+			label: 'Gain Down',
+			bank: {
+				style: 'text',
+				text: 'GAIN\\nDOWN',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'gainD',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Exposure',
+			label: 'Iris Up',
+			bank: {
+				style: 'text',
+				text: 'IRIS\\nUP',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'irisU',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Exposure',
+			label: 'Iris Down',
+			bank: {
+				style: 'text',
+				text: 'IRIS\\nDOWN',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'irisD',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Exposure',
+			label: 'Shutter Up',
+			bank: {
+				style: 'text',
+				text: 'Shut\\nUP',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'shutU',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Exposure',
+			label: 'Shutter Down',
+			bank: {
+				style: 'text',
+				text: 'Shut\\nDOWN',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'shutD',
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 1',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n1',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '00',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 2',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n2',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '01',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 3',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n3',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '02',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 4',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n4',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '03',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 5',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n5',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '04',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 6',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n6',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '05',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 7',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n7',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '06',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 8',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n8',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '07',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 9',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n9',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '08',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 10',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n10',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '09',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 11',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n11',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '0A',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 12',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n12',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '0B',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 13',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n13',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '0C',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 14',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n14',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '0D',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 15',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n15',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '0E',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset 16',
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n16',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: '0F',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 1',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n1',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '00',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 2',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n2',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '01',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 3',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n3',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '02',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 4',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n4',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '03',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 5',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n5',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '04',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 6',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n6',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '05',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 7',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n7',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '06',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 8',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n8',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '07',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 9',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n9',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '08',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 10',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n10',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '09',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 11',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n11',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '0A',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 12',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n12',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '0B',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 13',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n13',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '0C',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 14',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n14',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '0D',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 15',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n15',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '0E',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset 16',
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n16',
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0,0,0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: '0F',
+					}
+				}
+			]
+		});
+
+
+	self.setPresetDefinitions(presets);
+}
+
 
 
 

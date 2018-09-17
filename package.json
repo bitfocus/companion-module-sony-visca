@@ -1,6 +1,6 @@
 {
   "name": "sony-visca",
-  "version": "0.0.1",
+  "version": "1.2.0",
   "description": "Module to control PTZ cameras with Sony Visca protocol over IP",
   "main": "index.js",
   "scripts": {
