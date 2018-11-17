@@ -1173,7 +1173,7 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'focusS':
-			cmd = '\x80\x01\x04\x38\x00\xFF';
+			cmd = '\x80\x01\x04\x08\x00\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
