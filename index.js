@@ -182,9 +182,6 @@ function instance(system, id, config) {
 	// super-constructor
 	instance_skel.apply(this, arguments);
 
-	self.actions(); // export actions
-	self.init_presets();
-
 	return self;
 }
 
@@ -225,6 +222,7 @@ instance.prototype.init = function() {
 
 	self.status(self.STATUS_UNKNOWN);
 	self.init_udp();
+	self.actions(); // export actions
 	self.init_presets();
 };
 
