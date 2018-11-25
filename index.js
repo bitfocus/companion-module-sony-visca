@@ -196,7 +196,7 @@ instance.prototype.init_udp = function() {
 	}
 
 	if (self.config.host !== undefined) {
-		self.udp = new udp(self.config.host, 52381);
+		self.udp = new udp(self.config.host, self.config.port);
 
 		// Reset sequence number
 		self.sendControlCommand('\x01');
@@ -208,7 +208,7 @@ instance.prototype.init_udp = function() {
 		self.udp.on('data', function (data) {
 			console.log("Data from SONY VISCA: ", data);
 		});
-	debug(self.udp.host,':52381');
+	debug(self.udp.host,':',self.config.port);
 	}
 };
 
@@ -239,7 +239,7 @@ instance.prototype.updateConfig = function(config) {
 	self.status(self.STATUS_UNKNOWN);
 
 	if (self.config.host !== undefined) {
-		self.udp = new udp(self.config.host, 52381);
+		self.udp = new udp(self.config.host, self.config.port);
 
 		self.udp.on('status_change', function (status, message) {
 			self.status(status, message);
@@ -264,6 +264,14 @@ instance.prototype.config_fields = function () {
 			label: 'Target IP',
 			width: 6,
 			regex: self.REGEX_IP
+		},
+		{
+			type: 'textinput',
+			id: 'port',
+			label: 'Target PORT',
+			width: 6,
+			regex: self.REGEX_PORT,
+			default: '52381'
 		}
 	]
 };
@@ -1283,13 +1291,6 @@ instance.prototype.action = function(action) {
 	}
 };
 
-
-
-instance.module_info = {
-	label: 'Sony Visca PTZ ',
-	id: 'sony-visca',
-	version: '0.0.1'
-};
 
 instance_skel.extendedBy(instance);
 
