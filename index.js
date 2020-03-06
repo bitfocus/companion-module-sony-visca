@@ -3,62 +3,6 @@ var udp           = require('../../udp');
 var debug;
 var log;
 
-(function(){
-
-		var ConvertBase = function (num) {
-				return {
-						from : function (baseFrom) {
-								return {
-										to : function (baseTo) {
-												return parseInt(num, baseFrom).toString(baseTo);
-										}
-								};
-						}
-				};
-		};
-
-		// binary to decimal
-		ConvertBase.bin2dec = function (num) {
-				return ConvertBase(num).from(2).to(10);
-		};
-
-		// binary to hexadecimal
-		ConvertBase.bin2hex = function (num) {
-				return ConvertBase(num).from(2).to(16);
-		};
-
-		// decimal to binary
-		ConvertBase.dec2bin = function (num) {
-				return ConvertBase(num).from(10).to(2);
-		};
-
-		// decimal to hexadecimal
-		ConvertBase.dec2hex = function (num) {
-				return ConvertBase(num).from(10).to(16);
-		};
-
-		// hexadecimal to binary
-		ConvertBase.hex2bin = function (num) {
-				return ConvertBase(num).from(16).to(2);
-		};
-
-		// hexadecimal to decimal
-		ConvertBase.hex2dec = function (num) {
-				return ConvertBase(num).from(16).to(10);
-		};
-
-		this.ConvertBase = ConvertBase;
-
-})(this);
-
-/*
-* Usage example:
-* ConvertBase.bin2dec('111'); // '7'
-* ConvertBase.dec2hex('42'); // '2a'
-* ConvertBase.hex2bin('f8'); // '11111000'
-* ConvertBase.dec2bin('22'); // '10110'
-*/
-
 var IRIS = [
 	{ id: '15', label: 'F2.8 OPEN' },
 	{ id: '14', label: 'F3.1' },
@@ -174,15 +118,6 @@ var PRESET = [
 		{ id: '135', label: 'id 7'},
 		{ id: '136', label: 'id 8'}
 	];
-
-function hex2str(hexdata) {
-		var result = '';
-		for (var i = 0; i < hexdata.length; i += 2) {
-				result += String.fromCharCode( parseInt(hexdata.substr(i,2), 16) );
-		}
-
-		return result;
-};
 
 instance.prototype.sendVISCACommand = function(payload) {
 	var self = this;
@@ -1112,61 +1047,61 @@ instance.prototype.action = function(action) {
 	switch (action.action) {
 
 		case 'left':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'right':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'up':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x01\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'down':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'upLeft':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x01\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'upRight':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x01\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'downLeft':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'downRight':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'stop':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'home':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x04\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x04\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'ptSlow':
 			if (opt.bol == '0') {
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x44\x02\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x44\x02\xFF';
 			}
 			if (opt.bol == '1') {
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x06\x44\x03\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x44\x03\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
@@ -1209,92 +1144,92 @@ instance.prototype.action = function(action) {
 
 
 		case 'zoomI':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x07\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x07\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'zoomO':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x07\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x07\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'zoomS':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x07\x00\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x07\x00\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'ciZoom':
 			if (opt.bol == 0){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x06\x03\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x06\x03\xFF';
 			}
 			if (opt.bol == 1){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x06\x04\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x06\x04\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusN':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x08\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x08\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusF':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x08\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x08\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusS':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x38\x00\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x38\x00\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusM':
 			if (opt.bol == 0){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x38\x02\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x38\x02\xFF';
 			}
 			if (opt.bol == 1){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x38\x03\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x38\x03\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusOpaf':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x18\x01\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x18\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'expM':
 			if (opt.val == 0){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x39\x00\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x39\x00\xFF';
 			}
 			if (opt.val == 1){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x39\x03\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x39\x03\xFF';
 			}
 			if (opt.val == 2){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x39\x0A\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x39\x0A\xFF';
 			}
 			if (opt.val == 3){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x39\x0B\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x39\x0B\xFF';
 			}
 			if (opt.val == 4){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x39\x0E\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x39\x0E\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
 
 
 		case 'gainU':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x0C\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0C\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'gainD':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x0C\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0C\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'gainS':
-			var cmd = Buffer.from(String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x4C\x00\x00\x00\x00\xFF', 'binary');
+			cmd = Buffer.from(String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x4C\x00\x00\x00\x00\xFF', 'binary');
 			cmd.writeUInt8((parseInt(opt.val,16) & 0xF0) >> 4, 6);
 			cmd.writeUInt8(parseInt(opt.val,16) & 0x0F, 7);
 			self.sendVISCACommand(cmd);
@@ -1302,17 +1237,17 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'irisU':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x0B\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0B\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'irisD':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x0B\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0B\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'irisS':
-			var cmd = Buffer.from(String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary');
+			cmd = Buffer.from(String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary');
 			cmd.writeUInt8((parseInt(opt.val,16) & 0xF0) >> 4, 6);
 			cmd.writeUInt8(parseInt(opt.val,16) & 0x0F, 7);
 			self.sendVISCACommand(cmd);
@@ -1320,17 +1255,17 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'shutU':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x0A\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0A\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'shutD':
-			cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x0A\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0A\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'shutS':
-			var cmd = Buffer.from(String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary');
+			cmd = Buffer.from(String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary');
 			cmd.writeUInt8((parseInt(opt.val,16) & 0xF0) >> 4, 6);
 			cmd.writeUInt8(parseInt(opt.val,16) & 0x0F, 7);
 			self.sendVISCACommand(cmd);
@@ -1338,26 +1273,26 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'savePset':
-			cmd =String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x3F\x01' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + '\xFF';
+			cmd =String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x3F\x01' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'recallPset':
-			cmd =String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x04\x3F\x02' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + '\xFF';
+			cmd =String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x3F\x02' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'speedPset':
-			cmd =String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x7E\x01\x0B' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + String.fromCharCode(parseInt(opt.speed,16) & 0xFF) + '\xFF';
+			cmd =String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x01\x0B' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + String.fromCharCode(parseInt(opt.speed,16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'tally':
 			if (opt.bol == 0){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x7E\x01\x0A\x00\x03\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x01\x0A\x00\x03\xFF';
 			}
 			if (opt.bol == 1){
-				cmd = String.fromCharCode(parseInt(ConvertBase.dec2hex(self.config.id),16)) +'\x01\x7E\x01\x0A\x00\x02\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x01\x0A\x00\x02\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
