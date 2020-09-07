@@ -212,13 +212,14 @@ instance.prototype.init_udp = function() {
 	}
 };
 
-instance.prototype.init = function() {
+instance.prototype.init = function(appEnv) {
 	var self = this;
 
 	debug = self.debug;
 	log = self.log;
 	self.ptSpeed = '0C';
 	self.ptSpeedIndex = 12;
+	self.appEnv = appEnv || null;
 
 	self.status(self.STATUS_UNKNOWN);
 	self.init_udp();
@@ -864,7 +865,64 @@ for (recall = 0; recall < 16; recall++) {
 instance.prototype.actions = function(system) {
 	var self = this;
 
+	const bitfocusButtonsActions = self.appEnv === 'bitfocus-buttons' ? {
+		'joystickControl':{
+			label: 'Joystick Control',
+			controller: 'bitfocus-joystick-ptz',
+			triggerType: 'move',
+			prohibitDelay: true,
+			options: [
+				{
+					type: 'text',
+					label: 'Joystick Control',
+					id: 'info',
+					text: 'This action tranforms joystick/fader/encoder-movements to PTZ-commands. Make sure to assign the features to correct axis in the "Edit Feature"-tab.',
+				},
+				{
+					type: 'dropdown',
+					label: 'max pan speed setting',
+					id: 'maxPanSpeed',
+					choices: SPEED,
+					inline: true
+				},
+				{
+					type: 'dropdown',
+					label: 'max tilt speed setting',
+					id: 'maxTiltSpeed',
+					choices: SPEED,
+					inline: true
+				},
+				{
+					type: 'dropdown',
+					label: 'max zoom speed setting',
+					id: 'maxZoomSpeed',
+					choices: SPEED,
+					inline: true
+				},
+				{
+					type: 'checkbox',
+					label: 'invert pan direction',
+					id: 'panInvert',
+					inline: true
+				},
+				{
+					type: 'checkbox',
+					label: 'invert tilt direction',
+					id: 'tiltInvert',
+					inline: true
+				},
+				{
+					type: 'checkbox',
+					label: 'invert zoom direction',
+					id: 'zoomInvert',
+					inline: true
+				}
+			]
+		}
+	} : {}
+
 	self.system.emit('instance_actions', self.id, {
+		...bitfocusButtonsActions,
 		'left':           { label: 'Pan Left' },
 		'right':          { label: 'Pan Right' },
 		'up':             { label: 'Tilt Up' },
@@ -1042,9 +1100,11 @@ instance.prototype.action = function(action) {
 	var opt = action.options;
 	var cmd = ''
 
-
-
 	switch (action.action) {
+		case 'joystickControl':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(opt.panSpeed,16) & 0xFF) + String.fromCharCode(parseInt(opt.tiltSpeed,16) & 0xFF) +String.fromCharCode(parseInt(opt.aVal,16) & 0xFF) +String.fromCharCode(parseInt(opt.bVal,16) & 0xFF) + '\xFF';
+			self.sendVISCACommand(cmd);
+			break;
 
 		case 'left':
 			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x03\xFF';
