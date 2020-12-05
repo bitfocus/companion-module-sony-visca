@@ -169,7 +169,7 @@ var PRESET = [
 
 instance.prototype.sendVISCACommand = function(payload) {
 	var self = this;
-	var buf = new Buffer(32);
+	var buf = Buffer.alloc(32);
 
 		// 0x01 0x00 = VISCA Command
 		buf[0] = 0x01;
@@ -198,7 +198,7 @@ instance.prototype.sendVISCACommand = function(payload) {
 
  instance.prototype.sendControlCommand = function(payload) {
 	var self = this;
-	var buf = new Buffer(32);
+	var buf = Buffer.alloc(32);
 
 	// 0x01 0x00 = VISCA Command
 	buf[0] = 0x02;
