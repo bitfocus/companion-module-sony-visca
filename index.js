@@ -1019,6 +1019,10 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
+		'camOn':          { label: 'Power On Camera' },
+		'camOff':         { label: 'Power Off Camera' },
+		'wbOutdoor':         { label: 'Outdoor' },
+		'wbIndoor':         { label: 'Indoor' },		
 		'focusN':         { label: 'Focus Near' },
 		'focusF':         { label: 'Focus Far' },
 		'focusS':         { label: 'Focus Stop' },
@@ -1047,6 +1051,24 @@ instance.prototype.actions = function(system) {
 						{ id: '2', label: 'Shutter Pri' },
 						{ id: '3', label: 'Iris Pri' },
 						{ id: '4', label: 'Gain Pri' }
+					]
+				}
+			]
+		},
+		'whiteBal':           {
+			label: 'White Balance Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'WB setting',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Auto' },
+						{ id: '1', label: 'Indoor' },
+						{ id: '2', label: 'Outdoor' },
+						{ id: '3', label: 'OnePush WB' },
+						{ id: '4', label: 'ATW' },
+						{ id: '5', label: 'Manual'}
 					]
 				}
 			]
@@ -1266,6 +1288,26 @@ instance.prototype.action = function(action) {
 			self.sendVISCACommand(cmd);
 			break;
 
+		case 'camOff':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x00\x03\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+		
+		case 'camOn':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x00\x02\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'wbIndoor':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x01\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'wbOutdoor':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x02\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
 		case 'ciZoom':
 			if (opt.bol == 0){
 				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x06\x03\xFF';
@@ -1324,7 +1366,28 @@ instance.prototype.action = function(action) {
 			}
 			self.sendVISCACommand(cmd);
 			break;
-
+		
+		case 'whiteBal':
+				if (opt.val == 0){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x00\xFF';
+				}
+				if (opt.val == 1){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x01\xFF';
+				}
+				if (opt.val == 2){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x02\xFF';
+				}
+				if (opt.val == 3){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x03\xFF';
+				}
+				if (opt.val == 4){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x04\xFF';
+				}
+				if (opt.val == 5){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x05\xFF';
+				}
+				self.sendVISCACommand(cmd);
+				break;
 
 		case 'gainU':
 			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0C\x02\xFF';
