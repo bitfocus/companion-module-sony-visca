@@ -44,3 +44,8 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 * Recall Preset
 * Preset Drive Speed
 * Tally on/off
+* Power Camera On/Off
+* BackLight Compensation On/Off
+* Aperture +,-,Reset
+* Wide Dynamic Range (Off,Low,Mid,High)
+* White Balance On/Off
