@@ -1,6 +1,6 @@
 {
 	"name": "sony-visca",
-	"version": "1.2.6",
+	"version": "1.2.7",
 	"api_version": "1.0.0",
 	"keywords": [
 		"Protocol",
@@ -15,5 +15,8 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Per Røine <per.roine@gmail.com>",
+	"contributors": [
+		"Yuri Vidal <yu.ri.vidal@gmail.com>"
+	],
 	"license": "MIT"
 }

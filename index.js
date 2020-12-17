@@ -992,6 +992,8 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
+		'brightnessU':       { label: 'Brightness +'},
+		'brightnessD':       { label: 'Brightness -'},
 		'ptSpeedU':       { label: 'P/T Speed Up'},
 		'ptSpeedD':       { label: 'P/T Speed Down'},
 		'ptSlow':         {
@@ -1002,6 +1004,17 @@ instance.prototype.actions = function(system) {
 					label: 'Slow Mode On/Off',
 					id: 'bol',
 					choices: [ { id: '1', label: 'Off' }, { id: '0', label: 'On' } ]
+				}
+			]
+		},
+		'backlightComp':         {
+			label: 'Backlight Compensation On/Off',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Backlight Compensation On/Off',
+					id: 'bol',
+					choices: [ { id: '0', label: 'Off' }, { id: '1', label: 'On' } ]
 				}
 			]
 		},
@@ -1019,6 +1032,10 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
+		'camOn':          { label: 'Power On Camera' },
+		'camOff':         { label: 'Power Off Camera' },
+		'wbOutdoor':         { label: 'Outdoor' },
+		'wbIndoor':         { label: 'Indoor' },		
 		'focusN':         { label: 'Focus Near' },
 		'focusF':         { label: 'Focus Far' },
 		'focusS':         { label: 'Focus Stop' },
@@ -1047,6 +1064,55 @@ instance.prototype.actions = function(system) {
 						{ id: '2', label: 'Shutter Pri' },
 						{ id: '3', label: 'Iris Pri' },
 						{ id: '4', label: 'Gain Pri' }
+					]
+				}
+			]
+		},
+		'aperture':           {
+			label: 'Lens Aperture',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode setting',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Reset' },
+						{ id: '1', label: 'Aperture +' },
+						{ id: '2', label: 'Aperture -' }
+					]
+				}
+			]
+		},
+		'whiteBal':           {
+			label: 'White Balance Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'WB setting',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Auto' },
+						{ id: '1', label: 'Indoor' },
+						{ id: '2', label: 'Outdoor' },
+						{ id: '3', label: 'OnePush WB' },
+						{ id: '4', label: 'ATW' },
+						{ id: '5', label: 'Manual'}
+					]
+				}
+			]
+		},
+		'WDR':           {
+			label: 'Wide Dynamic Range',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'WDR Settings',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'Low' },
+						{ id: '2', label: 'Mid' },
+						{ id: '3', label: 'High' }
 					]
 				}
 			]
@@ -1203,7 +1269,8 @@ instance.prototype.action = function(action) {
 			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x04\xFF';
 			self.sendVISCACommand(cmd);
 			break;
-
+		
+		
 		case 'ptSlow':
 			if (opt.bol == '0') {
 				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x44\x02\xFF';
@@ -1266,6 +1333,36 @@ instance.prototype.action = function(action) {
 			self.sendVISCACommand(cmd);
 			break;
 
+		case 'camOff':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x00\x03\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+		
+		case 'camOn':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x00\x02\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'brightnessU':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0D\x02\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'brightnessD':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0D\x03\xFF';
+			self.sendVISCACommand(cmd);
+			break;						
+
+		case 'wbIndoor':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x01\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'wbOutdoor':
+			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x02\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
 		case 'ciZoom':
 			if (opt.bol == 0){
 				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x06\x03\xFF';
@@ -1275,6 +1372,16 @@ instance.prototype.action = function(action) {
 			}
 			self.sendVISCACommand(cmd);
 			break;
+	
+		case 'backlightComp':
+			if (opt.bol == 0){
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x33\x03\xFF';
+			}
+			if (opt.bol == 1){
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x33\x02\xFF';
+			}
+			self.sendVISCACommand(cmd);
+			break;	
 
 		case 'focusN':
 			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x08\x03\xFF';
@@ -1325,6 +1432,56 @@ instance.prototype.action = function(action) {
 			self.sendVISCACommand(cmd);
 			break;
 
+		case 'aperture':
+			if (opt.val == 0){
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x02\x00\xFF';
+			}
+			if (opt.val == 1){
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x02\x02\xFF';
+			}
+			if (opt.val == 2){
+				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x02\x03\xFF';
+			}
+			self.sendVISCACommand(cmd);
+			break;			
+		
+		case 'whiteBal':
+				if (opt.val == 0){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x00\xFF';
+				}
+				if (opt.val == 1){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x01\xFF';
+				}
+				if (opt.val == 2){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x02\xFF';
+				}
+				if (opt.val == 3){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x03\xFF';
+				}
+				if (opt.val == 4){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x04\xFF';
+				}
+				if (opt.val == 5){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x05\xFF';
+				}
+				self.sendVISCACommand(cmd);
+				break;
+
+		case 'WDR':
+				if (opt.val == 0){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x04\x00\x00\xFF';
+				}
+				if (opt.val == 1){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x04\x00\x01\xFF';
+				}
+				if (opt.val == 2){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x04\x00\x02\xFF';
+				}
+				if (opt.val == 3){
+					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x04\x00\x03\xFF';
+				}
+				self.sendVISCACommand(cmd);
+				break;
 
 		case 'gainU':
 			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0C\x02\xFF';
