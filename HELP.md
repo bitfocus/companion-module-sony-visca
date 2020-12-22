@@ -1,5 +1,6 @@
 ## Sony Visca
-This module uses the Sony Visca protocol to control PTZ cameras.
+This module uses the Sony Visca protocol to control PTZ cameras.   
+**Please Note**: Not all Sony PTZ cameras support all VISCA commands. Please check the official "Technical Manual" of your exact model to see what commands it supports, in case one of the commands in this module is not working for you.
 
 ### Configuration
 * Type in the IP address of the device.
