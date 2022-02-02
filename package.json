@@ -18,5 +18,13 @@
 	"contributors": [
 		"Yuri Vidal <yu.ri.vidal@gmail.com>"
 	],
-	"license": "MIT"
+	"license": "MIT",
+	"homepage": "https://github.com/bitfocus/companion-module-sony-visca#readme",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-sony-visca/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-sony-visca.git"
+	}
 }
