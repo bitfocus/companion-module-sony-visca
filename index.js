@@ -969,7 +969,7 @@ instance.prototype.actions = function(system) {
 		}
 	} : {}
 
-	self.system.emit('instance_actions', self.id, {
+	self.setActions({
 		...bitfocusButtonsActions,
 		'left':           { label: 'Pan Left' },
 		'right':          { label: 'Pan Right' },
