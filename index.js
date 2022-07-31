@@ -379,7 +379,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -402,7 +402,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -425,7 +425,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -448,7 +448,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -471,7 +471,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -494,7 +494,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -517,7 +517,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
