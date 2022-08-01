@@ -167,6 +167,8 @@ var CAMERAID = [
 	{ id: '136', label: 'id 8' }
 ];
 
+var LongPressPsetTimers = {};
+
 instance.prototype.sendVISCACommand = function (payload) {
 	var self = this;
 	var buf = Buffer.alloc(32);
@@ -860,8 +862,39 @@ instance.prototype.init_presets = function () {
 		}
 	];
 
+	var camPreset;
+	for (camPreset = 0; camPreset < 64; camPreset++) {
+		presets.push({
+			category: 'Presets',
+			label: 'Preset ' + parseInt(camPreset + 1),
+			bank: {
+				style: 'text',
+				text: 'Preset\\n' + parseInt(camPreset + 1),
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'savePsetLongPress',
+					options: {
+						val: camPreset.toString(16).toUpperCase().padStart(2, '0'),
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: camPreset.toString(16).toUpperCase().padStart(2, '0'),
+					}
+				}
+			]
+		});
+	}
+
 	var save;
-	for (save = 0; save < 16; save++) {
+	for (save = 0; save < 64; save++) {
 		presets.push({
 			category: 'Save Preset',
 			label: 'Save Preset ' + parseInt(save + 1),
@@ -876,7 +909,7 @@ instance.prototype.init_presets = function () {
 				{
 					action: 'savePset',
 					options: {
-						val: '0' + save.toString(16).toUpperCase(),
+						val: save.toString(16).toUpperCase().padStart(2, '0'),
 					}
 				}
 			]
@@ -884,7 +917,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	var recall;
-	for (recall = 0; recall < 16; recall++) {
+	for (recall = 0; recall < 64; recall++) {
 		presets.push({
 			category: 'Recall Preset',
 			label: 'Recall Preset ' + parseInt(recall + 1),
@@ -899,7 +932,7 @@ instance.prototype.init_presets = function () {
 				{
 					action: 'recallPset',
 					options: {
-						val: '0' + recall.toString(16).toUpperCase(),
+						val: recall.toString(16).toUpperCase().padStart(2, '0'),
 					}
 				}
 			]
@@ -1158,6 +1191,17 @@ instance.prototype.actions = function (system) {
 		},
 		'savePset': {
 			label: 'Save Preset',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Nr.',
+					id: 'val',
+					choices: PRESET
+				}
+			]
+		},
+		'savePsetLongPress': {
+			label: 'Save Preset on Long Press',
 			options: [
 				{
 					type: 'dropdown',
@@ -1542,7 +1586,19 @@ instance.prototype.action = function (action) {
 			self.sendVISCACommand(cmd);
 			break;
 
+		case 'savePsetLongPress':
+			LongPressPsetTimers[opt.val] = setTimeout(() => {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x3F\x01' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + '\xFF';
+				self.sendVISCACommand(cmd);
+				delete LongPressPsetTimers[opt.val];
+			}, 2000);
+			break;
+
 		case 'recallPset':
+			if (LongPressPsetTimers.hasOwnProperty([opt.val])) {
+				clearTimeout(LongPressPsetTimers[opt.val]);
+				delete LongPressPsetTimers[opt.val];
+			}
 			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x3F\x02' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
