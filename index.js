@@ -865,7 +865,7 @@ instance.prototype.init_presets = function () {
 	var camPreset;
 	for (camPreset = 0; camPreset < 64; camPreset++) {
 		presets.push({
-			category: 'Presets',
+			category: 'Cam Presets',
 			label: 'Preset ' + parseInt(camPreset + 1),
 			bank: {
 				style: 'text',
