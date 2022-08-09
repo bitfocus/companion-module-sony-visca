@@ -50,3 +50,7 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 * Aperture +,-,Reset
 * Wide Dynamic Range (Off,Low,Mid,High)
 * White Balance On/Off
+
+### Presets
+* "Cam Presets" are dual function. Tap to recall or press for 2+ seconds to save.
+* "Save Preset" and "Recall Preset" are single function.

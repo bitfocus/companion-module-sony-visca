@@ -1,5 +1,5 @@
 var instance_skel = require('../../instance_skel');
-var udp           = require('../../udp');
+var udp = require('../../udp');
 var debug;
 var log;
 
@@ -128,75 +128,77 @@ var PRESET = [
 	{ id: '00', label: 'Preset 1' }
 ];
 
-	var SPEED = [
-		{ id: '18', label: 'Speed 24 (Fast)' },
-		{ id: '17', label: 'Speed 23' },
-		{ id: '16', label: 'Speed 22' },
-		{ id: '15', label: 'Speed 21' },
-		{ id: '14', label: 'Speed 20' },
-		{ id: '13', label: 'Speed 19' },
-		{ id: '12', label: 'Speed 18' },
-		{ id: '11', label: 'Speed 17' },
-		{ id: '10', label: 'Speed 16' },
-		{ id: '0F', label: 'Speed 15' },
-		{ id: '0E', label: 'Speed 14' },
-		{ id: '0D', label: 'Speed 13' },
-		{ id: '0C', label: 'Speed 12' },
-		{ id: '0B', label: 'Speed 11' },
-		{ id: '0A', label: 'Speed 10' },
-		{ id: '09', label: 'Speed 09' },
-		{ id: '08', label: 'Speed 08' },
-		{ id: '07', label: 'Speed 07' },
-		{ id: '06', label: 'Speed 06' },
-		{ id: '05', label: 'Speed 05' },
-		{ id: '04', label: 'Speed 04' },
-		{ id: '03', label: 'Speed 03' },
-		{ id: '02', label: 'Speed 02' },
-		{ id: '01', label: 'Speed 01 (Slow)' }
-	];
+var SPEED = [
+	{ id: '18', label: 'Speed 24 (Fast)' },
+	{ id: '17', label: 'Speed 23' },
+	{ id: '16', label: 'Speed 22' },
+	{ id: '15', label: 'Speed 21' },
+	{ id: '14', label: 'Speed 20' },
+	{ id: '13', label: 'Speed 19' },
+	{ id: '12', label: 'Speed 18' },
+	{ id: '11', label: 'Speed 17' },
+	{ id: '10', label: 'Speed 16' },
+	{ id: '0F', label: 'Speed 15' },
+	{ id: '0E', label: 'Speed 14' },
+	{ id: '0D', label: 'Speed 13' },
+	{ id: '0C', label: 'Speed 12' },
+	{ id: '0B', label: 'Speed 11' },
+	{ id: '0A', label: 'Speed 10' },
+	{ id: '09', label: 'Speed 09' },
+	{ id: '08', label: 'Speed 08' },
+	{ id: '07', label: 'Speed 07' },
+	{ id: '06', label: 'Speed 06' },
+	{ id: '05', label: 'Speed 05' },
+	{ id: '04', label: 'Speed 04' },
+	{ id: '03', label: 'Speed 03' },
+	{ id: '02', label: 'Speed 02' },
+	{ id: '01', label: 'Speed 01 (Slow)' }
+];
 
-	var CAMERAID = [
-		{ id: '128', label: 'id 0'},
-		{ id: '129', label: 'id 1'},
-		{ id: '130', label: 'id 2'},
-		{ id: '131', label: 'id 3'},
-		{ id: '132', label: 'id 4'},
-		{ id: '133', label: 'id 5'},
-		{ id: '134', label: 'id 6'},
-		{ id: '135', label: 'id 7'},
-		{ id: '136', label: 'id 8'}
-	];
+var CAMERAID = [
+	{ id: '128', label: 'id 0' },
+	{ id: '129', label: 'id 1' },
+	{ id: '130', label: 'id 2' },
+	{ id: '131', label: 'id 3' },
+	{ id: '132', label: 'id 4' },
+	{ id: '133', label: 'id 5' },
+	{ id: '134', label: 'id 6' },
+	{ id: '135', label: 'id 7' },
+	{ id: '136', label: 'id 8' }
+];
 
-instance.prototype.sendVISCACommand = function(payload) {
+var LongPressPsetTimers = {};
+
+instance.prototype.sendVISCACommand = function (payload) {
 	var self = this;
 	var buf = Buffer.alloc(32);
 
-		// 0x01 0x00 = VISCA Command
-		buf[0] = 0x01;
-		buf[1] = 0x00;
+	// 0x01 0x00 = VISCA Command
+	buf[0] = 0x01;
+	buf[1] = 0x00;
 
-		self.packet_counter = (self.packet_counter + 1) % 0xFFFFFFFF;
+	self.packet_counter = (self.packet_counter + 1) % 0xFFFFFFFF;
 
-		buf.writeUInt16BE(payload.length, 2);
-		buf.writeUInt32BE(self.packet_counter, 4);
+	buf.writeUInt16BE(payload.length, 2);
+	buf.writeUInt32BE(self.packet_counter, 4);
 
-		if (typeof payload == 'string') {
-				buf.write(payload, 8, 'binary');
-		} else if (typeof payload == 'object' && payload instanceof Buffer) {
-				payload.copy(buf, 8);
-		}
+	if (typeof payload == 'string') {
+		buf.write(payload, 8, 'binary');
+	} else if (typeof payload == 'object' && payload instanceof Buffer) {
+		payload.copy(buf, 8);
+	}
 
-		var newbuf = buf.slice(0, 8 + payload.length);
+	var newbuf = buf.slice(0, 8 + payload.length);
 
-		// udp.send(newbuf);
+	// udp.send(newbuf);
 
-		debug('sending',newbuf,"to",self.udp.host);
-		self.udp.send(newbuf);
+	debug('sending', newbuf, "to", self.udp.host);
+	self.udp.send(newbuf);
 
 };
 
 
- instance.prototype.sendControlCommand = function(payload) {
+instance.prototype.sendControlCommand = function (payload) {
 	var self = this;
 	var buf = Buffer.alloc(32);
 
@@ -210,16 +212,16 @@ instance.prototype.sendVISCACommand = function(payload) {
 	buf.writeUInt32BE(self.packet_counter, 4);
 
 	if (typeof payload == 'string') {
-			buf.write(payload, 8, 'binary');
+		buf.write(payload, 8, 'binary');
 	} else if (typeof payload == 'object' && payload instanceof Buffer) {
-			payload.copy(buf, 8);
+		payload.copy(buf, 8);
 	}
 
 	var newbuf = buf.slice(0, 8 + payload.length);
 
 	// udp.send(newbuf);
 
-	debug('sending',newbuf,"to",self.udp.host);
+	debug('sending', newbuf, "to", self.udp.host);
 	self.udp.send(newbuf);
 
 };
@@ -235,7 +237,7 @@ function instance(system, id, config) {
 
 
 
-instance.prototype.init_udp = function() {
+instance.prototype.init_udp = function () {
 	var self = this;
 
 	if (self.udp !== undefined) {
@@ -256,11 +258,11 @@ instance.prototype.init_udp = function() {
 		self.udp.on('data', function (data) {
 			console.log("Data from SONY VISCA: ", data);
 		});
-	debug(self.udp.host,':',self.config.port);
+		debug(self.udp.host, ':', self.config.port);
 	}
 };
 
-instance.prototype.init = function(appEnv) {
+instance.prototype.init = function (appEnv) {
 	var self = this;
 
 	debug = self.debug;
@@ -275,7 +277,7 @@ instance.prototype.init = function(appEnv) {
 	self.init_presets();
 };
 
-instance.prototype.updateConfig = function(config) {
+instance.prototype.updateConfig = function (config) {
 	var self = this;
 	self.config = config;
 	self.init_presets();
@@ -334,7 +336,7 @@ instance.prototype.config_fields = function () {
 };
 
 // When module gets deleted
-instance.prototype.destroy = function() {
+instance.prototype.destroy = function () {
 	var self = this;
 
 	if (self.udp !== undefined) {
@@ -356,7 +358,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,255)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -379,7 +381,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -402,7 +404,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -425,7 +427,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -448,7 +450,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -471,7 +473,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -494,7 +496,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -517,7 +519,7 @@ instance.prototype.init_presets = function () {
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 255)
 			},
 			actions: [
 				{
@@ -538,7 +540,7 @@ instance.prototype.init_presets = function () {
 				text: 'HOME',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 0)
 			},
 			actions: [
 				{
@@ -554,7 +556,7 @@ instance.prototype.init_presets = function () {
 				text: 'SPEED\\nUP',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 0)
 			},
 			actions: [
 				{
@@ -570,7 +572,7 @@ instance.prototype.init_presets = function () {
 				text: 'SPEED\\nDOWN',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 0)
 			},
 			actions: [
 				{
@@ -586,7 +588,7 @@ instance.prototype.init_presets = function () {
 				text: 'ZOOM\\nIN',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 0)
 			},
 			actions: [
 				{
@@ -607,7 +609,7 @@ instance.prototype.init_presets = function () {
 				text: 'ZOOM\\nOUT',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0)
+				bgcolor: self.rgb(0, 0, 0)
 			},
 			actions: [
 				{
@@ -628,7 +630,7 @@ instance.prototype.init_presets = function () {
 				text: 'CI\\nZOOM',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 				latch: true
 			},
 			actions: [
@@ -656,7 +658,7 @@ instance.prototype.init_presets = function () {
 				text: 'FOCUS\\nNEAR',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 			},
 			actions: [
 				{
@@ -677,7 +679,7 @@ instance.prototype.init_presets = function () {
 				text: 'FOCUS\\nFAR',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 			},
 			actions: [
 				{
@@ -698,7 +700,7 @@ instance.prototype.init_presets = function () {
 				text: 'AUTO\\nFOCUS',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 				latch: true
 			},
 			actions: [
@@ -726,7 +728,7 @@ instance.prototype.init_presets = function () {
 				text: 'O.P.\\nAF',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 			},
 			actions: [
 				{
@@ -742,7 +744,7 @@ instance.prototype.init_presets = function () {
 				text: 'EXP\\nMODE',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 				latch: true
 			},
 			actions: [
@@ -770,7 +772,7 @@ instance.prototype.init_presets = function () {
 				text: 'GAIN\\nUP',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 			},
 			actions: [
 				{
@@ -786,7 +788,7 @@ instance.prototype.init_presets = function () {
 				text: 'GAIN\\nDOWN',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 			},
 			actions: [
 				{
@@ -802,7 +804,7 @@ instance.prototype.init_presets = function () {
 				text: 'IRIS\\nUP',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 			},
 			actions: [
 				{
@@ -818,7 +820,7 @@ instance.prototype.init_presets = function () {
 				text: 'IRIS\\nDOWN',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 			},
 			actions: [
 				{
@@ -834,7 +836,7 @@ instance.prototype.init_presets = function () {
 				text: 'Shut\\nUP',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 			},
 			actions: [
 				{
@@ -850,7 +852,7 @@ instance.prototype.init_presets = function () {
 				text: 'Shut\\nDOWN',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0,0,0),
+				bgcolor: self.rgb(0, 0, 0),
 			},
 			actions: [
 				{
@@ -860,61 +862,92 @@ instance.prototype.init_presets = function () {
 		}
 	];
 
-var save;
-for (save = 0; save < 16; save++) {
-	presets.push({
-		category: 'Save Preset',
-		label: 'Save Preset '+ parseInt(save+1) ,
-		bank: {
-			style: 'text',
-			text: 'SAVE\\nPSET\\n' + parseInt(save+1) ,
-			size: '14',
-			color: '16777215',
-			bgcolor: self.rgb(0,0,0),
-		},
-		actions: [
-			{
-				action: 'savePset',
-				options: {
-				val: '0' + save.toString(16).toUpperCase(),
+	var camPreset;
+	for (camPreset = 0; camPreset < 64; camPreset++) {
+		presets.push({
+			category: 'Cam Presets',
+			label: 'Preset ' + parseInt(camPreset + 1),
+			bank: {
+				style: 'text',
+				text: 'Preset\\n' + parseInt(camPreset + 1),
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'savePsetLongPress',
+					options: {
+						val: camPreset.toString(16).toUpperCase().padStart(2, '0'),
+					}
 				}
-			}
-		]
-	});
-}
+			],
+			release_actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: camPreset.toString(16).toUpperCase().padStart(2, '0'),
+					}
+				}
+			]
+		});
+	}
 
-var recall;
-for (recall = 0; recall < 16; recall++) {
-	presets.push({
-		category: 'Recall Preset',
-		label: 'Recall Preset '+ parseInt(recall+1) ,
-		bank: {
-			style: 'text',
-			text: 'Recall\\nPSET\\n' + parseInt(recall+1) ,
-			size: '14',
-			color: '16777215',
-			bgcolor: self.rgb(0,0,0),
-		},
-		actions: [
-			{
-				action: 'recallPset',
-				options: {
-				val: '0' + recall.toString(16).toUpperCase(),
+	var save;
+	for (save = 0; save < 64; save++) {
+		presets.push({
+			category: 'Save Preset',
+			label: 'Save Preset ' + parseInt(save + 1),
+			bank: {
+				style: 'text',
+				text: 'SAVE\\nPSET\\n' + parseInt(save + 1),
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'savePset',
+					options: {
+						val: save.toString(16).toUpperCase().padStart(2, '0'),
+					}
 				}
-			}
-		]
-	});
-}
+			]
+		});
+	}
+
+	var recall;
+	for (recall = 0; recall < 64; recall++) {
+		presets.push({
+			category: 'Recall Preset',
+			label: 'Recall Preset ' + parseInt(recall + 1),
+			bank: {
+				style: 'text',
+				text: 'Recall\\nPSET\\n' + parseInt(recall + 1),
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'recallPset',
+					options: {
+						val: recall.toString(16).toUpperCase().padStart(2, '0'),
+					}
+				}
+			]
+		});
+	}
 
 	self.setPresetDefinitions(presets);
 };
 
 
-instance.prototype.actions = function(system) {
+instance.prototype.actions = function (system) {
 	var self = this;
 
 	const bitfocusButtonsActions = self.appEnv === 'bitfocus-buttons' ? {
-		'joystickControl':{
+		'joystickControl': {
 			label: 'Joystick Control',
 			controller: 'bitfocus-joystick-ptz',
 			triggerType: 'move',
@@ -971,17 +1004,17 @@ instance.prototype.actions = function(system) {
 
 	self.setActions({
 		...bitfocusButtonsActions,
-		'left':           { label: 'Pan Left' },
-		'right':          { label: 'Pan Right' },
-		'up':             { label: 'Tilt Up' },
-		'down':           { label: 'Tilt Down' },
-		'upLeft':         { label: 'Up Left' },
-		'upRight':        { label: 'Up Right' },
-		'downLeft':       { label: 'Down Left' },
-		'downRight':      { label: 'Down Right' },
-		'stop':           { label: 'P/T Stop' },
-		'home':           { label: 'P/T Home' },
-		'ptSpeedS':       {
+		'left': { label: 'Pan Left' },
+		'right': { label: 'Pan Right' },
+		'up': { label: 'Tilt Up' },
+		'down': { label: 'Tilt Down' },
+		'upLeft': { label: 'Up Left' },
+		'upRight': { label: 'Up Right' },
+		'downLeft': { label: 'Down Left' },
+		'downRight': { label: 'Down Right' },
+		'stop': { label: 'P/T Stop' },
+		'home': { label: 'P/T Home' },
+		'ptSpeedS': {
 			label: 'P/T Speed',
 			options: [
 				{
@@ -992,66 +1025,66 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'brightnessU':       { label: 'Brightness +'},
-		'brightnessD':       { label: 'Brightness -'},
-		'ptSpeedU':       { label: 'P/T Speed Up'},
-		'ptSpeedD':       { label: 'P/T Speed Down'},
-		'ptSlow':         {
+		'brightnessU': { label: 'Brightness +' },
+		'brightnessD': { label: 'Brightness -' },
+		'ptSpeedU': { label: 'P/T Speed Up' },
+		'ptSpeedD': { label: 'P/T Speed Down' },
+		'ptSlow': {
 			label: 'P/T Slow Mode',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Slow Mode On/Off',
 					id: 'bol',
-					choices: [ { id: '1', label: 'Off' }, { id: '0', label: 'On' } ]
+					choices: [{ id: '1', label: 'Off' }, { id: '0', label: 'On' }]
 				}
 			]
 		},
-		'backlightComp':         {
+		'backlightComp': {
 			label: 'Backlight Compensation On/Off',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Backlight Compensation On/Off',
 					id: 'bol',
-					choices: [ { id: '0', label: 'Off' }, { id: '1', label: 'On' } ]
+					choices: [{ id: '0', label: 'Off' }, { id: '1', label: 'On' }]
 				}
 			]
 		},
-		'zoomI':          { label: 'Zoom In' },
-		'zoomO':          { label: 'Zoom Out' },
-		'zoomS':          { label: 'Zoom Stop' },
-		'ciZoom':         {
+		'zoomI': { label: 'Zoom In' },
+		'zoomO': { label: 'Zoom Out' },
+		'zoomS': { label: 'Zoom Stop' },
+		'ciZoom': {
 			label: 'Clear Image Zoom',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Clear Image On/Off',
 					id: 'bol',
-					choices: [ { id: '0', label: 'Off' }, { id: '1', label: 'On' } ]
+					choices: [{ id: '0', label: 'Off' }, { id: '1', label: 'On' }]
 				}
 			]
 		},
-		'camOn':          { label: 'Power On Camera' },
-		'camOff':         { label: 'Power Off Camera' },
-		'wbOutdoor':         { label: 'Outdoor' },
-		'wbIndoor':         { label: 'Indoor' },		
-		'focusN':         { label: 'Focus Near' },
-		'focusF':         { label: 'Focus Far' },
-		'focusS':         { label: 'Focus Stop' },
-		'focusM':         {
+		'camOn': { label: 'Power On Camera' },
+		'camOff': { label: 'Power Off Camera' },
+		'wbOutdoor': { label: 'Outdoor' },
+		'wbIndoor': { label: 'Indoor' },
+		'focusN': { label: 'Focus Near' },
+		'focusF': { label: 'Focus Far' },
+		'focusS': { label: 'Focus Stop' },
+		'focusM': {
 			label: 'Focus Mode',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Auto / Manual Focus',
 					id: 'bol',
-					choices: [ { id: '0', label: 'Auto Focus' }, { id: '1', label: 'Manual Focus' } ]
+					choices: [{ id: '0', label: 'Auto Focus' }, { id: '1', label: 'Manual Focus' }]
 				}
 			]
 		},
-		'focusOpaf':      { label: 'One Push Auto Focus' },
-		'expM':           {
+		'focusOpaf': { label: 'One Push Auto Focus' },
+		'expM': {
 			label: 'Exposure Mode',
 			options: [
 				{
@@ -1068,7 +1101,7 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'aperture':           {
+		'aperture': {
 			label: 'Lens Aperture',
 			options: [
 				{
@@ -1083,7 +1116,7 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'whiteBal':           {
+		'whiteBal': {
 			label: 'White Balance Mode',
 			options: [
 				{
@@ -1096,12 +1129,12 @@ instance.prototype.actions = function(system) {
 						{ id: '2', label: 'Outdoor' },
 						{ id: '3', label: 'OnePush WB' },
 						{ id: '4', label: 'ATW' },
-						{ id: '5', label: 'Manual'}
+						{ id: '5', label: 'Manual' }
 					]
 				}
 			]
 		},
-		'WDR':           {
+		'WDR': {
 			label: 'Wide Dynamic Range',
 			options: [
 				{
@@ -1117,9 +1150,9 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'gainU':          { label: 'Gain Up' },
-		'gainD':          { label: 'Gain Down' },
-		'gainS':          {
+		'gainU': { label: 'Gain Up' },
+		'gainD': { label: 'Gain Down' },
+		'gainS': {
 			label: 'Set Gain',
 			options: [
 				{
@@ -1130,9 +1163,9 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'irisU':          { label: 'Iris Up' },
-		'irisD':          { label: 'Iris Down' },
-		'irisS':          {
+		'irisU': { label: 'Iris Up' },
+		'irisD': { label: 'Iris Down' },
+		'irisS': {
 			label: 'Set Iris',
 			options: [
 				{
@@ -1143,9 +1176,9 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'shutU':          { label: 'Shutter Up' },
-		'shutD':          { label: 'Shutter Down' },
-		'shutS':          {
+		'shutU': { label: 'Shutter Up' },
+		'shutD': { label: 'Shutter Down' },
+		'shutS': {
 			label: 'Set Shutter',
 			options: [
 				{
@@ -1156,7 +1189,7 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'savePset':       {
+		'savePset': {
 			label: 'Save Preset',
 			options: [
 				{
@@ -1167,7 +1200,18 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'recallPset':     {
+		'savePsetLongPress': {
+			label: 'Save Preset on Long Press',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Nr.',
+					id: 'val',
+					choices: PRESET
+				}
+			]
+		},
+		'recallPset': {
 			label: 'Recall Preset',
 			options: [
 				{
@@ -1178,7 +1222,7 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'speedPset':      {
+		'speedPset': {
 			label: 'Preset Drive Speed',
 			options: [
 				{
@@ -1195,88 +1239,88 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'tally':          {
+		'tally': {
 			label: 'Tally on/off',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'On / Off',
 					id: 'bol',
-					choices: [ { id: '0', label: 'Off' }, { id: '1', label: 'On' } ]
+					choices: [{ id: '0', label: 'Off' }, { id: '1', label: 'On' }]
 				}
 			]
 		}
 	});
 }
 
-instance.prototype.action = function(action) {
+instance.prototype.action = function (action) {
 	var self = this;
 	var opt = action.options;
 	var cmd = ''
 
 	switch (action.action) {
 		case 'joystickControl':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(opt.panSpeed,16) & 0xFF) + String.fromCharCode(parseInt(opt.tiltSpeed,16) & 0xFF) +String.fromCharCode(parseInt(opt.aVal,16) & 0xFF) +String.fromCharCode(parseInt(opt.bVal,16) & 0xFF) + '\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x01' + String.fromCharCode(parseInt(opt.panSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(opt.tiltSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(opt.aVal, 16) & 0xFF) + String.fromCharCode(parseInt(opt.bVal, 16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'left':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x01' + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + '\x01\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'right':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x01' + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + '\x02\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'up':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x01\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x01' + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + '\x03\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'down':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x01' + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + '\x03\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'upLeft':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x01\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x01' + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + '\x01\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'upRight':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x01\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x01' + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + '\x02\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'downLeft':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x01\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x01' + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + '\x01\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'downRight':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x02\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x01' + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + '\x02\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'stop':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x01'+ String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed,16) & 0xFF) +'\x03\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x01' + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xFF) + '\x03\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'home':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x04\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x04\xFF';
 			self.sendVISCACommand(cmd);
 			break;
-		
-		
+
+
 		case 'ptSlow':
 			if (opt.bol == '0') {
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x44\x02\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x44\x02\xFF';
 			}
 			if (opt.bol == '1') {
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x06\x44\x03\xFF';
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x06\x44\x03\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
@@ -1302,7 +1346,7 @@ instance.prototype.action = function(action) {
 				self.ptSpeedIndex = 23;
 			}
 			else if (self.ptSpeedIndex < 23) {
-				self.ptSpeedIndex ++;
+				self.ptSpeedIndex++;
 			}
 			self.ptSpeed = SPEED[self.ptSpeedIndex].id
 			break;
@@ -1319,245 +1363,257 @@ instance.prototype.action = function(action) {
 
 
 		case 'zoomI':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x07\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x07\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'zoomO':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x07\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x07\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'zoomS':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x07\x00\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x07\x00\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'camOff':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x00\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x00\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
-		
+
 		case 'camOn':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x00\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x00\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'brightnessU':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0D\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x0D\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'brightnessD':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0D\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x0D\x03\xFF';
 			self.sendVISCACommand(cmd);
-			break;						
+			break;
 
 		case 'wbIndoor':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x01\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x35\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'wbOutdoor':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x35\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'ciZoom':
-			if (opt.bol == 0){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x06\x03\xFF';
+			if (opt.bol == 0) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x06\x03\xFF';
 			}
-			if (opt.bol == 1){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x06\x04\xFF';
+			if (opt.bol == 1) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x06\x04\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
-	
+
 		case 'backlightComp':
-			if (opt.bol == 0){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x33\x03\xFF';
+			if (opt.bol == 0) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x33\x03\xFF';
 			}
-			if (opt.bol == 1){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x33\x02\xFF';
+			if (opt.bol == 1) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x33\x02\xFF';
 			}
 			self.sendVISCACommand(cmd);
-			break;	
+			break;
 
 		case 'focusN':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x08\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x08\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusF':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x08\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x08\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusS':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x08\x00\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x08\x00\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusM':
-			if (opt.bol == 0){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x38\x02\xFF';
+			if (opt.bol == 0) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x38\x02\xFF';
 			}
-			if (opt.bol == 1){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x38\x03\xFF';
+			if (opt.bol == 1) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x38\x03\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'focusOpaf':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x18\x01\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x18\x01\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'expM':
-			if (opt.val == 0){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x39\x00\xFF';
+			if (opt.val == 0) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x39\x00\xFF';
 			}
-			if (opt.val == 1){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x39\x03\xFF';
+			if (opt.val == 1) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x39\x03\xFF';
 			}
-			if (opt.val == 2){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x39\x0A\xFF';
+			if (opt.val == 2) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x39\x0A\xFF';
 			}
-			if (opt.val == 3){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x39\x0B\xFF';
+			if (opt.val == 3) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x39\x0B\xFF';
 			}
-			if (opt.val == 4){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x39\x0E\xFF';
+			if (opt.val == 4) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x39\x0E\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'aperture':
-			if (opt.val == 0){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x02\x00\xFF';
+			if (opt.val == 0) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x02\x00\xFF';
 			}
-			if (opt.val == 1){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x02\x02\xFF';
+			if (opt.val == 1) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x02\x02\xFF';
 			}
-			if (opt.val == 2){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x02\x03\xFF';
+			if (opt.val == 2) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x02\x03\xFF';
 			}
 			self.sendVISCACommand(cmd);
-			break;			
-		
+			break;
+
 		case 'whiteBal':
-				if (opt.val == 0){
-					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x00\xFF';
-				}
-				if (opt.val == 1){
-					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x01\xFF';
-				}
-				if (opt.val == 2){
-					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x02\xFF';
-				}
-				if (opt.val == 3){
-					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x03\xFF';
-				}
-				if (opt.val == 4){
-					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x04\xFF';
-				}
-				if (opt.val == 5){
-					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x35\x05\xFF';
-				}
-				self.sendVISCACommand(cmd);
-				break;
+			if (opt.val == 0) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x35\x00\xFF';
+			}
+			if (opt.val == 1) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x35\x01\xFF';
+			}
+			if (opt.val == 2) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x35\x02\xFF';
+			}
+			if (opt.val == 3) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x35\x03\xFF';
+			}
+			if (opt.val == 4) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x35\x04\xFF';
+			}
+			if (opt.val == 5) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x35\x05\xFF';
+			}
+			self.sendVISCACommand(cmd);
+			break;
 
 		case 'WDR':
-				if (opt.val == 0){
-					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x04\x00\x00\xFF';
-				}
-				if (opt.val == 1){
-					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x04\x00\x01\xFF';
-				}
-				if (opt.val == 2){
-					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x04\x00\x02\xFF';
-				}
-				if (opt.val == 3){
-					cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x04\x00\x03\xFF';
-				}
-				self.sendVISCACommand(cmd);
-				break;
+			if (opt.val == 0) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x04\x00\x00\xFF';
+			}
+			if (opt.val == 1) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x04\x00\x01\xFF';
+			}
+			if (opt.val == 2) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x04\x00\x02\xFF';
+			}
+			if (opt.val == 3) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x04\x00\x03\xFF';
+			}
+			self.sendVISCACommand(cmd);
+			break;
 
 		case 'gainU':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0C\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x0C\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'gainD':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0C\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x0C\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'gainS':
-			cmd = Buffer.from(String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x4C\x00\x00\x00\x00\xFF', 'binary');
-			cmd.writeUInt8((parseInt(opt.val,16) & 0xF0) >> 4, 6);
-			cmd.writeUInt8(parseInt(opt.val,16) & 0x0F, 7);
+			cmd = Buffer.from(String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x4C\x00\x00\x00\x00\xFF', 'binary');
+			cmd.writeUInt8((parseInt(opt.val, 16) & 0xF0) >> 4, 6);
+			cmd.writeUInt8(parseInt(opt.val, 16) & 0x0F, 7);
 			self.sendVISCACommand(cmd);
-			debug('cmd=',cmd);
+			debug('cmd=', cmd);
 			break;
 
 		case 'irisU':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0B\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x0B\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'irisD':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0B\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x0B\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'irisS':
-			cmd = Buffer.from(String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary');
-			cmd.writeUInt8((parseInt(opt.val,16) & 0xF0) >> 4, 6);
-			cmd.writeUInt8(parseInt(opt.val,16) & 0x0F, 7);
+			cmd = Buffer.from(String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x4B\x00\x00\x00\x00\xFF', 'binary');
+			cmd.writeUInt8((parseInt(opt.val, 16) & 0xF0) >> 4, 6);
+			cmd.writeUInt8(parseInt(opt.val, 16) & 0x0F, 7);
 			self.sendVISCACommand(cmd);
-			debug('cmd=',cmd);
+			debug('cmd=', cmd);
 			break;
 
 		case 'shutU':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0A\x02\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x0A\x02\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'shutD':
-			cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x0A\x03\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x0A\x03\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'shutS':
-			cmd = Buffer.from(String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary');
-			cmd.writeUInt8((parseInt(opt.val,16) & 0xF0) >> 4, 6);
-			cmd.writeUInt8(parseInt(opt.val,16) & 0x0F, 7);
+			cmd = Buffer.from(String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x4A\x00\x00\x00\x00\xFF', 'binary');
+			cmd.writeUInt8((parseInt(opt.val, 16) & 0xF0) >> 4, 6);
+			cmd.writeUInt8(parseInt(opt.val, 16) & 0x0F, 7);
 			self.sendVISCACommand(cmd);
-			debug('cmd=',cmd);
+			debug('cmd=', cmd);
 			break;
 
 		case 'savePset':
-			cmd =String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x3F\x01' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + '\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x3F\x01' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
+		case 'savePsetLongPress':
+			LongPressPsetTimers[opt.val] = setTimeout(() => {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x3F\x01' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + '\xFF';
+				self.sendVISCACommand(cmd);
+				delete LongPressPsetTimers[opt.val];
+			}, 2000);
+			break;
+
 		case 'recallPset':
-			cmd =String.fromCharCode(parseInt(self.config.id)) +'\x01\x04\x3F\x02' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + '\xFF';
+			if (LongPressPsetTimers.hasOwnProperty([opt.val])) {
+				clearTimeout(LongPressPsetTimers[opt.val]);
+				delete LongPressPsetTimers[opt.val];
+			}
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x3F\x02' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'speedPset':
-			cmd =String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x01\x0B' + String.fromCharCode(parseInt(opt.val,16) & 0xFF) + String.fromCharCode(parseInt(opt.speed,16) & 0xFF) + '\xFF';
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x01\x0B' + String.fromCharCode(parseInt(opt.val, 16) & 0xFF) + String.fromCharCode(parseInt(opt.speed, 16) & 0xFF) + '\xFF';
 			self.sendVISCACommand(cmd);
 			break;
 
 		case 'tally':
-			if (opt.bol == 0){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x01\x0A\x00\x03\xFF';
+			if (opt.bol == 0) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x01\x0A\x00\x03\xFF';
 			}
-			if (opt.bol == 1){
-				cmd = String.fromCharCode(parseInt(self.config.id)) +'\x01\x7E\x01\x0A\x00\x02\xFF';
+			if (opt.bol == 1) {
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x01\x0A\x00\x02\xFF';
 			}
 			self.sendVISCACommand(cmd);
 			break;
@@ -1567,7 +1623,7 @@ instance.prototype.action = function(action) {
 
 instance_skel.extendedBy(instance);
 
- // Variables for Base64 image data do not edit
+// Variables for Base64 image data do not edit
 var image_up = 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6AQMAAAApyY3OAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAIFJREFUKM+90EEKgzAQRmFDFy49ghcp5FquVPBighcRegHBjWDJ68D8U6F7m00+EnhkUlW3ru6rdyCV0INQzSg1zFLLKmU2aeCQQMEEJXIQORRsTLNyKJhNm3IoaPBg4mQorp2Mh1+00kKN307o/bZrpt5O/FlPU/c75X91/fPd6wPRD1eHyHEL4wAAAABJRU5ErkJggg==';
 
 var image_down = 'iVBORw0KGgoAAAANSUhEUgAAAEgAAAA6AQMAAAApyY3OAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAARnQU1BAACxjwv8YQUAAAABc1JHQgCuzhzpAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAIlJREFUKM/F0DEOwyAMBVAjDxk5Qo7CtdiClIv1KJF6gUpZIhXxY2zTDJ2benoS8LFN9MsKbYjxF2XRS1UZ4bCeGFztFmNqphURpidm146kpwFvLDYJpPQtLSLNoySyP2bRpoqih2oSFW8K3lYAxmJGXA88XMnjeuDmih7XA8vXvNeeqX6U6aY6AacbWAQNWOPUAAAAAElFTkSuQmCC';
