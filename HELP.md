@@ -7,7 +7,7 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 * Type in the port of the device (default is 52381).
 * You can also specify the Camera ID.
 
-### Available Actions
+## Available Actions
 * Pan Left
 * Pan Right
 * Tilt Up
@@ -49,8 +49,21 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 * BackLight Compensation On/Off
 * Aperture +,-,Reset
 * Wide Dynamic Range (Off,Low,Mid,High)
-* White Balance On/Off
 
-### Presets
+**White Balance**
+
+* Set Mode (Auto1, Auto2, Indoor, Outdoor, Manual, One push WB)
+* One push trigger (must be in One Push WB mode)
+* Adjust Red or Green Up or Down (must be in Manual WB mode)
+* Offset - **adjust up** to make redder, **adjust down** to make bluer, or **reset** (works in Auto1, Auto2, or One Push WB modes)
+
+## Companion Presets
+
+* Pan/Tilt
+* Zoom (In, Out, CI)
+* Focus (Near, Far, Auto, On Press Auto Focus)
+* Exposure (Mode, Gain, Iris, Shutter)
+* White Balance (modes, adjustments, trigger)
 * "Cam Presets" are dual function. Tap to recall or press for 2+ seconds to save.
-* "Save Preset" and "Recall Preset" are single function.
+* Save Preset - saves camera preset
+* Recall Preset - recalls camera preset

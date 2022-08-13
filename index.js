@@ -859,8 +859,253 @@ instance.prototype.init_presets = function () {
 					action: 'shutD',
 				}
 			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance Mode - Auto1',
+			bank: {
+				style: 'text',
+				text: 'WB\\nAuto1',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'whiteBal',
+					options: {
+						val: 0,
+					}
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance Mode - Auto2 (ATW)',
+			bank: {
+				style: 'text',
+				text: 'WB\\nAuto2',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'whiteBal',
+					options: {
+						val: 4,
+					}
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance Mode - Indoor',
+			bank: {
+				style: 'text',
+				text: 'WB\\nIndoor',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'whiteBal',
+					options: {
+						val: 1,
+					}
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance Mode - Outdoor',
+			bank: {
+				style: 'text',
+				text: 'WB\\nOutdoor',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'whiteBal',
+					options: {
+						val: 2,
+					}
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance Mode - Manual',
+			bank: {
+				style: 'text',
+				text: 'WB\\nManual',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'whiteBal',
+					options: {
+						val: 5,
+					}
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance Mode - One push WB',
+			bank: {
+				style: 'text',
+				text: 'WB\\n1 Push',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'whiteBal',
+					options: {
+						val: 3,
+					}
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'One push WB trigger (must be in One push WB mode)',
+			bank: {
+				style: 'text',
+				text: '1 Push\\nTrigger',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'whiteBalTrigger',
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance - Red Gain Up (must be in WB Manual)',
+			bank: {
+				style: 'text',
+				text: 'Red\\nGain\\nUp',
+				size: '18',
+				color: self.rgb(255, 128, 128),
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'wbRedUp',
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance - Red Gain Down (must be in WB Manual)',
+			bank: {
+				style: 'text',
+				text: 'Red\\nGain\\nDown',
+				size: '18',
+				color: self.rgb(255, 128, 128),
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'wbRedDown',
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance - Blue Gain Up (must be in WB Manual)',
+			bank: {
+				style: 'text',
+				text: 'Blue\\nGain\\nUp',
+				size: '18',
+				color: self.rgb(128, 128, 255),
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'wbBlueUp',
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance - Blue Gain Down (must be in WB Manual)',
+			bank: {
+				style: 'text',
+				text: 'Blue\\nGain\\nDown',
+				size: '18',
+				color: self.rgb(128, 128, 255),
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'wbBlueDown',
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance - Offset Reset',
+			bank: {
+				style: 'text',
+				text: 'WB\\nOffset\\nReset',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'wbOffsetReset',
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance - Offset Up (more red)',
+			bank: {
+				style: 'text',
+				text: 'WB\\nOffset\\nUp',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'wbOffsetUp',
+				}
+			]
+		},
+		{
+			category: 'White Balance',
+			label: 'White Balance - Offset Down (more blue)',
+			bank: {
+				style: 'text',
+				text: 'WB\\nOffset\\nDown',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				{
+					action: 'wbOffsetDown',
+				}
+			]
 		}
 	];
+	// 'wbOffsetReset': { label: 'White Balance - Offset Reset' },
+	// 'wbOffsetUp': { label: 'White Balance - Offset Up' },
+	// 'wbOffsetDown': { label: 'White Balance - Offset Down' },
 
 	var camPreset;
 	for (camPreset = 0; camPreset < 64; camPreset++) {
@@ -1124,16 +1369,24 @@ instance.prototype.actions = function (system) {
 					label: 'WB setting',
 					id: 'val',
 					choices: [
-						{ id: '0', label: 'Auto' },
+						{ id: '0', label: 'Auto1 - Auto' },
 						{ id: '1', label: 'Indoor' },
 						{ id: '2', label: 'Outdoor' },
-						{ id: '3', label: 'OnePush WB' },
-						{ id: '4', label: 'ATW' },
+						{ id: '3', label: 'One push WB' },
+						{ id: '4', label: 'Auto2 - ATW' },
 						{ id: '5', label: 'Manual' }
 					]
 				}
 			]
 		},
+		'whiteBalTrigger': { label: 'One push WB trigger' },
+		'wbRedUp': { label: 'White Balance - Red Gain Up' },
+		'wbRedDown': { label: 'White Balance - Red Gain Down' },
+		'wbBlueUp': { label: 'White Balance - Blue Gain Up' },
+		'wbBlueDown': { label: 'White Balance - Blue Gain Down' },
+		'wbOffsetReset': { label: 'White Balance - Offset Reset' },
+		'wbOffsetUp': { label: 'White Balance - Offset Up' },
+		'wbOffsetDown': { label: 'White Balance - Offset Down' },
 		'WDR': {
 			label: 'Wide Dynamic Range',
 			options: [
@@ -1511,6 +1764,46 @@ instance.prototype.action = function (action) {
 			self.sendVISCACommand(cmd);
 			break;
 
+		case 'whiteBalTrigger':
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x10\x05\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'wbRedUp':
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x03\x02\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'wbRedDown':
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x03\x03\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+	
+		case 'wbBlueUp':
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x04\x02\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'wbBlueDown':
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x04\x03\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'wbOffsetReset':
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x01\x2E\x00\x00\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'wbOffsetUp':
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x01\x2E\x00\x02\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+
+		case 'wbOffsetDown':
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x01\x2E\x00\x03\xFF';
+			self.sendVISCACommand(cmd);
+			break;
+	
 		case 'WDR':
 			if (opt.val == 0) {
 				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x7E\x04\x00\x00\xFF';
