@@ -738,6 +738,34 @@ instance.prototype.init_presets = function () {
 		},
 		{
 			category: 'Exposure',
+			label: 'Auto Exposure Toggle',
+			bank: {
+				style: 'text',
+				text: 'AUTO\\nEXP\\nToggle',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+				latch: true
+			},
+			actions: [
+				{
+					action: 'expM',
+					options: {
+						bol: 0,
+					}
+				}
+			],
+			release_actions: [
+				{
+					action: 'expM',
+					options: {
+						bol: 1,
+					}
+				}
+			]
+		},
+		{
+			category: 'Exposure',
 			label: 'Exposure Mode',
 			bank: {
 				style: 'text',
@@ -957,6 +985,27 @@ instance.prototype.init_presets = function () {
 		},
 		{
 			category: 'White Balance',
+			label: 'White Balance Mode - Custom',
+			bank: {
+				style: 'text',
+				text: 'WB\\nCustom',
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0),
+			},
+			actions: [
+				
+				{
+					action: 'wbCustom',
+					options: {
+						rVal: 192,
+						bVal: 192,
+					}
+				}
+			]
+		},
+		{
+			category: 'White Balance',
 			label: 'White Balance Mode - One push WB',
 			bank: {
 				style: 'text',
@@ -986,7 +1035,7 @@ instance.prototype.init_presets = function () {
 			},
 			actions: [
 				{
-					action: 'whiteBalTrigger',
+					action: 'wbTrigger',
 				}
 			]
 		},
@@ -1379,7 +1428,32 @@ instance.prototype.actions = function (system) {
 				}
 			]
 		},
-		'whiteBalTrigger': { label: 'One push WB trigger' },
+		'wbTrigger': { label: 'One push WB trigger' },
+		'wbCustom': {
+			label: 'White Balance - Custom',
+			options: [
+				{
+					type: 'number',
+					label: 'Red',
+					id: 'rVal',
+					tooltip: 'Sets the red gain, 192 is the default',
+					min: 0,
+					max: 255,
+					default: 192,
+					step: 1
+				},
+				{
+					type: 'number',
+					label: 'Blue',
+					id: 'bVal',
+					tooltip: 'Sets the blue gain, 192 is the default',
+					min: 0,
+					max: 255,
+					default: 192,
+					step: 1
+				}
+			]
+		},
 		'wbRedUp': { label: 'White Balance - Red Gain Up' },
 		'wbRedDown': { label: 'White Balance - Red Gain Down' },
 		'wbBlueUp': { label: 'White Balance - Blue Gain Up' },
@@ -1764,9 +1838,27 @@ instance.prototype.action = function (action) {
 			self.sendVISCACommand(cmd);
 			break;
 
-		case 'whiteBalTrigger':
+		case 'wbTrigger':
 			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x10\x05\xFF';
 			self.sendVISCACommand(cmd);
+			break;
+
+		case 'wbCustom':
+			// Switch to manual
+			cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x35\x05\xFF';
+			self.sendVISCACommand(cmd);
+			setTimeout(()=>{
+				// Set Red Gain
+				const r = opt.rVal.toString(16).padStart(2,'0').split('').map(x => String.fromCharCode(parseInt(x,16)));
+				cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x43\x00\x00' + r[0] + r[1] +'\xFF';
+				self.sendVISCACommand(cmd);
+				setTimeout(()=>{
+					// Set Blue Gain
+					const b = opt.bVal.toString(16).padStart(2,'0').split('').map(x => String.fromCharCode(parseInt(x,16)));
+					cmd = String.fromCharCode(parseInt(self.config.id)) + '\x01\x04\x44\x00\x00' + b[0] + b[1] +'\xFF';
+					self.sendVISCACommand(cmd);
+				},50);
+			},50);
 			break;
 
 		case 'wbRedUp':
