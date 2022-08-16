@@ -751,7 +751,7 @@ instance.prototype.init_presets = function () {
 				{
 					action: 'expM',
 					options: {
-						bol: 0,
+						val: 0,
 					}
 				}
 			],
@@ -759,7 +759,7 @@ instance.prototype.init_presets = function () {
 				{
 					action: 'expM',
 					options: {
-						bol: 1,
+						val: 1,
 					}
 				}
 			]
@@ -779,7 +779,7 @@ instance.prototype.init_presets = function () {
 				{
 					action: 'expM',
 					options: {
-						bol: 0,
+						val: 0,
 					}
 				}
 			],
@@ -787,7 +787,7 @@ instance.prototype.init_presets = function () {
 				{
 					action: 'expM',
 					options: {
-						bol: 1,
+						val: 1,
 					}
 				}
 			]
