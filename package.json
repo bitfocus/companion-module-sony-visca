@@ -1,30 +1,24 @@
 {
 	"name": "sony-visca",
-	"version": "1.2.12",
-	"api_version": "1.0.0",
-	"keywords": [
-		"Protocol",
-		"Camera"
-	],
-	"manufacturer": "Sony",
-	"product": "VISCA",
-	"shortname": "visca",
-	"description": "Module to control PTZ cameras with Sony Visca protocol over IP",
+	"version": "2.0.0",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"format": "prettier -w .",
+		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
+		"lint": "yarn lint:raw ."
 	},
-	"author": "Per Røine <per.roine@gmail.com>",
-	"contributors": [
-		"Yuri Vidal <yu.ri.vidal@gmail.com>"
-	],
 	"license": "MIT",
-	"homepage": "https://github.com/bitfocus/companion-module-sony-visca#readme",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-sony-visca/issues"
-	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-sony-visca.git"
-	}
+	},
+	"dependencies": {
+		"@companion-module/base": "~1.2.1",
+		"typescript": "^4.9.5"
+	},
+	"devDependencies": {
+		"@companion-module/tools": "^1.0.1"
+	},
+	"prettier": "@companion-module/tools/.prettierrc.json"
 }
