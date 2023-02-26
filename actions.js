@@ -4,22 +4,6 @@ module.exports = function (self) {
 	const camId = String.fromCharCode(parseInt(self.config.id))
 	let ptSpeed = String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xff)
 	self.setActionDefinitions({
-		sample_action: {
-			name: 'My First Action',
-			options: [
-				{
-					id: 'num',
-					type: 'number',
-					label: 'Test',
-					default: 5,
-					min: 0,
-					max: 100,
-				},
-			],
-			callback: async (event) => {
-				self.log('debug', 'Hello world!' + event.options.num)
-			},
-		},
 		left: {
 			name: 'Pan Left',
 			options: [],
@@ -303,9 +287,12 @@ module.exports = function (self) {
 			callback: async (event) => {
 				if (event.options.bol == '1') {
 					self.VISCA.send(camId + '\x01\x04\x38\x03\xFF')
+					self.data.oaf = 'Manual'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x38\x02\xFF')
+					self.data.oaf = 'Auto'
 				}
+				self.checkFeedbacks()
 			},
 		},
 		focusOpaf: {
@@ -332,26 +319,29 @@ module.exports = function (self) {
 				},
 			],
 			callback: async (event) => {
-				if (event.options.val == 0) {
-					self.VISCA.send(camId + '\x01\x04\x39\x00\xFF')
-					return
+				switch (event.options.val) {
+					case 0:
+						self.VISCA.send(camId + '\x01\x04\x39\x00\xFF')
+						self.data.exposureMode = 'Auto'
+						break
+					case 1:
+						self.VISCA.send(camId + '\x01\x04\x39\x03\xFF')
+						self.data.exposureMode = 'Manual'
+						break
+					case 2:
+						self.VISCA.send(camId + '\x01\x04\x39\x0A\xFF')
+						self.data.exposureMode = 'Shutter Priority'
+						break
+					case 3:
+						self.VISCA.send(camId + '\x01\x04\x39\x0B\xFF')
+						self.data.exposureMode = 'Iris Priority'
+						break
+					case 4:
+						self.VISCA.send(camId + '\x01\x04\x39\x0E\xFF')
+						self.data.exposureMode = 'Gain Priority'
+						break
 				}
-				if (event.options.val == 1) {
-					self.VISCA.send(camId + '\x01\x04\x39\x03\xFF')
-					return
-				}
-				if (event.options.val == 2) {
-					self.VISCA.send(camId + '\x01\x04\x39\x0A\xFF')
-					return
-				}
-				if (event.options.val == 3) {
-					self.VISCA.send(camId + '\x01\x04\x39\x0B\xFF')
-					return
-				}
-				if (event.options.val == 4) {
-					self.VISCA.send(camId + '\x01\x04\x39\x0E\xFF')
-					return
-				}
+				self.checkFeedbacks()
 			},
 		},
 		aperture: {

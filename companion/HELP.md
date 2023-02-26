@@ -56,8 +56,8 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 
 ### Color
 
-- Set Mode (Auto1, Auto2, Indoor, Outdoor, Manual, One push WB)
-- One push trigger (must be in One Push WB mode)
+- White Balance Modes - Auto1, Auto2, Indoor, Outdoor, Manual, One push WB
+- One push White Balance trigger (must be in One Push WB mode)
 - Adjust Red or Green Up or Down (must be in Manual WB mode)
 - Offset - **adjust up** to make redder, **adjust down** to make bluer, or **reset** (works in Auto1, Auto2, or One Push WB modes)
 
@@ -75,10 +75,9 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 ## Companion Presets
 
 - Pan/Tilt
-- Zoom (In, Out, CI)
-- Focus (Near, Far, Auto, On Press Auto Focus)
-- Exposure (Mode, Gain, Iris, Shutter)
-- White Balance (modes, adjustments, trigger)
-- "Cam Presets" are dual function. Tap to recall or press for 2+ seconds to save.
-- Save Preset - saves camera preset
-- Recall Preset - recalls camera preset
+- Lens - Zoom and Focus actions
+- Exposure - Modes, Gain, Iris, Shutter)
+- Color - White Balance modes, adjustments, trigger
+- Presets - Dual function buttons, tap to recall or press for 2+ seconds to save.
+
+**Note:** The implementation has changed since Companion 2.4.x. If you used "Cam Presets" in previous versions the recall function for those buttons works as expected but save function will no longer work. This can be fixed by replacing it with a new preset or by deleting the `savePsetLongPress` action from an existing button and adding a duration group with the action "Save Preset".
