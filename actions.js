@@ -321,7 +321,7 @@ module.exports = function(self) {
                 ],
             }, ],
             callback: async(event) => {
-                switch (event.options.val) {
+                switch (parseInt(event.options.val)) {
                     case 0:
                         self.VISCA.send(camId + '\x01\x04\x39\x00\xFF')
                         self.data.exposureMode = 'Auto'
@@ -707,5 +707,21 @@ module.exports = function(self) {
                 }
             },
         },
+        setHeldFeedback: {
+            name: 'Set Held Feedback On',
+            options: [],
+            callback: async(event) => {
+                self.data.heldThresholdReached = true
+                self.checkFeedbacks()
+            }
+        },
+        clearHeldFeedback: {
+            name: 'Clear Held Feedback',
+            options: [],
+            callback: async(event) => {
+                self.data.heldThresholdReached = false
+                self.checkFeedbacks()
+            }
+        }
     })
 }

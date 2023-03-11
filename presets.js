@@ -1,84 +1,6 @@
 const COLORS = require('./colors')
-
 module.exports = function() {
     const presets = {
-        // ##########################
-        // ####      System      ####
-        // ##########################
-
-        'system-powerOn': {
-            type: 'button',
-            category: 'System',
-            name: 'Camera Power On',
-            style: {
-                text: 'Cam\nOn',
-                size: '18',
-                color: COLORS.WHITE,
-                bgcolor: COLORS.BLACK,
-            },
-            steps: [{
-                down: [{
-                    actionId: 'camOn',
-                    options: {},
-                }, ],
-            }, ],
-            feedbacks: [],
-        },
-        'system-powerOff': {
-            type: 'button',
-            category: 'System',
-            name: 'Camera Power Off',
-            style: {
-                text: 'Cam\nOff',
-                size: '18',
-                color: COLORS.WHITE,
-                bgcolor: COLORS.BLACK,
-            },
-            steps: [{
-                down: [{
-                    actionId: 'camOff',
-                    options: {},
-                }, ],
-            }, ],
-            feedbacks: [],
-        },
-        'system-menuBack': {
-            type: 'button',
-            category: 'System',
-            name: 'Menu On or Back Button',
-            style: {
-                text: 'Menu\n/Back',
-                size: '18',
-                color: COLORS.WHITE,
-                bgcolor: COLORS.BLACK,
-            },
-            steps: [{
-                down: [{
-                    actionId: 'menuToggle',
-                    options: {},
-                }, ],
-            }, ],
-            feedbacks: [],
-        },
-        'system-menuEnter': {
-            type: 'button',
-            category: 'System',
-            name: 'Menu Enter Button',
-            style: {
-                text: 'Menu\nEnter',
-                size: '18',
-                color: COLORS.WHITE,
-                bgcolor: COLORS.BLACK,
-            },
-            steps: [{
-                down: [{
-                    actionId: 'menuEnter',
-                    options: {},
-                }, ],
-            }, ],
-            feedbacks: [],
-        },
-
         // ##########################
         // #### Pan/Tilt Presets ####
         // ##########################
@@ -473,20 +395,12 @@ module.exports = function() {
             category: 'Lens',
             name: 'Auto Focus',
             style: {
-                text: 'AUTO\\nFOCUS',
+                text: 'Auto\\nFocus',
                 size: '18',
                 color: COLORS.WHITE,
-                bgcolor: COLORS.BLACK,
+                bgcolor: COLORS.DARK_RED,
             },
             steps: [{
-                    down: [{
-                        actionId: 'focusM',
-                        options: {
-                            bol: 0,
-                        },
-                    }, ],
-                },
-                {
                     down: [{
                         actionId: 'focusM',
                         options: {
@@ -494,8 +408,26 @@ module.exports = function() {
                         },
                     }, ],
                 },
+                {
+                    down: [{
+                        actionId: 'focusM',
+                        options: {
+                            bol: 0,
+                        },
+                    }, ],
+                },
             ],
-            feedbacks: [],
+            feedbacks: [{
+                feedbackId: 'autoFocus',
+                options: {
+                    option: '0',
+                },
+                style: {
+                    color: COLORS.WHITE,
+                    bgcolor: COLORS.BLACK,
+                    text: 'Manual\\nFocus'
+                },
+            }]
         },
         'lens-opaf': {
             type: 'button',
@@ -525,20 +457,12 @@ module.exports = function() {
             category: 'Exposure',
             name: 'Auto / Manual Exposure Toggle',
             style: {
-                text: 'AUTO\\Manual\\nExpose',
+                text: 'Auto\\nExpose',
                 size: '18',
                 color: COLORS.WHITE,
-                bgcolor: COLORS.BLACK,
+                bgcolor: COLORS.DARK_YELLOW,
             },
             steps: [{
-                    down: [{
-                        actionId: 'expM',
-                        options: {
-                            val: 0,
-                        },
-                    }, ],
-                },
-                {
                     down: [{
                         actionId: 'expM',
                         options: {
@@ -546,8 +470,60 @@ module.exports = function() {
                         },
                     }, ],
                 },
+                {
+                    down: [{
+                        actionId: 'expM',
+                        options: {
+                            val: 0,
+                        },
+                    }, ],
+                },
             ],
-            feedbacks: [],
+            feedbacks: [{
+                    feedbackId: 'exposureManual',
+                    options: {
+                        option: '1',
+                    },
+                    style: {
+                        color: COLORS.WHITE,
+                        bgcolor: COLORS.BLACK,
+                        text: 'Manual\\nExpose'
+                    },
+                },
+                {
+                    feedbackId: 'exposureIrisPriority',
+                    options: {
+                        option: '1',
+                    },
+                    style: {
+                        color: COLORS.WHITE,
+                        bgcolor: COLORS.BLACK,
+                        text: 'Iris\\nPriority\\nExpose'
+                    },
+                },
+                {
+                    feedbackId: 'exposureShutterPriority',
+                    options: {
+                        option: '1',
+                    },
+                    style: {
+                        color: COLORS.WHITE,
+                        bgcolor: COLORS.BLACK,
+                        text: 'Shutter\\nPriority\\nExpose'
+                    },
+                },
+                {
+                    feedbackId: 'exposureGainPriority',
+                    options: {
+                        option: '1',
+                    },
+                    style: {
+                        color: COLORS.WHITE,
+                        bgcolor: COLORS.BLACK,
+                        text: 'Gain\\nPriority\\nExpose'
+                    },
+                },
+            ]
         },
         'exposure-mode': {
             type: 'button',
@@ -953,6 +929,83 @@ module.exports = function() {
             }, ],
             feedbacks: [],
         },
+
+        // ##########################
+        // ####      System      ####
+        // ##########################
+
+        'system-powerOn': {
+            type: 'button',
+            category: 'System',
+            name: 'Camera Power On',
+            style: {
+                text: 'Cam\nOn',
+                size: '18',
+                color: COLORS.WHITE,
+                bgcolor: COLORS.BLACK,
+            },
+            steps: [{
+                down: [{
+                    actionId: 'camOn',
+                    options: {},
+                }, ],
+            }, ],
+            feedbacks: [],
+        },
+        'system-powerOff': {
+            type: 'button',
+            category: 'System',
+            name: 'Camera Power Off',
+            style: {
+                text: 'Cam\nOff',
+                size: '18',
+                color: COLORS.WHITE,
+                bgcolor: COLORS.BLACK,
+            },
+            steps: [{
+                down: [{
+                    actionId: 'camOff',
+                    options: {},
+                }, ],
+            }, ],
+            feedbacks: [],
+        },
+        'system-menuBack': {
+            type: 'button',
+            category: 'System',
+            name: 'Menu On or Back Button',
+            style: {
+                text: 'Menu\n/Back',
+                size: '18',
+                color: COLORS.WHITE,
+                bgcolor: COLORS.BLACK,
+            },
+            steps: [{
+                down: [{
+                    actionId: 'menuToggle',
+                    options: {},
+                }, ],
+            }, ],
+            feedbacks: [],
+        },
+        'system-menuEnter': {
+            type: 'button',
+            category: 'System',
+            name: 'Menu Enter Button',
+            style: {
+                text: 'Menu\nEnter',
+                size: '18',
+                color: COLORS.WHITE,
+                bgcolor: COLORS.BLACK,
+            },
+            steps: [{
+                down: [{
+                    actionId: 'menuEnter',
+                    options: {},
+                }, ],
+            }, ],
+            feedbacks: [],
+        },
     }
 
     // ###############################
@@ -960,7 +1013,7 @@ module.exports = function() {
     // ###############################
 
     for (let i = 0; i < 64; i++) {
-        var preset = {
+        const preset = {
             type: 'button',
             category: 'Presets',
             label: 'Preset ' + (i + 1),
@@ -968,16 +1021,9 @@ module.exports = function() {
                 text: 'Preset\\n' + (i + 1),
                 size: '18',
                 color: COLORS.WHITE,
-                bgcolor: COLORS.BLACK,
+                bgcolor: COLORS.DARK_GRAY,
             },
             steps: [{
-                2000: [{
-                    actionId: 'savePset',
-                    options: {
-                        val: ('0' + i.toString(16)).slice(-2).toUpperCase(),
-                    },
-                    delay: 0,
-                }, ],
                 down: [],
                 up: [{
                     actionId: 'recallPset',
@@ -985,12 +1031,36 @@ module.exports = function() {
                         val: ('0' + i.toString(16)).slice(-2).toUpperCase(),
                     },
                     delay: 0,
-                }, ],
-            }, ],
-            options: {
-                runWhileHeld: [2000],
-            },
-            feedbacks: [],
+                }],
+                2000: {
+                    options: {
+                        runWhileHeld: true,
+                    },
+                    actions: [{
+                            actionId: 'savePset',
+                            options: {
+                                val: ('0' + i.toString(16)).slice(-2).toUpperCase(),
+                            },
+                            delay: 0,
+                        },
+                        {
+                            actionId: 'setHeldFeedback',
+                            options: {},
+                            delay: 0,
+                        }
+                    ],
+                },
+                2001: [{
+                    actionId: 'clearHeldFeedback'
+                }],
+            }],
+            feedbacks: [{
+                feedbackId: 'heldFeedback',
+                style: {
+                    color: COLORS.BLACK,
+                    bgcolor: COLORS.YELLOW
+                }
+            }],
         }
         presets['presets-Preset' + i] = preset
     }
