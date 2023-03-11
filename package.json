@@ -1,24 +1,24 @@
 {
-	"name": "sony-visca",
-	"version": "2.0.0",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"format": "prettier -w .",
-		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
-		"lint": "yarn lint:raw ."
-	},
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-sony-visca.git"
-	},
-	"dependencies": {
-		"@companion-module/base": "~1.2.1",
-		"typescript": "^4.9.5"
-	},
-	"devDependencies": {
-		"@companion-module/tools": "^1.0.1"
-	},
-	"prettier": "@companion-module/tools/.prettierrc.json"
+    "name": "sony-visca",
+    "version": "2.1.0",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "prettier -w .",
+        "lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
+        "lint": "yarn lint:raw ."
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/bitfocus/companion-module-sony-visca.git"
+    },
+    "dependencies": {
+        "@companion-module/base": "~1.3.0",
+        "typescript": "^4.9.5"
+    },
+    "devDependencies": {
+        "@companion-module/tools": "^1.0.1"
+    },
+    "prettier": "@companion-module/tools/.prettierrc.json"
 }

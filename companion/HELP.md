@@ -69,8 +69,12 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 
 ### Misc
 
-- Tally on/off
+The pan-tilt directional commands (Up, Down, Left, Right) double as controls for the menu.
+
+- Menu Display (doubles as a back button when you have the menu on screen)
+- Menu Enter
 - Power Camera On/Off
+- Tally on/off
 
 ## Companion Presets
 
@@ -78,6 +82,7 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 - Lens - Zoom and Focus actions
 - Exposure - Modes, Gain, Iris, Shutter)
 - Color - White Balance modes, adjustments, trigger
-- Presets - Dual function buttons, tap to recall or press for 2+ seconds to save.
+- System - Power On, Power Off, Menu On, Menu Enter
+- Presets - Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.
 
 **Note:** The implementation has changed since Companion 2.4.x. If you used "Cam Presets" in previous versions the recall function for those buttons works as expected but save function will no longer work. This can be fixed by replacing it with a new preset or by deleting the `savePsetLongPress` action from an existing button and adding a duration group with the action "Save Preset".

@@ -7,6 +7,12 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 
 ## Changes
 
+### v2.1.0
+
+- Add menu actions and presets
+- Update Camera Preset presets to highlight and save when pressed for 2 seconds
+- Add feedbacks for Auto Focus and Auto Iris
+
 ### v2.0.0
 
 - Compatible with Companion 3.x
