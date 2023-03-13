@@ -58,7 +58,7 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 
 - White Balance Modes - Auto1, Auto2, Indoor, Outdoor, Manual, One push WB
 - One push White Balance trigger (must be in One Push WB mode)
-- Adjust Red or Green Up or Down (must be in Manual WB mode)
+- Adjust Red or Green Up, Down or set to value (must be in Manual WB mode)
 - Offset - **adjust up** to make redder, **adjust down** to make bluer, or **reset** (works in Auto1, Auto2, or One Push WB modes)
 
 ### Camera Presets
@@ -86,3 +86,15 @@ The pan-tilt directional commands (Up, Down, Left, Right) double as controls for
 - Presets - Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.
 
 **Note:** The implementation has changed since Companion 2.4.x. If you used "Cam Presets" in previous versions the recall function for those buttons works as expected but save function will no longer work. This can be fixed by replacing it with a new preset or by deleting the `savePsetLongPress` action from an existing button and adding a duration group with the action "Save Preset".
+
+## Rotation Enabled Presets
+
+Intended for devices like the Stream Deck + and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Pressing the knob defaults the setting.
+
+- Pan/Tilt Speed
+- Iris
+- Gain
+- Shutter
+- White Balance - Red Gain
+- White Balance - Blue Gain
+- White Balance - Offset

@@ -484,6 +484,54 @@ module.exports = (self) => {
 				}, 50)
 			},
 		},
+		wbRedS: {
+			name: 'White Balance - Red Set',
+			options: [
+				{
+					type: 'number',
+					label: 'Red',
+					id: 'rVal',
+					tooltip: 'Sets the red gain, 192 is the default',
+					min: 0,
+					max: 255,
+					default: 192,
+					step: 1,
+				},
+			],
+			callback: async (event) => {
+				// Set Red Gain
+				const r = event.options.rVal
+					.toString(16)
+					.padStart(2, '0')
+					.split('')
+					.map((x) => String.fromCharCode(parseInt(x, 16)))
+				self.VISCA.send(camId + '\x01\x04\x43\x00\x00' + r[0] + r[1] + '\xFF')
+			},
+		},
+		wbBlueS: {
+			name: 'White Balance - Blue Set',
+			options: [
+				{
+					type: 'number',
+					label: 'Blue',
+					id: 'bVal',
+					tooltip: 'Sets the blue gain, 192 is the default',
+					min: 0,
+					max: 255,
+					default: 192,
+					step: 1,
+				},
+			],
+			callback: async (event) => {
+				// Set Blue Gain
+				const b = event.options.bVal
+					.toString(16)
+					.padStart(2, '0')
+					.split('')
+					.map((x) => String.fromCharCode(parseInt(x, 16)))
+				self.VISCA.send(camId + '\x01\x04\x44\x00\x00' + b[0] + b[1] + '\xFF')
+			},
+		},
 		wbRedUp: {
 			name: 'White Balance - Red Gain Up',
 			options: [],

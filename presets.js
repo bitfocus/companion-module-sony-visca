@@ -4,6 +4,7 @@ module.exports = () => {
 		// ##########################
 		// #### Pan/Tilt Presets ####
 		// ##########################
+
 		'panTilt-upLeft': {
 			type: 'button',
 			category: 'Pan/Tilt',
@@ -338,6 +339,7 @@ module.exports = () => {
 		// ##########################
 		// ####   Lens Presets   ####
 		// ##########################
+
 		'lens-zoomIn': {
 			type: 'button',
 			category: 'Lens',
@@ -554,6 +556,7 @@ module.exports = () => {
 		// ##########################
 		// #### Exposure Presets ####
 		// ##########################
+
 		'exposure-autoManual': {
 			type: 'button',
 			category: 'Exposure',
@@ -787,6 +790,7 @@ module.exports = () => {
 		// #######################
 		// #### Color Presets ####
 		// #######################
+
 		'color-wbModeAuto': {
 			type: 'button',
 			category: 'Color',
@@ -1128,6 +1132,7 @@ module.exports = () => {
 		// ##########################
 		// ####      System      ####
 		// ##########################
+
 		'system-powerOn': {
 			type: 'button',
 			category: 'System',
@@ -1221,6 +1226,7 @@ module.exports = () => {
 	// ###############################
 	// #### Camera Preset Presets ####
 	// ###############################
+
 	for (let i = 0; i < 64; i++) {
 		const preset = {
 			type: 'button',
@@ -1281,6 +1287,288 @@ module.exports = () => {
 			],
 		}
 		presets['presets-Preset' + i] = preset
+	}
+
+	// ##############################
+	// ####   Rotation Enabled   ####
+	// ##############################
+
+	presets['panTilt-speed'] = {
+		type: 'button',
+		category: 'Rotation Enabled',
+		name: 'Pan/Tilt Speed',
+		style: {
+			text: 'P/T\\nSpeed',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'ptSpeedS',
+						options: {
+							speed: '0C',
+						},
+					},
+				],
+				rotate_left: [
+					{
+						actionId: 'ptSpeedD',
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'ptSpeedU',
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['exposure-iris'] = {
+		type: 'button',
+		category: 'Rotation Enabled',
+		name: 'Iris',
+		style: {
+			text: 'Iris',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'irisS',
+						options: {
+							val: '15',
+						},
+					},
+				],
+				rotate_left: [
+					{
+						actionId: 'irisD',
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'irisU',
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['exposure-gain'] = {
+		type: 'button',
+		category: 'Rotation Enabled',
+		name: 'Gain',
+		style: {
+			text: 'Gain',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'gainS',
+						options: {
+							val: '01',
+						},
+					},
+				],
+				rotate_left: [
+					{
+						actionId: 'gainD',
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'gainU',
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['exposure-shutter'] = {
+		type: 'button',
+		category: 'Rotation Enabled',
+		name: 'Shutter',
+		style: {
+			text: 'Shutter',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'shutS',
+						options: {
+							val: '12',
+						},
+					},
+				],
+				rotate_left: [
+					{
+						actionId: 'shutD',
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'shutU',
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['color-wbRedGain'] = {
+		type: 'button',
+		category: 'Rotation Enabled',
+		name: 'Red Gain',
+		style: {
+			text: 'Red\\nGain',
+			size: '18',
+			color: COLORS.PALE_RED,
+			bgcolor: COLORS.BLACK,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'wbRedS',
+						options: {
+							rVal: 192,
+						},
+					},
+				],
+				rotate_left: [
+					{
+						actionId: 'wbRedDown',
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'wbRedUp',
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['color-wbBlueGain'] = {
+		type: 'button',
+		category: 'Rotation Enabled',
+		name: 'Blue Gain',
+		style: {
+			text: 'Blue\\nGain',
+			size: '18',
+			color: COLORS.PALE_BLUE,
+			bgcolor: COLORS.BLACK,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'wbBlueS',
+						options: {
+							bVal: 192,
+						},
+					},
+				],
+				rotate_left: [
+					{
+						actionId: 'wbBlueDown',
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'wbBlueUp',
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['color-wbOffset'] = {
+		type: 'button',
+		category: 'Rotation Enabled',
+		name: 'White Balance Offset',
+		style: {
+			text: 'WB\\nOffset',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'wbOffsetReset',
+						options: {},
+					},
+				],
+				rotate_left: [
+					{
+						actionId: 'wbOffsetDown',
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'wbOffsetUp',
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
 	}
 
 	return presets
