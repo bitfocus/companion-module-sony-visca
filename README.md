@@ -12,6 +12,7 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 - Add menu actions and presets
 - Update Camera Preset presets to highlight and save when pressed for 2 seconds
 - Add feedbacks for Auto Focus and Auto Iris
+- Add rotation enabled presets for Stream Deck + and Loupe Deck knobs
 
 ### v2.0.0
 
