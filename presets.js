@@ -786,7 +786,207 @@ module.exports = () => {
 			],
 			feedbacks: [],
 		},
-
+		'exposure-ExposureCompOnOff': {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Compensation On/Off',
+			style: {
+				text: 'ExpCmp\\nOn',
+				size: '18',
+				color: COLORS.BLACK,
+				bgcolor: COLORS.PALE_YELLOW,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'exposureCompOnOff',
+							options: {
+								bol: 0,
+							},
+						},
+					],
+				},
+				{
+					down: [
+						{
+							actionId: 'exposureCompOnOff',
+							options: {
+								bol: 1,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'exposureCompOnOff',
+					options: {
+						option: '0',
+					},
+					style: {
+						color: COLORS.WHITE,
+						bgcolor: COLORS.BLACK,
+						text: 'ExpCmp\\nOff',
+					},
+				},
+			],
+		},
+		'exposure-CompensationUp': {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Exposure Compensation Up',
+			style: {
+				text: 'ExpCmp\\nUP',
+				size: '18',
+				color: COLORS.WHITE,
+				bgcolor: COLORS.BLACK,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'exposureCompU',
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		},
+		'exposure-CompensationDown': {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Exposure Compensation Down',
+			style: {
+				text: 'ExpCmp\\nDOWN',
+				size: '18',
+				color: COLORS.WHITE,
+				bgcolor: COLORS.BLACK,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'exposureCompD',
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		},
+		'exposure-CompensationReset': {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Exposure Compensation Reset',
+			style: {
+				text: 'ExpCmp\\nReset',
+				size: '18',
+				color: COLORS.WHITE,
+				bgcolor: COLORS.BLACK,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'exposureCompReset',
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		},
+		'exposure-BacklightCompOnOff': {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Backlight Compensation On/Off',
+			style: {
+				text: 'BckLite\\nOff',
+				size: '18',
+				color: COLORS.WHITE,
+				bgcolor: COLORS.BLACK,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'backlightComp',
+							options: {
+								bol: 1,
+							},
+						},
+					],
+				},
+				{
+					down: [
+						{
+							actionId: 'backlightComp',
+							options: {
+								bol: 0,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'backlightCompOnOff',
+					options: {
+						option: '1',
+					},
+					style: {
+						color: COLORS.BLACK,
+						bgcolor: COLORS.PALE_YELLOW,
+						text: 'BckLite\\nOn',
+					},
+				},
+			],
+		},
+		'exposure-SpotlightCompOnOff': {
+			type: 'button',
+			category: 'Exposure',
+			name: 'Spotlight Compensation On/Off',
+			style: {
+				text: 'SptLite\\nOff',
+				size: '18',
+				color: COLORS.WHITE,
+				bgcolor: COLORS.BLACK,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'spotlightComp',
+							options: {
+								bol: 1,
+							},
+						},
+					],
+				},
+				{
+					down: [
+						{
+							actionId: 'spotlightComp',
+							options: {
+								bol: 0,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'spotlightCompOnOff',
+					options: {
+						option: '1',
+					},
+					style: {
+						color: COLORS.BLACK,
+						bgcolor: COLORS.PALE_YELLOW,
+						text: 'SptLite\\nOn',
+					},
+				},
+			],
+		},
 		// #######################
 		// #### Color Presets ####
 		// #######################
@@ -1452,15 +1652,14 @@ module.exports = () => {
 		],
 		feedbacks: [],
 	}
-
-	presets['color-wbRedGain'] = {
+	;(presets['exposure-Compensation'] = {
 		type: 'button',
 		category: 'Rotation Enabled',
-		name: 'Red Gain',
+		name: 'Exposure Compensation - Tap to Reset',
 		style: {
-			text: 'Red\\nGain',
+			text: 'Expose\\nComp',
 			size: '18',
-			color: COLORS.PALE_RED,
+			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
 		options: {
@@ -1470,28 +1669,64 @@ module.exports = () => {
 			{
 				down: [
 					{
-						actionId: 'wbRedS',
-						options: {
-							rVal: 192,
-						},
+						actionId: 'exposureCompReset',
 					},
 				],
 				rotate_left: [
 					{
-						actionId: 'wbRedDown',
+						actionId: 'exposureCompD',
 						options: {},
 					},
 				],
 				rotate_right: [
 					{
-						actionId: 'wbRedUp',
+						actionId: 'exposureCompU',
 						options: {},
 					},
 				],
 			},
 		],
 		feedbacks: [],
-	}
+	}),
+		(presets['color-wbRedGain'] = {
+			type: 'button',
+			category: 'Rotation Enabled',
+			name: 'Red Gain',
+			style: {
+				text: 'Red\\nGain',
+				size: '18',
+				color: COLORS.PALE_RED,
+				bgcolor: COLORS.BLACK,
+			},
+			options: {
+				rotaryActions: true,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'wbRedS',
+							options: {
+								rVal: 192,
+							},
+						},
+					],
+					rotate_left: [
+						{
+							actionId: 'wbRedDown',
+							options: {},
+						},
+					],
+					rotate_right: [
+						{
+							actionId: 'wbRedUp',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [],
+		})
 
 	presets['color-wbBlueGain'] = {
 		type: 'button',

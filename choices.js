@@ -60,6 +60,24 @@ module.exports = {
 		{ id: '03', label: '1/8 | 1/6' },
 	],
 
+	EXPOSURE_COMPENSATION: [
+		{ id: '0E', label: '+7' },
+		{ id: '0D', label: '+6' },
+		{ id: '0C', label: '+5' },
+		{ id: '0B', label: '+4' },
+		{ id: '0A', label: '+3' },
+		{ id: '09', label: '+2' },
+		{ id: '08', label: '+1' },
+		{ id: '07', label: '0' },
+		{ id: '06', label: '-1' },
+		{ id: '05', label: '-2' },
+		{ id: '04', label: '-3' },
+		{ id: '03', label: '-4' },
+		{ id: '02', label: '-5' },
+		{ id: '01', label: '-6' },
+		{ id: '00', label: '-7' },
+	],
+
 	PRESET: [
 		{ id: '3F', label: 'Preset 64' },
 		{ id: '3E', label: 'Preset 63' },

@@ -12,7 +12,7 @@ class SonyVISCAInstance extends InstanceBase {
 
 	async init(config) {
 		this.config = config
-		this.data = { exposureMode: 'Auto' }
+		this.data = { exposureMode: 'Auto', expCompState: 'On' }
 		this.updateStatus(InstanceStatus.Disconnected)
 		this.VISCA = {
 			// VISCA Communication Types

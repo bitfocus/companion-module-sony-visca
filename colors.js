@@ -76,6 +76,9 @@ module.exports = {
 	MEDIUM_BLUE: combineRgb(0, 0, 153),
 
 	PALE_RED: combineRgb(255, 128, 128),
+	PALE_ORANGE: combineRgb(255, 191, 128),
+	PALE_YELLOW: combineRgb(255, 255, 128),
 	PALE_GREEN: combineRgb(128, 255, 128),
 	PALE_BLUE: combineRgb(128, 128, 255),
+	PALE_MAGENTA: combineRgb(255, 128, 255),
 }

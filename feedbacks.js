@@ -199,6 +199,123 @@ module.exports = (self) => {
 				return false
 			},
 		},
+		exposureCompOnOff: {
+			type: 'boolean',
+			name: 'Exposure Compensation On/Off',
+			description: 'Indicate if Exposure Compensation is ON or OFF',
+			defaultStyle: {
+				color: COLORS.BLACK,
+				bgcolor: COLORS.PALE_YELLOW,
+				text: 'ExpCmp\\nOn',
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Exposure Compensation',
+					id: 'option',
+					default: '1',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+					],
+				},
+			],
+			callback: function (feedback) {
+				switch (feedback.options.option) {
+					case '0':
+						if (self.data.expCompState === 'Off') {
+							return true
+						}
+						break
+					case '1':
+						if (self.data.expCompState === 'On') {
+							return true
+						}
+						break
+					default:
+						break
+				}
+				return false
+			},
+		},
+		backlightCompOnOff: {
+			type: 'boolean',
+			name: 'Backlight Compensation On/Off',
+			description: 'Indicate if Backlight Compensation is ON or OFF',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: COLORS.Black,
+				text: 'BckLite\\nOff',
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'BackLight Compensation',
+					id: 'option',
+					default: '0',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+					],
+				},
+			],
+			callback: function (feedback) {
+				switch (feedback.options.option) {
+					case '0':
+						if (self.data.backlightComp === 'Off') {
+							return true
+						}
+						break
+					case '1':
+						if (self.data.backlightComp === 'On') {
+							return true
+						}
+						break
+					default:
+						break
+				}
+				return false
+			},
+		},
+		spotlightCompOnOff: {
+			type: 'boolean',
+			name: 'Spotlight Compensation On/Off',
+			description: 'Indicate if Spotlight Compensation is ON or OFF',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: COLORS.Black,
+				text: 'SptLite\\nOff',
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Spotlight Compensation',
+					id: 'option',
+					default: '0',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+					],
+				},
+			],
+			callback: function (feedback) {
+				switch (feedback.options.option) {
+					case '0':
+						if (self.data.spotlightComp === 'Off') {
+							return true
+						}
+						break
+					case '1':
+						if (self.data.spotlightComp === 'On') {
+							return true
+						}
+						break
+					default:
+						break
+				}
+				return false
+			},
+		},
 	}
 
 	return feedbacks

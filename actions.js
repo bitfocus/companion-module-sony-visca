@@ -158,6 +158,69 @@ module.exports = (self) => {
 				self.VISCA.send(camId + '\x01\x04\x0D\x03\xFF')
 			},
 		},
+		exposureCompOnOff: {
+			name: 'Exposure Compensation On/Off',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Exposure Compensation On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				if (event.options.bol == '1') {
+					self.VISCA.send(camId + '\x01\x04\x3E\x02\xFF')
+					self.data.expCompState = 'On'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x3E\x03\xFF')
+					self.data.expCompState = 'Off'
+				}
+				self.checkFeedbacks()
+			},
+		},
+		exposureCompReset: {
+			name: 'Exposure Compensation Reset',
+			options: [],
+			callback: async () => {
+				self.VISCA.send(camId + '\x01\x04\x0E\x00\xFF')
+			},
+		},
+		exposureCompU: {
+			name: 'Exposure Compensation Up',
+			options: [],
+			callback: async () => {
+				self.VISCA.send(camId + '\x01\x04\x0E\x02\xFF')
+			},
+		},
+		exposureCompD: {
+			name: 'Exposure Compensation Down',
+			options: [],
+			callback: async () => {
+				self.VISCA.send(camId + '\x01\x04\x0E\x03\xFF')
+			},
+		},
+		exposureCompDirect: {
+			name: 'Exposure Compensation Direct',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Offset',
+					id: 'offset',
+					choices: CHOICES.EXPOSURE_COMPENSATION,
+				},
+			],
+			callback: async (event) => {
+				let cmd = Buffer.from(camId + '\x01\x04\x4E\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((parseInt(event.options.offset, 16) & 0xf0) >> 4, 6)
+				cmd.writeUInt8(parseInt(event.options.offset, 16) & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
 		backlightComp: {
 			name: 'Backlight Compensation On/Off',
 			options: [
@@ -175,9 +238,37 @@ module.exports = (self) => {
 			callback: async (event) => {
 				if (event.options.bol == '1') {
 					self.VISCA.send(camId + '\x01\x04\x33\x02\xFF')
+					self.data.backlightComp = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x33\x03\xFF')
+					self.data.backlightComp = 'Off'
 				}
+				self.checkFeedbacks()
+			},
+		},
+		spotlightComp: {
+			name: 'Spotlight Compensation On/Off',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Spotlight Compensation On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				if (event.options.bol == '1') {
+					self.VISCA.send(camId + '\x01\x04\x3A\x02\xFF')
+					self.data.spotlightComp = 'On'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x3A\x03\xFF')
+					self.data.spotlightComp = 'Off'
+				}
+				self.checkFeedbacks()
 			},
 		},
 		zoomI: {
