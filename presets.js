@@ -428,6 +428,79 @@ module.exports = () => {
 			],
 			feedbacks: [],
 		},
+		'lens-zoomMode': {
+			type: 'button',
+			category: 'Lens',
+			name: 'Zoom Mode',
+			style: {
+				text: 'Zoom\\nMode',
+				size: '18',
+				color: COLORS.WHITE,
+				bgcolor: COLORS.BLACK,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'zoomMode',
+							options: {
+								mode: '3',
+							},
+						},
+					],
+				},
+				{
+					down: [
+						{
+							actionId: 'zoomMode',
+							options: {
+								mode: '4',
+							},
+						},
+					],
+				},
+				{
+					down: [
+						{
+							actionId: 'zoomMode',
+							options: {
+								mode: '2',
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'zoomMode',
+					options: {
+						option: '3',
+					},
+					style: {
+						text: 'Optical\\nZoom',
+					},
+				},
+				{
+					feedbackId: 'zoomMode',
+					options: {
+						option: '4',
+					},
+					style: {
+						text: 'CI\\nZoom',
+					},
+				},
+				{
+					feedbackId: 'zoomMode',
+					options: {
+						option: '2',
+					},
+					style: {
+						text: 'Digital\\nZoom',
+					},
+				},
+			],
+		},
+
 		'lens-focusNear': {
 			type: 'button',
 			category: 'Lens',

@@ -31,7 +31,7 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 - Zoom In
 - Zoom Out
 - Zoom Stop
-- Clear Image Zoom
+- Zoom Mode (Optical Only, Clear Image, Digital)
 - Focus Near
 - Focus Far
 - Focus Stop
@@ -55,6 +55,7 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 - Spotlight Compensation On/Off
 - Aperture +,-,Reset
 - Wide Dynamic Range (Off,Low,Mid,High)
+- Noise Reduction
 
 ### Color
 
@@ -77,6 +78,7 @@ The pan-tilt directional commands (Up, Down, Left, Right) double as controls for
 - Menu Enter
 - Power Camera On/Off
 - Tally on/off
+- Latency
 
 ## Companion Presets
 

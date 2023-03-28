@@ -30,6 +30,51 @@ module.exports = (self) => {
 				return self.data.heldThresholdReached
 			},
 		},
+		zoomMode: {
+			type: 'boolean',
+			name: 'Lens - Zoom Mode',
+			description: 'Indicate Zoom Mode',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: COLORS.BLACK,
+				text: 'Optical\\nZoom',
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Zoom Mode',
+					id: 'option',
+					default: '3',
+					choices: [
+						{ id: '3', label: 'Optical Only' },
+						{ id: '4', label: 'Clear Image' },
+						{ id: '2', label: 'Digital Only' },
+					],
+				},
+			],
+			callback: function (feedback) {
+				switch (feedback.options.option) {
+					case '3':
+						if (self.data.zoomMode === '3') {
+							return true
+						}
+						break
+					case '2':
+						if (self.data.zoomMode === '2') {
+							return true
+						}
+						break
+					case '4':
+						if (self.data.zoomMode === '4') {
+							return true
+						}
+						break
+					default:
+						break
+				}
+				return false
+			},
+		},
 		autoFocus: {
 			type: 'boolean',
 			name: 'Lens - Auto Focus State',

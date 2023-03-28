@@ -11,6 +11,9 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 
 - Add Exposure Compensation actions and presets
 - Add Spotlight Compensation On/Off 
+- Add Zoom Modes and preset to cycle through
+- Add Noise Reduction action
+- Add Latency selection action
 
 ### v2.1.0
 

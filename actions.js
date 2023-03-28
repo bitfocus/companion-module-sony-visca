@@ -292,6 +292,27 @@ module.exports = (self) => {
 				self.VISCA.send(camId + '\x01\x04\x07\x00\xFF')
 			},
 		},
+		zoomMode: {
+			name: 'Zoom Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Zoom Mode',
+					id: 'mode',
+					choices: [
+						{ id: '2', label: 'Digital' },
+						{ id: '3', label: 'Optical only' },
+						{ id: '4', label: 'Clear Image Zoom' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x06' + String.fromCharCode(parseInt(event.options.mode, 16) & 0xff) + '\xFF')
+				self.data.zoomMode = event.options.mode
+				self.checkFeedbacks()
+			},
+		},
 		ciZoom: {
 			name: 'Clear Image Zoom',
 			options: [
@@ -706,6 +727,28 @@ module.exports = (self) => {
 				}
 			},
 		},
+		noiseReduction: {
+			name: 'Noise Reduction Level',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Noise Reduction Level',
+					id: 'level',
+					choices: [
+						{ id: '0', label: '0-Off' },
+						{ id: '1', label: '1-Weak' },
+						{ id: '2', label: '2' },
+						{ id: '3', label: '3-Default' },
+						{ id: '4', label: '4' },
+						{ id: '5', label: '5-Strong' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x53' + String.fromCharCode(parseInt(event.options.level, 16) & 0xff) + '\xFF')
+			},
+		},
 		gainU: {
 			name: 'Gain Up',
 			options: [],
@@ -876,6 +919,24 @@ module.exports = (self) => {
 				} else {
 					self.VISCA.send(camId + '\x01\x7E\x01\x0A\x00\x03\xFF')
 				}
+			},
+		},
+		latency: {
+			name: 'Latency',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Latency',
+					id: 'val',
+					choices: [
+						{ id: '03', label: 'Normal' },
+						{ id: '02', label: 'Low Latency (disables digital zoom)' },
+					],
+					default: '03',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x01\x5A' + String.fromCharCode(parseInt(event.options.val, 16)) + '\xFF')
 			},
 		},
 		setHeldFeedback: {

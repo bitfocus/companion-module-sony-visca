@@ -36,6 +36,7 @@ class SonyVISCAInstance extends InstanceBase {
 				}
 
 				const newBuffer = buffer.slice(0, 8 + payload.length)
+				// this.log('debug', this.viscaToString(newBuffer))
 				this.udp.send(newBuffer)
 			},
 		}
@@ -106,6 +107,21 @@ class SonyVISCAInstance extends InstanceBase {
 
 	updatePresets() {
 		this.setPresetDefinitions(GetPresets(this))
+	}
+
+	viscaToString(payload) {
+		let response = payload.toString('hex')
+
+		let s = response.substr(0, 2)
+		for (let i = 2; i < response.length; i = i + 2) {
+			if (i == 4 || i == 8 || i == 16) {
+				s += ' | '
+			} else {
+				s += ' '
+			}
+			s += response.substr(i, 2)
+		}
+		return s
 	}
 
 	init_udp() {
