@@ -91,7 +91,7 @@ module.exports = (self) => {
 			},
 			// SAMPLE EVENT RESPONSE
 			// event: {
-			//     "id": "dXms1abehCE3MUvIBTGvE",
+			//     "id": "dXms14behCE3MUvIBTGvE",
 			//     "actionId": "ptSpeedS",
 			//     "controlId": "bank:2-18",
 			//     "options": { "speed": "18" },
@@ -352,6 +352,7 @@ module.exports = (self) => {
 			name: 'Menu/Back',
 			options: [],
 			callback: async () => {
+				// self.log('info', 'menuToggle: ' + self.viscaToString(camId + '\x01\x06\x06\x10\xFF'))
 				self.VISCA.send(camId + '\x01\x06\x06\x10\xFF')
 			},
 		},
@@ -937,6 +938,23 @@ module.exports = (self) => {
 			],
 			callback: async (event) => {
 				self.VISCA.send(camId + '\x01\x7E\x01\x5A' + String.fromCharCode(parseInt(event.options.val, 16)) + '\xFF')
+			},
+		},
+		customCommand: {
+			name: 'Custom Command',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Command example: 81 01 06 06 10 FF',
+					id: 'cmd',
+					regex: '/^81 ?([0-9a-fA-F]{2} ?){3,13}[fF][fF]$/',
+				},
+			],
+			callback: async (event) => {
+				self.log('info', 'Custom Command: ' + self.viscaToString(event.options.cmd))
+				const hexData = event.options.cmd.replace(/\s+/g, '')
+				const tempBuffer = Buffer.from(hexData, 'hex')
+				self.VISCA.send(tempBuffer)
 			},
 		},
 		setHeldFeedback: {
