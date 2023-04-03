@@ -2,84 +2,34 @@ import { combineRgb } from '@companion-module/base'
 
 export const COLORS = {
 	BLACK: combineRgb(0, 0, 0),
-	RED1: combineRgb(51, 0, 0),
-	ORANGE1: combineRgb(51, 25, 0),
-	YELLOW1: combineRgb(51, 51, 0),
-	GREEN1: combineRgb(0, 51, 0),
-	BLUE1: combineRgb(0, 0, 51),
-	MAGENTA1: combineRgb(51, 0, 51),
-
-	GRAY2: combineRgb(36, 36, 36),
-	RED2: combineRgb(102, 0, 0),
-	ORANGE2: combineRgb(102, 51, 0),
-	YELLOW2: combineRgb(102, 102, 0),
-	GREEN2: combineRgb(0, 102, 0),
-	BLUE2: combineRgb(0, 0, 102),
-	MAGENTA2: combineRgb(102, 0, 102),
-
-	GRAY3: combineRgb(72, 72, 72),
-	RED3: combineRgb(153, 0, 0),
-	ORANGE3: combineRgb(153, 76, 0),
-	YELLOW3: combineRgb(153, 153, 0),
-	GREEN3: combineRgb(0, 153, 0),
-	BLUE3: combineRgb(0, 0, 153),
-	MAGENTA3: combineRgb(153, 0, 153),
-
-	GRAY4: combineRgb(110, 110, 110),
-	RED4: combineRgb(204, 0, 0),
-	ORANGE4: combineRgb(204, 101, 0),
-	YELLOW4: combineRgb(204, 204, 0),
-	GREEN4: combineRgb(0, 204, 0),
-	BLUE4: combineRgb(0, 0, 204),
-	MAGENTA4: combineRgb(204, 0, 204),
-
-	GRAY: combineRgb(128, 128, 128),
-	RED: combineRgb(255, 0, 0),
-	ORANGE: combineRgb(255, 128, 0),
-	YELLOW: combineRgb(255, 255, 0),
-	GREEN: combineRgb(0, 255, 0),
-	BLUE: combineRgb(0, 0, 255),
-	CYAN: combineRgb(0, 255, 255),
-	MAGENTA: combineRgb(255, 0, 255),
-
-	GRAY6: combineRgb(182, 182, 182),
-	RED6: combineRgb(255, 64, 64),
-	ORANGE6: combineRgb(255, 159, 64),
-	YELLOW6: combineRgb(255, 255, 64),
-	GREEN6: combineRgb(64, 255, 64),
-	BLUE6: combineRgb(64, 64, 255),
-	MAGENTA6: combineRgb(255, 64, 255),
-
-	GRAY7: combineRgb(218, 218, 218),
-	RED7: combineRgb(255, 128, 128),
-	ORANGE7: combineRgb(255, 191, 128),
-	YELLOW7: combineRgb(255, 255, 128),
-	GREEN7: combineRgb(128, 255, 128),
-	BLUE7: combineRgb(128, 128, 255),
-	MAGENTA7: combineRgb(255, 128, 255),
-
-	WHITE: combineRgb(255, 255, 255),
-	RED8: combineRgb(255, 192, 192),
-	ORANGE8: combineRgb(255, 223, 192),
-	YELLOW8: combineRgb(255, 255, 192),
-	GREEN8: combineRgb(192, 255, 192),
-	BLUE8: combineRgb(192, 192, 255),
-	MAGENTA8: combineRgb(255, 192, 255),
-
 	DARK_GRAY: combineRgb(72, 72, 72),
+	GRAY: combineRgb(128, 128, 128),
+	WHITE: combineRgb(255, 255, 255),
+
+	RED: combineRgb(255, 0, 0),
 	DARK_RED: combineRgb(102, 0, 0),
-	DARK_YELLOW: combineRgb(102, 102, 0),
-	DARK_GREEN: combineRgb(0, 51, 0),
-	DARK_BLUE: combineRgb(0, 0, 102),
-
 	MEDIUM_RED: combineRgb(153, 0, 0),
-	MEDIUM_GREEN: combineRgb(0, 102, 0),
-	MEDIUM_BLUE: combineRgb(0, 0, 153),
-
 	PALE_RED: combineRgb(255, 128, 128),
+
+	ORANGE: combineRgb(255, 128, 0),
 	PALE_ORANGE: combineRgb(255, 191, 128),
+
+	YELLOW: combineRgb(255, 255, 0),
+	DARK_YELLOW: combineRgb(102, 102, 0),
 	PALE_YELLOW: combineRgb(255, 255, 128),
+
+	GREEN: combineRgb(0, 255, 0),
+	DARK_GREEN: combineRgb(0, 51, 0),
+	MEDIUM_GREEN: combineRgb(0, 102, 0),
 	PALE_GREEN: combineRgb(128, 255, 128),
+
+	BLUE: combineRgb(0, 0, 255),
+	DARK_BLUE: combineRgb(0, 0, 102),
+	MEDIUM_BLUE: combineRgb(0, 0, 153),
 	PALE_BLUE: combineRgb(128, 128, 255),
+
+	CYAN: combineRgb(0, 255, 255),
+
+	MAGENTA: combineRgb(255, 0, 255),
 	PALE_MAGENTA: combineRgb(255, 128, 255),
 }
