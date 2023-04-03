@@ -1,9 +1,9 @@
-const CHOICES = require('./choices')
+import { CHOICES } from './choices.js'
 
-module.exports = (self) => {
+export function getActionDefinitions(self) {
 	const camId = String.fromCharCode(parseInt(self.config.id))
 	let ptSpeed = String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xff)
-	self.setActionDefinitions({
+	return {
 		left: {
 			name: 'Pan Left',
 			options: [],
@@ -87,7 +87,6 @@ module.exports = (self) => {
 			callback: async (event) => {
 				self.ptSpeed = event.options.speed
 				ptSpeed = String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xff)
-				// self.VISCA.send(cmd)
 			},
 			// SAMPLE EVENT RESPONSE
 			// event: {
@@ -973,5 +972,5 @@ module.exports = (self) => {
 				self.checkFeedbacks()
 			},
 		},
-	})
+	}
 }

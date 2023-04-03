@@ -1,6 +1,6 @@
-const COLORS = require('./colors')
+import { COLORS } from './colors.js'
 
-module.exports = (self) => {
+export function getFeedbackDefinitions(self) {
 	const feedbacks = {
 		heldFeedback: {
 			type: 'boolean',

@@ -1,5 +1,6 @@
-const { combineRgb } = require('@companion-module/base')
-module.exports = {
+import { combineRgb } from '@companion-module/base'
+
+export const COLORS = {
 	BLACK: combineRgb(0, 0, 0),
 	RED1: combineRgb(51, 0, 0),
 	ORANGE1: combineRgb(51, 25, 0),

@@ -1,9 +1,10 @@
-const { InstanceBase, Regex, runEntrypoint, InstanceStatus, UDPHelper } = require('@companion-module/base')
-const UpgradeScripts = require('./upgrades')
-const UpdateActions = require('./actions')
-const GetFeedbacks = require('./feedbacks')
-const GetPresets = require('./presets')
-const CHOICES = require('./choices')
+import { InstanceBase, InstanceStatus, runEntrypoint, UDPHelper } from '@companion-module/base'
+import { CHOICES } from './choices.js'
+import { UpgradeScripts } from './upgrades.js'
+import { getConfigDefinitions } from './config.js'
+import { getFeedbackDefinitions } from './feedbacks.js'
+import { getActionDefinitions } from './actions.js'
+import { getPresetDefinitions } from './presets.js'
 
 class SonyVISCAInstance extends InstanceBase {
 	constructor(internal) {
@@ -42,9 +43,9 @@ class SonyVISCAInstance extends InstanceBase {
 		}
 
 		this.ptSpeed = '0C'
-		this.updateFeedbacks()
-		this.updateActions() // export actions
-		this.updatePresets()
+		this.setFeedbackDefinitions(getFeedbackDefinitions(this))
+		this.setActionDefinitions(getActionDefinitions(this))
+		this.setPresetDefinitions(getPresetDefinitions(this))
 		this.init_udp()
 	}
 
@@ -63,50 +64,7 @@ class SonyVISCAInstance extends InstanceBase {
 
 	// Return config fields for web config
 	getConfigFields() {
-		return [
-			{
-				type: 'static-text',
-				id: 'info',
-				width: 12,
-				label: 'Information',
-				value: 'This module controls PTZ cameras with VISCA over IP protocol',
-			},
-			{
-				type: 'textinput',
-				id: 'host',
-				label: 'Target IP',
-				width: 6,
-				regex: Regex.IP,
-			},
-			{
-				type: 'textinput',
-				id: 'port',
-				label: 'Target Port',
-				width: 6,
-				regex: Regex.PORT,
-				default: '52381',
-			},
-			{
-				type: 'dropdown',
-				id: 'id',
-				label: 'camera id',
-				width: 6,
-				default: '128',
-				choices: CHOICES.CAMERA_ID,
-			},
-		]
-	}
-
-	updateFeedbacks() {
-		this.setFeedbackDefinitions(GetFeedbacks(this))
-	}
-
-	updateActions() {
-		UpdateActions(this)
-	}
-
-	updatePresets() {
-		this.setPresetDefinitions(GetPresets(this))
+		return getConfigDefinitions(CHOICES)
 	}
 
 	viscaToString(payload) {

@@ -1,4 +1,4 @@
-module.exports = {
+export const CHOICES = {
 	// ########################
 	// #### Value Look Ups ####
 	// ########################

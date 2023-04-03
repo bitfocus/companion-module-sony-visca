@@ -1,5 +1,6 @@
-const COLORS = require('./colors')
-module.exports = () => {
+import { COLORS } from './colors.js'
+
+export function getPresetDefinitions() {
 	const presets = {
 		// ##########################
 		// #### Pan/Tilt Presets ####
