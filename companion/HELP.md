@@ -34,23 +34,16 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 
 ### Lens Actions
 
-* Pan Left
-* Pan Right
-* Tilt Up
-* Tilt Down
-* Up Left
-* Up Right
-* Down Left
-* Down Right
-* Pan/Tilt Stop
-* Pan/Tilt Home
-* P/T Slow Mode
-* Pan Speed (up/down/default)
-* Tilt Speed (up/down/default)
-* P/T Speed Up . . . . . . deprecated
-* P/T Speed Down . . . . . . deprecated
-* Pan and/or Tilt Speed Set
-* P/T Speed Set . . . . . . deprecated
+* Zoom In - standard speed
+* Zoom Out - standard speed
+* Zoom Stop
+* Zoom Mode (digital/optical/clear image)
+* Clear Image Zoom . . . . . . deprecated
+* Focus Mode (auto/manual)
+* Focus Near - standard speed
+* Focus Far - standard speed
+* Focus Stop
+* One Push Auto Focus
 
 ### Exposure Actions
 

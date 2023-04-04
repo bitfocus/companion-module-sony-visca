@@ -1439,7 +1439,7 @@ export function getActionsMarkdown() {
 	}
 
 	markdown += formatActionsMarkdown('Pan/Tilt', getPanTiltActionDefinitions(self))
-	markdown += formatActionsMarkdown('Lens', getPanTiltActionDefinitions(self))
+	markdown += formatActionsMarkdown('Lens', getLensActionDefinitions(self))
 	markdown += formatActionsMarkdown('Exposure', getExposureActionDefinitions(self))
 	markdown += formatActionsMarkdown('Color', getColorActionDefinitions(self))
 	markdown += formatActionsMarkdown('Camera Preset', getPresetActionDefinitions(self))
