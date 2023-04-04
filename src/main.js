@@ -68,7 +68,7 @@ class SonyVISCAInstance extends InstanceBase {
 	}
 
 	viscaToString(payload) {
-		let response = payload.toString('hex')
+		let response = payload.toString('hex').replaceAll(' ', '')
 
 		let s = response.substr(0, 2)
 		for (let i = 2; i < response.length; i = i + 2) {

@@ -172,6 +172,17 @@ export const CHOICES = {
 		{ id: '01', label: 'Speed 01 (slow)' },
 	],
 
+	LENS_SPEED: [
+		{ id: '07', label: 'Speed 7 (fast)' },
+		{ id: '06', label: 'Speed 6' },
+		{ id: '05', label: 'Speed 5' },
+		{ id: '04', label: 'Speed 4' },
+		{ id: '03', label: 'Speed 3' },
+		{ id: '02', label: 'Speed 2' },
+		{ id: '01', label: 'Speed 1' },
+		{ id: '00', label: 'Speed 0 (slow)' },
+	],
+
 	CAMERA_ID: [
 		{ id: '128', label: 'id 0' },
 		{ id: '129', label: 'id 1' },

@@ -2,12 +2,12 @@
 
 This module uses the Sony Visca protocol to control PTZ cameras.
 
-- See companion/HELP.md for features implemented and operational instructions.
-- See LICENSE
+- See [companion/HELP.md](https://github.com/bitfocus/companion-module-sony-visca/blob/master/companion/HELP.md) for features implemented and operational instructions.
+- See [LICENSE](https://github.com/bitfocus/companion-module-sony-visca/blob/master/LICENSE)
 
 ## Changes
 
-### v2.3.0
+### v2.3.4
 
 - Add Custom Command action
 

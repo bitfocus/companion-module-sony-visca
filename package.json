@@ -1,19 +1,25 @@
 {
     "name": "sony-visca",
-    "version": "2.3.3",
+    "version": "2.3.4",
     "main": "src/main.js",
     "type": "module",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "format": "prettier -w .",
         "lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
-        "lint": "yarn lint:raw ."
+        "lint": "yarn lint:raw .",
+        "docs": "node src/help.js"
     },
     "license": "MIT",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/bitfocus/companion-module-sony-visca.git"
     },
+	"engines": {
+		"npm": "please-use-yarn",
+		"yarn": "^1.22",
+		"node": ">=18.12 <19"
+	},
     "dependencies": {
         "@companion-module/base": "~1.3.0",
         "typescript": "^4.9.5"
