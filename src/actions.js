@@ -93,14 +93,14 @@ function getPanTiltActionDefinitions(self, camId) {
 					label: 'Slow Mode On/Off',
 					id: 'bol',
 					choices: [
-						{ id: '3', label: 'Off' },
-						{ id: '2', label: 'On' },
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
 					],
-					default: '3',
+					default: '0',
 				},
 			],
 			callback: async (event) => {
-				if (event.options.bol == '3') {
+				if (event.options.bol == '0') {
 					self.VISCA.send(camId + '\x01\x06\x44\x03\xFF')
 				} else {
 					self.VISCA.send(camId + '\x01\x06\x44\x02\xFF')
@@ -124,14 +124,14 @@ function getPanTiltActionDefinitions(self, camId) {
 			],
 			callback: async (action) => {
 				switch (action.options.val) {
-					case '3':
-						self.speed.pan = 12
-						break
 					case '1':
 						if (self.speed.pan < 24) self.speed.pan++
 						break
 					case '2':
 						if (self.speed.pan > 1) self.speed.pan--
+						break
+					case '3':
+						self.speed.pan = 12
 						break
 				}
 			},
@@ -153,14 +153,14 @@ function getPanTiltActionDefinitions(self, camId) {
 			],
 			callback: async (action) => {
 				switch (action.options.val) {
-					case '3':
-						self.speed.tilt = 12
-						break
 					case '1':
 						if (self.speed.tilt < 24) self.speed.tilt++
 						break
 					case '2':
 						if (self.speed.tilt > 1) self.speed.tilt--
+						break
+					case '3':
+						self.speed.tilt = 12
 						break
 				}
 			},
@@ -193,15 +193,16 @@ function getPanTiltActionDefinitions(self, camId) {
 			name: 'Pan and/or Tilt Speed Set',
 			options: [
 				{
-					type: 'dropdown',
-					label: 'Axis',
-					id: 'axis',
-					default: '3',
-					choices: [
-						{ id: '1', label: 'Pan' },
-						{ id: '2', label: 'Tilt' },
-						{ id: '3', label: 'Pan and Tilt' },
-					],
+					type: 'checkbox',
+					label: 'Set Pan Value',
+					id: 'pSet',
+					default: true,
+				},
+				{
+					type: 'checkbox',
+					label: 'Set Tilt Value',
+					id: 'tSet',
+					default: true,
 				},
 				{
 					type: 'dropdown',
@@ -213,17 +214,11 @@ function getPanTiltActionDefinitions(self, camId) {
 			],
 			callback: async (action) => {
 				const speed = parseInt(action.options.speed, 16)
-				switch (action.options.axis) {
-					case '1':
-						self.speed.pan = speed
-						break
-					case '2':
-						self.speed.tilt = speed
-						break
-					case '3':
-						self.speed.pan = speed
-						self.speed.tilt = speed
-						break
+				if (action.options.pSet) {
+					self.speed.pan = speed
+				}
+				if (action.options.tSet) {
+					self.speed.tilt = speed
 				}
 			},
 		},
@@ -303,6 +298,7 @@ function getLensActionDefinitions(self, camId) {
 						{ id: '0', label: 'Off' },
 						{ id: '1', label: 'On' },
 					],
+					default: '0',
 				},
 			],
 			callback: async (event) => {
@@ -324,6 +320,7 @@ function getLensActionDefinitions(self, camId) {
 						{ id: '0', label: 'Auto Focus' },
 						{ id: '1', label: 'Manual Focus' },
 					],
+					default: '0',
 				},
 			],
 			callback: async (event) => {
@@ -378,7 +375,6 @@ function getExposureActionDefinitions(self, camId) {
 					type: 'dropdown',
 					label: 'Mode setting',
 					id: 'val',
-					default: '0',
 					choices: [
 						{ id: '0', label: 'Full auto' },
 						{ id: '1', label: 'Manual' },
@@ -386,6 +382,7 @@ function getExposureActionDefinitions(self, camId) {
 						{ id: '3', label: 'Iris Pri' },
 						{ id: '4', label: 'Gain Pri' },
 					],
+					default: '0',
 				},
 			],
 			callback: async (event) => {
@@ -421,11 +418,11 @@ function getExposureActionDefinitions(self, camId) {
 					type: 'dropdown',
 					label: 'Iris setting',
 					id: 'val',
-					default: '1',
 					choices: [
 						{ id: '1', label: 'Iris Up' },
 						{ id: '2', label: 'Iris Down' },
 					],
+					default: '1',
 				},
 			],
 			callback: async (event) => {
@@ -463,6 +460,7 @@ function getExposureActionDefinitions(self, camId) {
 					label: 'Iris adjust',
 					id: 'val',
 					choices: CHOICES.IRIS,
+					default: '15',
 				},
 			],
 			callback: async (event) => {
@@ -521,6 +519,7 @@ function getExposureActionDefinitions(self, camId) {
 					label: 'Gain setting',
 					id: 'val',
 					choices: CHOICES.GAIN,
+					default: '01',
 				},
 			],
 			callback: async (event) => {
@@ -537,11 +536,11 @@ function getExposureActionDefinitions(self, camId) {
 					type: 'dropdown',
 					label: 'Shutter adjust',
 					id: 'val',
-					default: '1',
 					choices: [
 						{ id: '1', label: 'Shutter Up' },
 						{ id: '2', label: 'Shutter Down' },
 					],
+					default: '1',
 				},
 			],
 			callback: async (event) => {
@@ -595,19 +594,19 @@ function getExposureActionDefinitions(self, camId) {
 					type: 'dropdown',
 					label: 'Brightness adjust',
 					id: 'val',
-					default: '2',
 					choices: [
-						{ id: '2', label: 'Brightness Up' },
-						{ id: '3', label: 'Brightness Down' },
+						{ id: '1', label: 'Brightness Up' },
+						{ id: '2', label: 'Brightness Down' },
 					],
+					default: '1',
 				},
 			],
 			callback: async (event) => {
 				switch (parseInt(event.options.val)) {
-					case '2':
+					case '1':
 						self.VISCA.send(camId + '\x01\x04\x0D\x02\xFF')
 						break
-					case '3':
+					case '2':
 						self.VISCA.send(camId + '\x01\x04\x0D\x03\xFF')
 						break
 				}
@@ -661,25 +660,25 @@ function getExposureActionDefinitions(self, camId) {
 					type: 'dropdown',
 					label: 'Exp Comp Adjust',
 					id: 'val',
-					default: '0',
+					default: '3',
 					choices: [
-						{ id: '0', label: 'Reset' },
 						{ id: '1', label: 'Exposure Compensation +' },
 						{ id: '2', label: 'Exposure Compensation -' },
+						{ id: '3', label: 'Reset' },
 					],
 				},
 			],
 			callback: async (event) => {
-				if (event.options.val == 0) {
-					self.VISCA.send(camId + '\x01\x04\x0E\x00\xFF')
-					return
-				}
 				if (event.options.val == 1) {
 					self.VISCA.send(camId + '\x01\x04\x0E\x02\xFF')
 					return
 				}
 				if (event.options.val == 2) {
 					self.VISCA.send(camId + '\x01\x04\x0E\x03\xFF')
+					return
+				}
+				if (event.options.val == 3) {
+					self.VISCA.send(camId + '\x01\x04\x0E\x00\xFF')
 					return
 				}
 			},
@@ -716,6 +715,7 @@ function getExposureActionDefinitions(self, camId) {
 					label: 'Offset',
 					id: 'offset',
 					choices: CHOICES.EXPOSURE_COMPENSATION,
+					default: '07',
 				},
 			],
 			callback: async (event) => {
@@ -732,25 +732,25 @@ function getExposureActionDefinitions(self, camId) {
 					type: 'dropdown',
 					label: 'Mode setting',
 					id: 'val',
-					default: '0',
 					choices: [
-						{ id: '0', label: 'Reset' },
 						{ id: '1', label: 'Aperture +' },
 						{ id: '2', label: 'Aperture -' },
+						{ id: '3', label: 'Reset' },
 					],
+					default: '3',
 				},
 			],
 			callback: async (event) => {
-				if (event.options.val == 0) {
-					self.VISCA.send(camId + '\x01\x04\x02\x00\xFF')
-					return
-				}
 				if (event.options.val == 1) {
 					self.VISCA.send(camId + '\x01\x04\x02\x02\xFF')
 					return
 				}
 				if (event.options.val == 2) {
 					self.VISCA.send(camId + '\x01\x04\x02\x03\xFF')
+					return
+				}
+				if (event.options.val == 3) {
+					self.VISCA.send(camId + '\x01\x04\x02\x00\xFF')
 					return
 				}
 			},
@@ -762,13 +762,13 @@ function getExposureActionDefinitions(self, camId) {
 					type: 'dropdown',
 					label: 'WDR Settings',
 					id: 'val',
-					default: '0',
 					choices: [
 						{ id: '0', label: 'Off' },
 						{ id: '1', label: 'Low' },
 						{ id: '2', label: 'Mid' },
 						{ id: '3', label: 'High' },
 					],
+					default: '0',
 				},
 			],
 			callback: async (event) => {
@@ -882,6 +882,7 @@ function getColorActionDefinitions(self, camId) {
 						{ id: '4', label: 'Auto2 - ATW' },
 						{ id: '5', label: 'Manual' },
 					],
+					default: '0',
 				},
 			],
 			callback: async (event) => {
@@ -951,23 +952,23 @@ function getColorActionDefinitions(self, camId) {
 				{
 					type: 'dropdown',
 					label: 'Up/Down',
-					id: 'dir',
+					id: 'val',
 					choices: [
-						{ id: 'u', label: 'Up' },
-						{ id: 'd', label: 'Down' },
+						{ id: '1', label: 'Up' },
+						{ id: '2', label: 'Down' },
 					],
-					default: 'u',
+					default: '1',
 				},
 			],
 			callback: async (event) => {
 				if (event.options.rb == 'r') {
-					if (event.options.dir == 'u') {
+					if (event.options.val == '1') {
 						self.VISCA.send(camId + '\x01\x04\x03\x02\xFF')
 					} else {
 						self.VISCA.send(camId + '\x01\x04\x03\x03\xFF')
 					}
 				} else {
-					if (event.options.dir == 'u') {
+					if (event.options.val == '2') {
 						self.VISCA.send(camId + '\x01\x04\x04\x02\xFF')
 					} else {
 						self.VISCA.send(camId + '\x01\x04\x04\x03\xFF')
@@ -1126,25 +1127,25 @@ function getColorActionDefinitions(self, camId) {
 				{
 					type: 'dropdown',
 					label: 'Adjust',
-					id: 'adjust',
-					default: 'r',
+					id: 'val',
+					default: '3',
 					choices: [
-						{ id: 'r', label: 'Reset' },
-						{ id: 'u', label: 'Up' },
-						{ id: 'd', label: 'Down' },
+						{ id: '1', label: 'Up' },
+						{ id: '2', label: 'Down' },
+						{ id: '3', label: 'Reset' },
 					],
 				},
 			],
 			callback: async (event) => {
-				switch (event.options.adjust) {
-					case 'r':
-						self.VISCA.send(camId + '\x01\x7E\x01\x2E\x00\x00\xFF')
-						break
-					case 'u':
+				switch (event.options.val) {
+					case '1':
 						self.VISCA.send(camId + '\x01\x7E\x01\x2E\x00\x02\xFF')
 						break
-					case 'd':
+					case '2':
 						self.VISCA.send(camId + '\x01\x7E\x01\x2E\x00\x03\xFF')
+						break
+					case '3':
+						self.VISCA.send(camId + '\x01\x7E\x01\x2E\x00\x00\xFF')
 						break
 				}
 			},
@@ -1285,6 +1286,7 @@ function getMiscActionDefinitions(self, camId) {
 						{ id: '0', label: 'Off' },
 						{ id: '1', label: 'On' },
 					],
+					default: '0',
 				},
 			],
 			callback: async (event) => {
