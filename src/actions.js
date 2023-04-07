@@ -12,69 +12,70 @@ export function getActionDefinitions(self) {
 	}
 }
 function getPanTiltActionDefinitions(self, camId) {
-	let ptSpeed = String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xff)
+	let speed = getSpeedCodes(self.speed)
+
 	return {
 		left: {
 			name: 'Pan Left',
 			options: [],
 			callback: async () => {
-				self.VISCA.send(camId + '\x01\x06\x01' + ptSpeed + ptSpeed + '\x01\x03\xFF')
+				self.VISCA.send(camId + '\x01\x06\x01' + speed.pan + speed.tilt + '\x01\x03\xFF')
 			},
 		},
 		right: {
 			name: 'Pan Right',
 			options: [],
 			callback: async () => {
-				self.VISCA.send(camId + '\x01\x06\x01' + ptSpeed + ptSpeed + '\x02\x03\xFF')
+				self.VISCA.send(camId + '\x01\x06\x01' + speed.pan + speed.tilt + '\x02\x03\xFF')
 			},
 		},
 		up: {
 			name: 'Tilt Up',
 			options: [],
 			callback: async () => {
-				self.VISCA.send(camId + '\x01\x06\x01' + ptSpeed + ptSpeed + '\x03\x01\xFF')
+				self.VISCA.send(camId + '\x01\x06\x01' + speed.pan + speed.tilt + '\x03\x01\xFF')
 			},
 		},
 		down: {
 			name: 'Tilt Down',
 			options: [],
 			callback: async () => {
-				self.VISCA.send(camId + '\x01\x06\x01' + ptSpeed + ptSpeed + '\x03\x02\xFF')
+				self.VISCA.send(camId + '\x01\x06\x01' + speed.pan + speed.tilt + '\x03\x02\xFF')
 			},
 		},
 		upLeft: {
 			name: 'Up Left',
 			options: [],
 			callback: async () => {
-				self.VISCA.send(camId + '\x01\x06\x01' + ptSpeed + ptSpeed + '\x01\x01\xFF')
+				self.VISCA.send(camId + '\x01\x06\x01' + speed.pan + speed.tilt + '\x01\x01\xFF')
 			},
 		},
 		upRight: {
 			name: 'Up Right',
 			options: [],
 			callback: async () => {
-				self.VISCA.send(camId + '\x01\x06\x01' + ptSpeed + ptSpeed + '\x02\x01\xFF')
+				self.VISCA.send(camId + '\x01\x06\x01' + speed.pan + speed.tilt + '\x02\x01\xFF')
 			},
 		},
 		downLeft: {
 			name: 'Down Left',
 			options: [],
 			callback: async () => {
-				self.VISCA.send(camId + '\x01\x06\x01' + ptSpeed + ptSpeed + '\x01\x02\xFF')
+				self.VISCA.send(camId + '\x01\x06\x01' + speed.pan + speed.tilt + '\x01\x02\xFF')
 			},
 		},
 		downRight: {
 			name: 'Down Right',
 			options: [],
 			callback: async () => {
-				self.VISCA.send(camId + '\x01\x06\x01' + ptSpeed + ptSpeed + '\x02\x02\xFF')
+				self.VISCA.send(camId + '\x01\x06\x01' + speed.pan + speed.tilt + '\x02\x02\xFF')
 			},
 		},
 		stop: {
 			name: 'Pan/Tilt Stop',
 			options: [],
 			callback: async () => {
-				self.VISCA.send(camId + '\x01\x06\x01' + ptSpeed + ptSpeed + '\x03\x03\xFF')
+				self.VISCA.send(camId + '\x01\x06\x01' + speed.pan + speed.tilt + '\x03\x03\xFF')
 			},
 		},
 		home: {
@@ -84,9 +85,8 @@ function getPanTiltActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x06\x04\xFF')
 			},
 		},
-		// TODO: Upgrade Script (values were wrong)
 		ptSlow: {
-			name: 'P/T Slow Mode',
+			name: 'Pan/Tilt Slow Mode',
 			options: [
 				{
 					type: 'dropdown',
@@ -125,15 +125,16 @@ function getPanTiltActionDefinitions(self, camId) {
 			callback: async (action) => {
 				switch (action.options.val) {
 					case '1':
-						if (self.speed.pan < 24) self.speed.pan++
+						if (self.speed.pan < 0x18) self.speed.pan++
 						break
 					case '2':
 						if (self.speed.pan > 1) self.speed.pan--
 						break
 					case '3':
-						self.speed.pan = 12
+						self.speed.pan = 0x0c
 						break
 				}
+				speed = getSpeedCodes(self.speed)
 			},
 		},
 		tiltSpeedAdjust: {
@@ -154,43 +155,53 @@ function getPanTiltActionDefinitions(self, camId) {
 			callback: async (action) => {
 				switch (action.options.val) {
 					case '1':
-						if (self.speed.tilt < 24) self.speed.tilt++
+						if (self.speed.tilt < 0x17) self.speed.tilt++
 						break
 					case '2':
 						if (self.speed.tilt > 1) self.speed.tilt--
 						break
 					case '3':
-						self.speed.tilt = 12
+						self.speed.tilt = 0x0c
 						break
 				}
+				speed = getSpeedCodes(self.speed)
 			},
 		},
-		// TODO: Add to upgrade scripts and merge with above
-		ptSpeedU: {
-			name: 'P/T Speed Up . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				const ptSpeedIndex = CHOICES.SPEED.findIndex((item) => item.id === self.ptSpeed)
-				if (ptSpeedIndex > 0) {
-					self.ptSpeed = CHOICES.SPEED[ptSpeedIndex - 1].id
-					ptSpeed = String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xff)
+		panTiltSpeedAdjust: {
+			name: 'Pan/Tilt Speed (up/down/default)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Pan/Tilt Speed Adjust',
+					id: 'val',
+					default: '3',
+					choices: [
+						{ id: '1', label: 'Pan/Tilt Speed +' },
+						{ id: '2', label: 'Pan/Tilt Speed -' },
+						{ id: '3', label: 'Default' },
+					],
+				},
+			],
+			callback: async (action) => {
+				switch (action.options.val) {
+					case '1':
+						if (self.speed.pan < 0x18) self.speed.pan++
+						if (self.speed.tilt < 0x17) self.speed.tilt++
+						break
+					case '2':
+						if (self.speed.pan > 1) self.speed.pan--
+						if (self.speed.tilt > 1) self.speed.tilt--
+						break
+					case '3':
+						self.speed.pan = 0x0c
+						self.speed.tilt = 0x0c
+						break
 				}
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		ptSpeedD: {
-			name: 'P/T Speed Down . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				const ptSpeedIndex = CHOICES.SPEED.findIndex((item) => item.id === self.ptSpeed)
-				if (ptSpeedIndex < CHOICES.SPEED.length - 1) {
-					self.ptSpeed = CHOICES.SPEED[ptSpeedIndex + 1].id
-					ptSpeed = String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xff)
-				}
+				speed = getSpeedCodes(self.speed)
 			},
 		},
 		speedSet: {
-			name: 'Pan and/or Tilt Speed Set',
+			name: 'Set Pan and/or Tilt Speed',
 			options: [
 				{
 					type: 'checkbox',
@@ -213,18 +224,19 @@ function getPanTiltActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (action) => {
-				const speed = parseInt(action.options.speed, 16)
+				const s = parseInt(action.options.speed, 16)
 				if (action.options.pSet) {
-					self.speed.pan = speed
+					self.speed.pan = s
 				}
 				if (action.options.tSet) {
-					self.speed.tilt = speed
+					self.speed.tilt = parseInt(s, 16)
 				}
+				speed = getSpeedCodes(self.speed)
 			},
 		},
-		// TODO: Add to upgrade scripts and merge with above
 		ptSpeedS: {
-			name: 'P/T Speed Set . . . . . . deprecated',
+			// Legacy action for old presets
+			name: 'Set Pan and Tilt Speed',
 			options: [
 				{
 					type: 'dropdown',
@@ -234,8 +246,9 @@ function getPanTiltActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				self.ptSpeed = event.options.speed
-				ptSpeed = String.fromCharCode(parseInt(self.ptSpeed, 16) & 0xff)
+				self.speed.pan = parseInt(event.options.speed, 16)
+				self.speed.tilt = parseInt(event.options.speed, 16)
+				speed = getSpeedCodes(self.speed)
 			},
 		},
 	}
@@ -284,29 +297,6 @@ function getLensActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x04\x06' + String.fromCharCode(parseInt(event.options.mode, 16) & 0xff) + '\xFF')
 				self.data.zoomMode = event.options.mode
 				self.checkFeedbacks()
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		ciZoom: {
-			name: 'Clear Image Zoom . . . . . . deprecated',
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Clear Image On/Off',
-					id: 'bol',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' },
-					],
-					default: '0',
-				},
-			],
-			callback: async (event) => {
-				if (event.options.bol == '1') {
-					self.VISCA.send(camId + '\x01\x04\x06\x04\xFF')
-				} else {
-					self.VISCA.send(camId + '\x01\x04\x06\x03\xFF')
-				}
 			},
 		},
 		focusM: {
@@ -436,22 +426,6 @@ function getExposureActionDefinitions(self, camId) {
 				}
 			},
 		},
-		// TODO: Add to upgrade scripts and merge with above
-		irisU: {
-			name: 'Iris Up . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0B\x02\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		irisD: {
-			name: 'Iris Down . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0B\x03\xFF')
-			},
-		},
 		irisS: {
 			name: 'Set Iris',
 			options: [
@@ -493,22 +467,6 @@ function getExposureActionDefinitions(self, camId) {
 						self.VISCA.send(camId + '\x01\x04\x0C\x03\xFF')
 						break
 				}
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		gainU: {
-			name: 'Gain Up . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0C\x02\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		gainD: {
-			name: 'Gain Down . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0C\x03\xFF')
 			},
 		},
 		gainS: {
@@ -554,22 +512,6 @@ function getExposureActionDefinitions(self, camId) {
 				}
 			},
 		},
-		// TODO: Add to upgrade scripts and merge with above
-		shutU: {
-			name: 'Shutter Up . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0A\x02\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		shutD: {
-			name: 'Shutter Down . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0A\x03\xFF')
-			},
-		},
 		shutS: {
 			name: 'Set Shutter',
 			options: [
@@ -587,7 +529,7 @@ function getExposureActionDefinitions(self, camId) {
 				self.VISCA.send(cmd)
 			},
 		},
-		brightness: {
+		brightnessAdjust: {
 			name: 'Brightness Adjust (up/down)',
 			options: [
 				{
@@ -602,7 +544,7 @@ function getExposureActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				switch (parseInt(event.options.val)) {
+				switch (event.options.val) {
 					case '1':
 						self.VISCA.send(camId + '\x01\x04\x0D\x02\xFF')
 						break
@@ -612,20 +554,22 @@ function getExposureActionDefinitions(self, camId) {
 				}
 			},
 		},
-		// TODO: Add to upgrade scripts and merge with above
-		brightnessU: {
-			name: 'Brightness Up . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0D\x02\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		brightnessD: {
-			name: 'Brightness Down . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0D\x03\xFF')
+		brightnessSet: {
+			name: 'Set Brightness',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Brightness setting',
+					id: 'val',
+					choices: CHOICES.BRIGHTNESS,
+					default: '11',
+				},
+			],
+			callback: async (event) => {
+				let cmd = Buffer.from(camId + '\x01\x04\x4D\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((parseInt(event.options.val, 16) & 0xf0) >> 4, 6)
+				cmd.writeUInt8(parseInt(event.options.val, 16) & 0x0f, 7)
+				self.VISCA.send(cmd)
 			},
 		},
 		exposureCompOnOff: {
@@ -681,30 +625,6 @@ function getExposureActionDefinitions(self, camId) {
 					self.VISCA.send(camId + '\x01\x04\x0E\x00\xFF')
 					return
 				}
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		exposureCompU: {
-			name: 'Exposure Compensation Up . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0E\x02\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		exposureCompD: {
-			name: 'Exposure Compensation Down . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0E\x03\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		exposureCompReset: {
-			name: 'Exposure Compensation Reset . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x0E\x00\xFF')
 			},
 		},
 		exposureCompDirect: {
@@ -912,23 +832,6 @@ function getColorActionDefinitions(self, camId) {
 				}
 			},
 		},
-		// TODO: Add to upgrade scripts and merge with whiteBal
-		wbOutdoor: {
-			name: 'Outdoor . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x35\x02\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with whiteBal
-		wbIndoor: {
-			name: 'Indoor . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x35\x01\xFF')
-			},
-		},
-
 		wbTrigger: {
 			name: 'One push WB trigger',
 			options: [],
@@ -968,44 +871,12 @@ function getColorActionDefinitions(self, camId) {
 						self.VISCA.send(camId + '\x01\x04\x03\x03\xFF')
 					}
 				} else {
-					if (event.options.val == '2') {
+					if (event.options.val == '1') {
 						self.VISCA.send(camId + '\x01\x04\x04\x02\xFF')
 					} else {
 						self.VISCA.send(camId + '\x01\x04\x04\x03\xFF')
 					}
 				}
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		wbRedUp: {
-			name: 'White Balance - Red Gain Up . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x03\x02\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		wbRedDown: {
-			name: 'White Balance - Red Gain Down . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x03\x03\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		wbBlueUp: {
-			name: 'White Balance - Blue Gain Up . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x04\x02\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		wbBlueDown: {
-			name: 'White Balance - Blue Gain Down . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x04\x03\xFF')
 			},
 		},
 		wbCustom: {
@@ -1050,7 +921,7 @@ function getColorActionDefinitions(self, camId) {
 				setTimeout(() => {
 					if (event.options.rSet) {
 						// Set Red Gain
-						const r = event.options.rVal
+						const r = parseInt(event.options.rVal)
 							.toString(16)
 							.padStart(2, '0')
 							.split('')
@@ -1060,7 +931,7 @@ function getColorActionDefinitions(self, camId) {
 					setTimeout(() => {
 						if (event.options.bSet) {
 							// Set Blue Gain
-							const b = event.options.bVal
+							const b = parseInt(event.options.bVal)
 								.toString(16)
 								.padStart(2, '0')
 								.split('')
@@ -1069,56 +940,6 @@ function getColorActionDefinitions(self, camId) {
 						}
 					}, 50)
 				}, 50)
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		wbRedS: {
-			name: 'White Balance - Red Set Value . . . . . . deprecated',
-			options: [
-				{
-					type: 'number',
-					label: 'Red',
-					id: 'rVal',
-					tooltip: 'Sets the red gain, 192 is the default',
-					min: 0,
-					max: 255,
-					default: 192,
-					step: 1,
-				},
-			],
-			callback: async (event) => {
-				// Set Red Gain
-				const r = event.options.rVal
-					.toString(16)
-					.padStart(2, '0')
-					.split('')
-					.map((x) => String.fromCharCode(parseInt(x, 16)))
-				self.VISCA.send(camId + '\x01\x04\x43\x00\x00' + r[0] + r[1] + '\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		wbBlueS: {
-			name: 'White Balance - Blue Set Value . . . . . . deprecated',
-			options: [
-				{
-					type: 'number',
-					label: 'Blue',
-					id: 'bVal',
-					tooltip: 'Sets the blue gain, 192 is the default',
-					min: 0,
-					max: 255,
-					default: 192,
-					step: 1,
-				},
-			],
-			callback: async (event) => {
-				// Set Blue Gain
-				const b = event.options.bVal
-					.toString(16)
-					.padStart(2, '0')
-					.split('')
-					.map((x) => String.fromCharCode(parseInt(x, 16)))
-				self.VISCA.send(camId + '\x01\x04\x44\x00\x00' + b[0] + b[1] + '\xFF')
 			},
 		},
 		wbOffsetAdjust: {
@@ -1130,8 +951,8 @@ function getColorActionDefinitions(self, camId) {
 					id: 'val',
 					default: '3',
 					choices: [
-						{ id: '1', label: 'Up' },
-						{ id: '2', label: 'Down' },
+						{ id: '1', label: 'Up (more red)' },
+						{ id: '2', label: 'Down (more blue)' },
 						{ id: '3', label: 'Reset' },
 					],
 				},
@@ -1150,30 +971,6 @@ function getColorActionDefinitions(self, camId) {
 				}
 			},
 		},
-		// TODO: Add to upgrade scripts and merge with above
-		wbOffsetUp: {
-			name: 'White Balance - Offset Up . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x7E\x01\x2E\x00\x02\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		wbOffsetDown: {
-			name: 'White Balance - Offset Down . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x7E\x01\x2E\x00\x03\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		wbOffsetReset: {
-			name: 'White Balance - Offset Reset . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x7E\x01\x2E\x00\x00\xFF')
-			},
-		},
 	}
 }
 
@@ -1184,7 +981,7 @@ function getPresetActionDefinitions(self, camId) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Preset Nr.',
+					label: 'Preset Number.',
 					id: 'val',
 					choices: CHOICES.PRESET,
 				},
@@ -1200,7 +997,7 @@ function getPresetActionDefinitions(self, camId) {
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Preset Nr.',
+					label: 'Preset Number',
 					id: 'val',
 					choices: CHOICES.PRESET,
 				},
@@ -1259,22 +1056,6 @@ function getMiscActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x04\x00' + String.fromCharCode(parseInt(event.options.val, 16) & 0xff) + '\xFF')
 			},
 		},
-		// TODO: Add to upgrade scripts and merge with above
-		camOn: {
-			name: 'Power On Camera . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x00\x02\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		camOff: {
-			name: 'Power Off Camera . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x04\x00\x03\xFF')
-			},
-		},
 		tally: {
 			name: 'Tally (on/off)',
 			options: [
@@ -1318,23 +1099,6 @@ function getMiscActionDefinitions(self, camId) {
 				}
 			},
 		},
-		// TODO: Add to upgrade scripts and merge with above
-		menuToggle: {
-			name: 'Menu/Back . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				// self.log('info', 'menuToggle: ' + self.viscaToString(camId + '\x01\x06\x06\x10\xFF'))
-				self.VISCA.send(camId + '\x01\x06\x06\x10\xFF')
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		menuEnter: {
-			name: 'Menu Enter . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.VISCA.send(camId + '\x01\x7E\x01\x02\x00\x01\xFF')
-			},
-		},
 		latency: {
 			name: 'Video Latency (normal/low)',
 			options: [
@@ -1372,24 +1136,6 @@ function getMiscActionDefinitions(self, camId) {
 				self.checkFeedbacks()
 			},
 		},
-		// TODO: Add to upgrade scripts and merge with above
-		setHeldFeedback: {
-			name: 'Set Held Feedback On . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.data.heldThresholdReached = true
-				self.checkFeedbacks()
-			},
-		},
-		// TODO: Add to upgrade scripts and merge with above
-		clearHeldFeedback: {
-			name: 'Clear Held Feedback . . . . . . deprecated',
-			options: [],
-			callback: async () => {
-				self.data.heldThresholdReached = false
-				self.checkFeedbacks()
-			},
-		},
 		customCommand: {
 			name: 'Custom Command',
 			description: 'Request additional actions at https://github.com/bitfocus/companion-module-sony-visca/issues/35',
@@ -1415,11 +1161,20 @@ function getMiscActionDefinitions(self, camId) {
 	}
 }
 
+function getSpeedCodes(speed) {
+	return {
+		pan: String.fromCharCode(speed.pan),
+		tilt: String.fromCharCode(speed.tilt),
+		zoom: String.fromCharCode(speed.zoom),
+		focus: String.fromCharCode(speed.focus),
+	}
+}
+
 function formatActionsMarkdown(title, actions) {
 	let markdown = `\n### ${title} Actions\n\n`
 	for (const action in actions) {
 		// if (actions[action].name.slice(-10) != 'deprecated')
-		markdown += `* ${actions[action].name}\n`
+		markdown += `- ${actions[action].name}\n`
 	}
 	return markdown
 }
@@ -1427,17 +1182,10 @@ function formatActionsMarkdown(title, actions) {
 export function getActionsMarkdown() {
 	let markdown = '## Actions Implemented\n'
 
-	// dummy values to provide getActionDefinitions(self) when generating HELP.md
+	// dummy values for getActionDefinitions(self) when generating HELP.md
 	const self = {
 		config: { id: '128' },
-		ptSpeed: '0C',
-		speed: {
-			pan: '0C',
-			tilt: '0C',
-			zoom: '0C',
-			focus: '0C',
-			preset: '0C',
-		},
+		speed: { pan: 0x0c, tilt: 0x0c, zoom: 4, focus: 3 },
 	}
 
 	markdown += formatActionsMarkdown('Pan/Tilt', getPanTiltActionDefinitions(self))

@@ -299,8 +299,8 @@ const panTiltPresets = {
 			{
 				down: [
 					{
-						actionId: 'ptSpeedU',
-						options: {},
+						actionId: 'panTiltSpeedAdjust',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -321,8 +321,8 @@ const panTiltPresets = {
 			{
 				down: [
 					{
-						actionId: 'ptSpeedD',
-						options: {},
+						actionId: 'panTiltSpeedAdjust',
+						options: { val: '2' },
 					},
 				],
 			},
@@ -343,10 +343,8 @@ const panTiltPresets = {
 			{
 				down: [
 					{
-						actionId: 'ptSpeedS',
-						options: {
-							speed: '0C',
-						},
+						actionId: 'panTiltSpeedAdjust',
+						options: { val: '3' },
 					},
 				],
 			},
@@ -484,35 +482,6 @@ const lensPresets = {
 			},
 		],
 	},
-
-	'lens-focusNear': {
-		type: 'button',
-		category: 'Lens',
-		name: 'Focus Near',
-		style: {
-			text: 'FOCUS\\nNEAR',
-			size: '18',
-			color: COLORS.WHITE,
-			bgcolor: COLORS.BLACK,
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: 'focusN',
-						options: {},
-					},
-				],
-				up: [
-					{
-						actionId: 'focusS',
-						options: {},
-					},
-				],
-			},
-		],
-		feedbacks: [],
-	},
 	'lens-focusFar': {
 		type: 'button',
 		category: 'Lens',
@@ -541,10 +510,38 @@ const lensPresets = {
 		],
 		feedbacks: [],
 	},
+	'lens-focusNear': {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Near',
+		style: {
+			text: 'FOCUS\\nNEAR',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'focusN',
+						options: {},
+					},
+				],
+				up: [
+					{
+						actionId: 'focusS',
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
 	'lens-focusAuto': {
 		type: 'button',
 		category: 'Lens',
-		name: 'Auto Focus',
+		name: 'Auto/Manual Focus Toggle',
 		style: {
 			text: 'Auto\\nFocus',
 			size: '18',
@@ -557,7 +554,7 @@ const lensPresets = {
 					{
 						actionId: 'focusM',
 						options: {
-							bol: 1,
+							bol: '1',
 						},
 					},
 				],
@@ -567,7 +564,7 @@ const lensPresets = {
 					{
 						actionId: 'focusM',
 						options: {
-							bol: 0,
+							bol: '0',
 						},
 					},
 				],
@@ -615,7 +612,7 @@ const exposurePresets = {
 	'exposure-autoManual': {
 		type: 'button',
 		category: 'Exposure',
-		name: 'Auto / Manual Exposure Toggle',
+		name: 'Auto/Manual Exposure Toggle',
 		style: {
 			text: 'Auto\\nExpose',
 			size: '18',
@@ -628,7 +625,7 @@ const exposurePresets = {
 					{
 						actionId: 'expM',
 						options: {
-							val: 1,
+							val: '1',
 						},
 					},
 				],
@@ -638,7 +635,7 @@ const exposurePresets = {
 					{
 						actionId: 'expM',
 						options: {
-							val: 0,
+							val: '0',
 						},
 					},
 				],
@@ -707,7 +704,7 @@ const exposurePresets = {
 					{
 						actionId: 'expM',
 						options: {
-							val: 0,
+							val: '0',
 						},
 					},
 				],
@@ -729,7 +726,8 @@ const exposurePresets = {
 			{
 				down: [
 					{
-						actionId: 'irisU',
+						actionId: 'irisAdjust',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -750,7 +748,8 @@ const exposurePresets = {
 			{
 				down: [
 					{
-						actionId: 'irisD',
+						actionId: 'irisAdjust',
+						options: { val: '2' },
 					},
 				],
 			},
@@ -771,7 +770,8 @@ const exposurePresets = {
 			{
 				down: [
 					{
-						actionId: 'gainU',
+						actionId: 'gainAdjust',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -792,7 +792,8 @@ const exposurePresets = {
 			{
 				down: [
 					{
-						actionId: 'gainD',
+						actionId: 'gainAdjust',
+						options: { val: '2' },
 					},
 				],
 			},
@@ -813,7 +814,8 @@ const exposurePresets = {
 			{
 				down: [
 					{
-						actionId: 'shutU',
+						actionId: 'shutterAdjust',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -834,7 +836,52 @@ const exposurePresets = {
 			{
 				down: [
 					{
-						actionId: 'shutD',
+						actionId: 'shutterAdjust',
+						options: { val: '2' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'exposure-brightnessUp': {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Brightness Up',
+		style: {
+			text: 'Bright\\nUp',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'brightnessAdjust',
+						options: { val: '1' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'exposure-brightnessDown': {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Brightness Down',
+		style: {
+			text: 'Bright\\nDown',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'brightnessAdjust',
+						options: { val: '2' },
 					},
 				],
 			},
@@ -857,7 +904,7 @@ const exposurePresets = {
 					{
 						actionId: 'exposureCompOnOff',
 						options: {
-							bol: 0,
+							bol: '0',
 						},
 					},
 				],
@@ -867,7 +914,7 @@ const exposurePresets = {
 					{
 						actionId: 'exposureCompOnOff',
 						options: {
-							bol: 1,
+							bol: '1',
 						},
 					},
 				],
@@ -901,7 +948,8 @@ const exposurePresets = {
 			{
 				down: [
 					{
-						actionId: 'exposureCompU',
+						actionId: 'exposureComp',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -922,7 +970,8 @@ const exposurePresets = {
 			{
 				down: [
 					{
-						actionId: 'exposureCompD',
+						actionId: 'exposureComp',
+						options: { val: '2' },
 					},
 				],
 			},
@@ -943,7 +992,8 @@ const exposurePresets = {
 			{
 				down: [
 					{
-						actionId: 'exposureCompReset',
+						actionId: 'exposureComp',
+						options: { val: '3' },
 					},
 				],
 			},
@@ -966,7 +1016,7 @@ const exposurePresets = {
 					{
 						actionId: 'backlightComp',
 						options: {
-							bol: 1,
+							bol: '1',
 						},
 					},
 				],
@@ -976,7 +1026,7 @@ const exposurePresets = {
 					{
 						actionId: 'backlightComp',
 						options: {
-							bol: 0,
+							bol: '0',
 						},
 					},
 				],
@@ -1012,7 +1062,7 @@ const exposurePresets = {
 					{
 						actionId: 'spotlightComp',
 						options: {
-							bol: 1,
+							bol: '1',
 						},
 					},
 				],
@@ -1022,7 +1072,7 @@ const exposurePresets = {
 					{
 						actionId: 'spotlightComp',
 						options: {
-							bol: 0,
+							bol: '0',
 						},
 					},
 				],
@@ -1061,7 +1111,7 @@ const colorPresets = {
 					{
 						actionId: 'whiteBal',
 						options: {
-							val: 0,
+							val: '0',
 						},
 					},
 				],
@@ -1085,7 +1135,7 @@ const colorPresets = {
 					{
 						actionId: 'whiteBal',
 						options: {
-							val: 4,
+							val: '4',
 						},
 					},
 				],
@@ -1109,7 +1159,7 @@ const colorPresets = {
 					{
 						actionId: 'whiteBal',
 						options: {
-							val: 1,
+							val: '1',
 						},
 					},
 				],
@@ -1133,7 +1183,7 @@ const colorPresets = {
 					{
 						actionId: 'whiteBal',
 						options: {
-							val: 2,
+							val: '2',
 						},
 					},
 				],
@@ -1157,7 +1207,7 @@ const colorPresets = {
 					{
 						actionId: 'whiteBal',
 						options: {
-							val: 5,
+							val: '5',
 						},
 					},
 				],
@@ -1181,8 +1231,10 @@ const colorPresets = {
 					{
 						actionId: 'wbCustom',
 						options: {
-							rVal: 192,
-							bVal: 192,
+							rSet: true,
+							bSet: true,
+							rVal: '192',
+							bVal: '192',
 						},
 					},
 				],
@@ -1206,7 +1258,7 @@ const colorPresets = {
 					{
 						actionId: 'whiteBal',
 						options: {
-							val: 3,
+							val: '3',
 						},
 					},
 				],
@@ -1229,6 +1281,7 @@ const colorPresets = {
 				down: [
 					{
 						actionId: 'wbTrigger',
+						options: {},
 					},
 				],
 			},
@@ -1249,7 +1302,11 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'wbRedUp',
+						actionId: 'wbAdjust',
+						options: {
+							rb: 'r',
+							val: '1',
+						},
 					},
 				],
 			},
@@ -1270,7 +1327,11 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'wbRedDown',
+						actionId: 'wbAdjust',
+						options: {
+							rb: 'r',
+							val: '2',
+						},
 					},
 				],
 			},
@@ -1291,7 +1352,11 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'wbBlueUp',
+						actionId: 'wbAdjust',
+						options: {
+							rb: 'b',
+							val: '1',
+						},
 					},
 				],
 			},
@@ -1312,7 +1377,11 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'wbBlueDown',
+						actionId: 'wbAdjust',
+						options: {
+							rb: 'b',
+							val: '2',
+						},
 					},
 				],
 			},
@@ -1333,7 +1402,8 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'wbOffsetReset',
+						actionId: 'wbOffsetAdjust',
+						options: { val: '3' },
 					},
 				],
 			},
@@ -1354,7 +1424,8 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'wbOffsetUp',
+						actionId: 'wbOffsetAdjust',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -1375,7 +1446,8 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'wbOffsetDown',
+						actionId: 'wbOffsetAdjust',
+						options: { val: '2' },
 					},
 				],
 			},
@@ -1399,8 +1471,8 @@ const systemPresets = {
 			{
 				down: [
 					{
-						actionId: 'camOn',
-						options: {},
+						actionId: 'cameraPower',
+						options: { val: '02' },
 					},
 				],
 			},
@@ -1421,8 +1493,8 @@ const systemPresets = {
 			{
 				down: [
 					{
-						actionId: 'camOff',
-						options: {},
+						actionId: 'cameraPower',
+						options: { val: '03' },
 					},
 				],
 			},
@@ -1443,8 +1515,8 @@ const systemPresets = {
 			{
 				down: [
 					{
-						actionId: 'menuToggle',
-						options: {},
+						actionId: 'menu',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -1465,8 +1537,8 @@ const systemPresets = {
 			{
 				down: [
 					{
-						actionId: 'menuEnter',
-						options: {},
+						actionId: 'menu',
+						options: { val: '2' },
 					},
 				],
 			},
@@ -1512,15 +1584,16 @@ for (let i = 0; i < 64; i++) {
 							delay: 0,
 						},
 						{
-							actionId: 'setHeldFeedback',
-							options: {},
+							actionId: 'buttonFeedback',
+							options: { bol: '1' },
 							delay: 0,
 						},
 					],
 				},
 				2001: [
 					{
-						actionId: 'clearHeldFeedback',
+						actionId: 'buttonFeedback',
+						options: { bol: '0' },
 					},
 				],
 			},
@@ -1528,6 +1601,7 @@ for (let i = 0; i < 64; i++) {
 		feedbacks: [
 			{
 				feedbackId: 'heldFeedback',
+				options: {},
 				style: {
 					color: COLORS.BLACK,
 					bgcolor: COLORS.YELLOW,
@@ -1564,14 +1638,14 @@ const rotationEnabledPresets = {
 				],
 				rotate_left: [
 					{
-						actionId: 'irisD',
-						options: {},
+						actionId: 'irisAdjust',
+						options: { val: '2' },
 					},
 				],
 				rotate_right: [
 					{
-						actionId: 'irisU',
-						options: {},
+						actionId: 'irisAdjust',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -1603,14 +1677,14 @@ const rotationEnabledPresets = {
 				],
 				rotate_left: [
 					{
-						actionId: 'gainD',
-						options: {},
+						actionId: 'gainAdjust',
+						options: { val: '2' },
 					},
 				],
 				rotate_right: [
 					{
-						actionId: 'gainU',
-						options: {},
+						actionId: 'gainAdjust',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -1636,20 +1710,59 @@ const rotationEnabledPresets = {
 					{
 						actionId: 'shutS',
 						options: {
-							val: '06',
+							val: '12',
 						},
 					},
 				],
 				rotate_left: [
 					{
-						actionId: 'shutD',
-						options: {},
+						actionId: 'shutterAdjust',
+						options: { val: '2' },
 					},
 				],
 				rotate_right: [
 					{
-						actionId: 'shutU',
-						options: {},
+						actionId: 'shutterAdjust',
+						options: { val: '1' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'exposure-brightness': {
+		type: 'button',
+		category: 'Rotation Enabled',
+		name: 'Brightness - tap for default (1/60 or 1/50)',
+		style: {
+			text: 'Bright',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'brightnessSet',
+						options: {
+							val: '11',
+						},
+					},
+				],
+				rotate_left: [
+					{
+						actionId: 'brightnessAdjust',
+						options: { val: '2' },
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'brightnessAdjust',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -1673,19 +1786,20 @@ const rotationEnabledPresets = {
 			{
 				down: [
 					{
-						actionId: 'exposureCompReset',
+						actionId: 'exposureComp',
+						options: { val: '3' },
 					},
 				],
 				rotate_left: [
 					{
-						actionId: 'exposureCompD',
-						options: {},
+						actionId: 'exposureComp',
+						options: { val: '2' },
 					},
 				],
 				rotate_right: [
 					{
-						actionId: 'exposureCompU',
-						options: {},
+						actionId: 'exposureComp',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -1709,22 +1823,31 @@ const rotationEnabledPresets = {
 			{
 				down: [
 					{
-						actionId: 'wbRedS',
+						actionId: 'wbCustom',
 						options: {
+							rSet: true,
+							bSet: false,
 							rVal: 192,
+							bVal: 192,
 						},
 					},
 				],
 				rotate_left: [
 					{
-						actionId: 'wbRedDown',
-						options: {},
+						actionId: 'wbAdjust',
+						options: {
+							rb: 'r',
+							val: '2',
+						},
 					},
 				],
 				rotate_right: [
 					{
-						actionId: 'wbRedUp',
-						options: {},
+						actionId: 'wbAdjust',
+						options: {
+							rb: 'r',
+							val: '1',
+						},
 					},
 				],
 			},
@@ -1748,22 +1871,31 @@ const rotationEnabledPresets = {
 			{
 				down: [
 					{
-						actionId: 'wbBlueS',
+						actionId: 'wbCustom',
 						options: {
+							rSet: false,
+							bSet: true,
+							rVal: 192,
 							bVal: 192,
 						},
 					},
 				],
 				rotate_left: [
 					{
-						actionId: 'wbBlueDown',
-						options: {},
+						actionId: 'wbAdjust',
+						options: {
+							rb: 'b',
+							val: '2',
+						},
 					},
 				],
 				rotate_right: [
 					{
-						actionId: 'wbBlueUp',
-						options: {},
+						actionId: 'wbAdjust',
+						options: {
+							rb: 'b',
+							val: '1',
+						},
 					},
 				],
 			},
@@ -1787,20 +1919,20 @@ const rotationEnabledPresets = {
 			{
 				down: [
 					{
-						actionId: 'wbOffsetReset',
-						options: {},
+						actionId: 'wbOffsetAdjust',
+						options: { val: '3' },
 					},
 				],
 				rotate_left: [
 					{
-						actionId: 'wbOffsetDown',
-						options: {},
+						actionId: 'wbOffsetAdjust',
+						options: { val: '2' },
 					},
 				],
 				rotate_right: [
 					{
-						actionId: 'wbOffsetUp',
-						options: {},
+						actionId: 'wbOffsetAdjust',
+						options: { val: '1' },
 					},
 				],
 			},
@@ -1824,22 +1956,44 @@ const rotationEnabledPresets = {
 			{
 				down: [
 					{
-						actionId: 'ptSpeedS',
+						actionId: 'panSpeedAdjust',
 						options: {
-							speed: '0C',
+							val: '3',
+						},
+					},
+					{
+						actionId: 'tiltSpeedAdjust',
+						options: {
+							val: '3',
 						},
 					},
 				],
 				rotate_left: [
 					{
-						actionId: 'ptSpeedD',
-						options: {},
+						actionId: 'panSpeedAdjust',
+						options: {
+							val: '2',
+						},
+					},
+					{
+						actionId: 'tiltSpeedAdjust',
+						options: {
+							val: '2',
+						},
 					},
 				],
 				rotate_right: [
 					{
-						actionId: 'ptSpeedU',
-						options: {},
+						actionId: 'panSpeedAdjust',
+						options: {
+							val: '1',
+						},
+					},
+					{
+						actionId: 'tiltSpeedAdjust',
+						options: {
+							val: '1',
+						},
 					},
 				],
 			},
@@ -1851,7 +2005,7 @@ const rotationEnabledPresets = {
 function formatPresetsMarkdown(title, presets) {
 	let markdown = `\n### ${title} Presets\n\n`
 	for (const preset in presets) {
-		markdown += `* ${presets[preset].name}\n`
+		markdown += `- ${presets[preset].name}\n`
 	}
 	return markdown
 }
@@ -1865,8 +2019,8 @@ export function getPresetsMarkdown() {
 	markdown += formatPresetsMarkdown('System', systemPresets)
 	markdown +=
 		'\n### Camera Presets\n\n' +
-		'* Presets 1-64 are available  \n' +
-		'*Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.*\n'
+		'- Presets 1-64 are available  \n' +
+		'- Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.*\n'
 	markdown += formatPresetsMarkdown('Rotation Enabled', rotationEnabledPresets)
 	markdown +=
 		'\n*Rotation enabled presets are intended for devices like the Stream Deck+ and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Tapping the knob defaults the setting.*\n'

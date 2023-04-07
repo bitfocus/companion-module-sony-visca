@@ -37,12 +37,12 @@ class SonyVISCAInstance extends InstanceBase {
 				}
 
 				const newBuffer = buffer.slice(0, 8 + payload.length)
-				// this.log('debug', this.viscaToString(newBuffer))
+				this.log('debug', 'send: ' + this.viscaToString(newBuffer))
 				this.udp.send(newBuffer)
 			},
 		}
 
-		this.ptSpeed = '0C'
+		this.speed = { pan: 0x0c, tilt: 0x0c, zoom: 4, focus: 3 }
 		this.setFeedbackDefinitions(getFeedbackDefinitions(this))
 		this.setActionDefinitions(getActionDefinitions(this))
 		this.setPresetDefinitions(getPresetDefinitions(this))

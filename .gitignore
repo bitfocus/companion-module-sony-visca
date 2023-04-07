@@ -4,3 +4,4 @@ package-lock.json
 /pkg.tgz
 DEBUG*
 .vscode
+/logs
