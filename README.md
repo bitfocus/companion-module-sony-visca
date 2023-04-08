@@ -7,12 +7,15 @@ This module uses the Sony Visca protocol to control PTZ cameras.
 
 ## Changes
 
-### v2.3.5 (work in progress)
+### v2.3.6
 
 - Add Custom Command action
+- Add variable speed zoom and focus actions and presets
+- Add speed controls and variables for PTZF functions
 - Add upgrade script to handle changes
 - Rework actions and presets for consistency and preparing for new features
-- Updated documentation to include all implemented actions and presets
+- Rework feedbacks, moved text updates to variables
+- Updated documentation to include all implemented actions, presets, and variables
 
 ### v2.2.0
 

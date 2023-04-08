@@ -35,11 +35,17 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 
 - Zoom In - standard speed
 - Zoom Out - standard speed
+- Zoom In - variable speed
+- Zoom Out - variable speed
 - Zoom Stop
 - Zoom Mode (digital/optical/clear image)
+- Zoom Speed (up/down/default)
+- Focus Speed (up/down/default)
 - Focus Mode (auto/manual)
 - Focus Near - standard speed
 - Focus Far - standard speed
+- Focus Near - variable speed
+- Focus Far - variable speed
 - Focus Stop
 - One Push Auto Focus
 
@@ -54,7 +60,7 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 - Set Shutter
 - Brightness Adjust (up/down)
 - Set Brightness
-- Exposure Compensation On/Off
+- Exposure Compensation (on/off)
 - Exposure Compensation (up/down/reset)
 - Exposure Compensation Set Value
 - Aperture Compensation (up/down/reset)
@@ -99,24 +105,30 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 - Down Left
 - Down Right
 - Home
-- Speed Up
-- Speed Down
-- Speed Default
+- Pan/Tilt Speed Up
+- Pan/Tilt Speed Down
+- Pan/Tilt Speed Default
+- Pan/Tilt Slow Mode (normal/slow)
 
 ### Lens Presets
 
-- Zoom In
-- Zoom Out
+- Zoom In (variable speed)
+- Zoom Out (variable speed)
 - Zoom Mode
-- Focus Far
-- Focus Near
-- Auto/Manual Focus Toggle
+- Focus Far (variable speed)
+- Focus Near (variable speed)
+- Focus Mode - Auto/Manual
 - One Push Auto Focus
+- Zoom Speed Faster
+- Zoom Speed Slower
+- Zoom Speed Default (1)
+- Focus Speed Faster
+- Focus Speed Slower
+- Focus Speed Default (1)
 
 ### Exposure Presets
 
 - Auto/Manual Exposure Toggle
-- Exposure Mode
 - Iris Up
 - Iris Down
 - Gain Up
@@ -173,5 +185,24 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 - Blue Gain - tap for default (192)
 - White Balance Offset - tap to reset
 - Pan/Tilt Speed - tap for default
+- Zoom Speed - tap for standard (1)
+- Focus Speed - tap for standard (1)
 
 *Rotation enabled presets are intended for devices like the Stream Deck+ and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Tapping the knob defaults the setting.*
+
+## Variables Implemented
+
+| Id | Name |
+|----|------|
+| ptSlowMode | Pan/Tilt Slow mode (slow/normal) |
+| panSpeed | Pan Speed |
+| tiltSpeed | Tilt Speed |
+| zoomSpeed | Zoom Speed |
+| focusSpeed | Focus Speed |
+| zoomMode | Zoom Mode (optical/digital/clr img) |
+| focusMode | Focus Mode (auto/manual) |
+| expMode | Exposure Mode |
+| expCompOnOff | Exposure Compensation (on/off) |
+| backlightComp | Backlight Compensation (on/off) |
+| spotlightComp | Spotlight Compensation (on/off) |
+| lastCmdSent | Last Command Sent (hex values) |

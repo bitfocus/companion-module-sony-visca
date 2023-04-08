@@ -5,16 +5,28 @@ import { getConfigDefinitions } from './config.js'
 import { getFeedbackDefinitions } from './feedbacks.js'
 import { getActionDefinitions } from './actions.js'
 import { getPresetDefinitions } from './presets.js'
+import { initVariables, updateVariables } from './variables.js'
 
 class SonyVISCAInstance extends InstanceBase {
 	constructor(internal) {
 		super(internal)
+		this.initVariables = initVariables
+		this.updateVariables = updateVariables
 	}
 
 	async init(config) {
-		this.config = config
-		this.data = { exposureMode: 'Auto', expCompState: 'On' }
 		this.updateStatus(InstanceStatus.Disconnected)
+		this.config = config
+		this.state = {
+			ptSlowMode: 'normal',
+			zoomMode: 'optical',
+			focusMode: 'auto',
+			exposureMode: 'auto',
+			expCompOnOff: 'off',
+			backlightComp: 'off',
+			spotlightComp: 'off',
+		}
+		this.speed = { pan: 0x0c, tilt: 0x0c, zoom: 1, focus: 1 }
 		this.VISCA = {
 			// VISCA Communication Types
 			command: Buffer.from([0x01, 0x00]),
@@ -38,15 +50,18 @@ class SonyVISCAInstance extends InstanceBase {
 
 				const newBuffer = buffer.slice(0, 8 + payload.length)
 				this.log('debug', 'send: ' + this.viscaToString(newBuffer))
+				let lastCmdSent = this.viscaToString(newBuffer).slice(30)
+				this.setVariableValues({ lastCmdSent: lastCmdSent })
 				this.udp.send(newBuffer)
 			},
 		}
 
-		this.speed = { pan: 0x0c, tilt: 0x0c, zoom: 4, focus: 3 }
 		this.setFeedbackDefinitions(getFeedbackDefinitions(this))
 		this.setActionDefinitions(getActionDefinitions(this))
 		this.setPresetDefinitions(getPresetDefinitions(this))
+		this.initVariables()
 		this.init_udp()
+		this.updateVariables()
 	}
 
 	// When module gets deleted

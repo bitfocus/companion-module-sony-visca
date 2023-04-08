@@ -2,18 +2,17 @@ import { CHOICES } from './choices.js'
 
 export function getActionDefinitions(self) {
 	const camId = String.fromCharCode(parseInt(self.config.id))
+	let speed = getSpeedCodes(self)
 	return {
-		...getPanTiltActionDefinitions(self, camId),
-		...getLensActionDefinitions(self, camId),
+		...getPanTiltActionDefinitions(self, camId, speed),
+		...getLensActionDefinitions(self, camId, speed),
 		...getExposureActionDefinitions(self, camId),
 		...getColorActionDefinitions(self, camId),
 		...getPresetActionDefinitions(self, camId),
 		...getMiscActionDefinitions(self, camId),
 	}
 }
-function getPanTiltActionDefinitions(self, camId) {
-	let speed = getSpeedCodes(self.speed)
-
+function getPanTiltActionDefinitions(self, camId, speed) {
 	return {
 		left: {
 			name: 'Pan Left',
@@ -102,9 +101,13 @@ function getPanTiltActionDefinitions(self, camId) {
 			callback: async (event) => {
 				if (event.options.bol == '0') {
 					self.VISCA.send(camId + '\x01\x06\x44\x03\xFF')
+					self.state.ptSlowMode = 'normal'
 				} else {
 					self.VISCA.send(camId + '\x01\x06\x44\x02\xFF')
+					self.state.ptSlowMode = 'slow'
 				}
+				self.updateVariables()
+				self.checkFeedbacks()
 			},
 		},
 		panSpeedAdjust: {
@@ -134,7 +137,7 @@ function getPanTiltActionDefinitions(self, camId) {
 						self.speed.pan = 0x0c
 						break
 				}
-				speed = getSpeedCodes(self.speed)
+				speed = getSpeedCodes(self)
 			},
 		},
 		tiltSpeedAdjust: {
@@ -164,7 +167,7 @@ function getPanTiltActionDefinitions(self, camId) {
 						self.speed.tilt = 0x0c
 						break
 				}
-				speed = getSpeedCodes(self.speed)
+				speed = getSpeedCodes(self)
 			},
 		},
 		panTiltSpeedAdjust: {
@@ -197,7 +200,7 @@ function getPanTiltActionDefinitions(self, camId) {
 						self.speed.tilt = 0x0c
 						break
 				}
-				speed = getSpeedCodes(self.speed)
+				speed = getSpeedCodes(self)
 			},
 		},
 		speedSet: {
@@ -231,7 +234,7 @@ function getPanTiltActionDefinitions(self, camId) {
 				if (action.options.tSet) {
 					self.speed.tilt = parseInt(s, 16)
 				}
-				speed = getSpeedCodes(self.speed)
+				speed = getSpeedCodes(self)
 			},
 		},
 		ptSpeedS: {
@@ -248,7 +251,7 @@ function getPanTiltActionDefinitions(self, camId) {
 			callback: async (event) => {
 				self.speed.pan = parseInt(event.options.speed, 16)
 				self.speed.tilt = parseInt(event.options.speed, 16)
-				speed = getSpeedCodes(self.speed)
+				speed = getSpeedCodes(self)
 			},
 		},
 	}
@@ -268,6 +271,60 @@ function getLensActionDefinitions(self, camId) {
 			options: [],
 			callback: async () => {
 				self.VISCA.send(camId + '\x01\x04\x07\x03\xFF')
+			},
+		},
+		zoomInVS: {
+			name: 'Zoom In - variable speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Zoom Speed for this button',
+					id: 'val',
+					default: 'v',
+					choices: [
+						{ id: 'v', label: 'Zoom Speed - Variable' },
+						{ id: '7', label: 'Zoom Speed 7 (fast)' },
+						{ id: '6', label: 'Zoom Speed 6' },
+						{ id: '5', label: 'Zoom Speed 5' },
+						{ id: '4', label: 'Zoom Speed 4' },
+						{ id: '3', label: 'Zoom Speed 3' },
+						{ id: '2', label: 'Zoom Speed 2' },
+						{ id: '1', label: 'Zoom Speed 1' },
+						{ id: '0', label: 'Zoom Speed 0 (slow)' },
+					],
+				},
+			],
+			callback: async (event) => {
+				const s = parseInt(event.options.val) || self.speed.zoom
+				const b = String.fromCharCode(0x20 + s)
+				self.VISCA.send(camId + '\x01\x04\x07' + b + '\xFF')
+			},
+		},
+		zoomOutVS: {
+			name: 'Zoom Out - variable speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Zoom Speed for this button',
+					id: 'val',
+					default: 'v',
+					choices: [
+						{ id: 'v', label: 'Zoom Speed - Variable' },
+						{ id: '7', label: 'Zoom Speed 7 (fast)' },
+						{ id: '6', label: 'Zoom Speed 6' },
+						{ id: '5', label: 'Zoom Speed 5' },
+						{ id: '4', label: 'Zoom Speed 4' },
+						{ id: '3', label: 'Zoom Speed 3' },
+						{ id: '2', label: 'Zoom Speed 2' },
+						{ id: '1', label: 'Zoom Speed 1' },
+						{ id: '0', label: 'Zoom Speed 0 (slow)' },
+					],
+				},
+			],
+			callback: async (event) => {
+				const s = parseInt(event.options.val) || self.speed.zoom
+				const b = String.fromCharCode(0x30 + s)
+				self.VISCA.send(camId + '\x01\x04\x07' + b + '\xFF')
 			},
 		},
 		zoomS: {
@@ -295,8 +352,99 @@ function getLensActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				self.VISCA.send(camId + '\x01\x04\x06' + String.fromCharCode(parseInt(event.options.mode, 16) & 0xff) + '\xFF')
-				self.data.zoomMode = event.options.mode
+				switch (event.options.mode) {
+					case '2':
+						self.state.zoomMode = 'digital'
+						break
+					case '3':
+						self.state.zoomMode = 'optical'
+						break
+					case '4':
+						self.state.zoomMode = 'clr img'
+						break
+				}
+				self.updateVariables()
 				self.checkFeedbacks()
+			},
+		},
+		zoomSpeedAdjust: {
+			name: 'Zoom Speed (up/down/default)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Zoom Speed Adjust',
+					id: 'val',
+					default: '1',
+					choices: [
+						{ id: 'u', label: 'Zoom Speed +' },
+						{ id: 'd', label: 'Zoom Speed -' },
+						{ id: '7', label: 'Zoom Speed 7 (fast)' },
+						{ id: '6', label: 'Zoom Speed 6' },
+						{ id: '5', label: 'Zoom Speed 5' },
+						{ id: '4', label: 'Zoom Speed 4' },
+						{ id: '3', label: 'Zoom Speed 3' },
+						{ id: '2', label: 'Zoom Speed 2' },
+						{ id: '1', label: 'Zoom Speed 1 (standard)' },
+						{ id: '0', label: 'Zoom Speed 0 (slow)' },
+					],
+				},
+			],
+			callback: async (action) => {
+				switch (action.options.val) {
+					case 'u':
+						if (self.speed.zoom < 7) self.speed.zoom++
+						break
+					case 'd':
+						if (self.speed.zoom > 0) self.speed.zoom--
+						break
+					default: {
+						const s = parseInt(action.options.val)
+						if (s >= 0 && s <= 7) {
+							self.speed.zoom = s
+						}
+					}
+				}
+				self.updateVariables()
+			},
+		},
+		focusSpeedAdjust: {
+			name: 'Focus Speed (up/down/default)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Focus Speed Adjust',
+					id: 'val',
+					default: '1',
+					choices: [
+						{ id: 'u', label: 'Focus Speed +' },
+						{ id: 'd', label: 'Focus Speed -' },
+						{ id: '7', label: 'Focus Speed 7 (fast)' },
+						{ id: '6', label: 'Focus Speed 6' },
+						{ id: '5', label: 'Focus Speed 5' },
+						{ id: '4', label: 'Focus Speed 4' },
+						{ id: '3', label: 'Focus Speed 3' },
+						{ id: '2', label: 'Focus Speed 2' },
+						{ id: '1', label: 'Focus Speed 1 (standard)' },
+						{ id: '0', label: 'Focus Speed 0 (slow)' },
+					],
+				},
+			],
+			callback: async (action) => {
+				switch (action.options.val) {
+					case 'u':
+						if (self.speed.focus < 7) self.speed.focus++
+						break
+					case 'd':
+						if (self.speed.focus > 0) self.speed.focus--
+						break
+					default: {
+						const s = parseInt(action.options.val)
+						if (s >= 0 && s <= 7) {
+							self.speed.focus = s
+						}
+					}
+				}
+				self.updateVariables()
 			},
 		},
 		focusM: {
@@ -316,11 +464,12 @@ function getLensActionDefinitions(self, camId) {
 			callback: async (event) => {
 				if (event.options.bol == '1') {
 					self.VISCA.send(camId + '\x01\x04\x38\x03\xFF')
-					self.data.oaf = 'Manual'
+					self.state.focusMode = 'manual'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x38\x02\xFF')
-					self.data.oaf = 'Auto'
+					self.state.focusMode = 'auto'
 				}
+				self.updateVariables()
 				self.checkFeedbacks()
 			},
 		},
@@ -336,6 +485,60 @@ function getLensActionDefinitions(self, camId) {
 			options: [],
 			callback: async () => {
 				self.VISCA.send(camId + '\x01\x04\x08\x02\xFF')
+			},
+		},
+		focusNearVS: {
+			name: 'Focus Near - variable speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Focus Speed for this button',
+					id: 'val',
+					default: 'v',
+					choices: [
+						{ id: 'v', label: 'Focus Speed - Variable' },
+						{ id: '7', label: 'Focus Speed 7 (fast)' },
+						{ id: '6', label: 'Focus Speed 6' },
+						{ id: '5', label: 'Focus Speed 5' },
+						{ id: '4', label: 'Focus Speed 4' },
+						{ id: '3', label: 'Focus Speed 3' },
+						{ id: '2', label: 'Focus Speed 2' },
+						{ id: '1', label: 'Focus Speed 1' },
+						{ id: '0', label: 'Focus Speed 0 (slow)' },
+					],
+				},
+			],
+			callback: async (event) => {
+				const s = parseInt(event.options.val) || self.speed.focus
+				const b = String.fromCharCode(0x30 + s)
+				self.VISCA.send(camId + '\x01\x04\x08' + b + '\xFF')
+			},
+		},
+		focusFarVS: {
+			name: 'Focus Far - variable speed',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Focus Speed for this button',
+					id: 'val',
+					default: 'v',
+					choices: [
+						{ id: 'v', label: 'Focus Speed - Variable' },
+						{ id: '7', label: 'Focus Speed 7 (fast)' },
+						{ id: '6', label: 'Focus Speed 6' },
+						{ id: '5', label: 'Focus Speed 5' },
+						{ id: '4', label: 'Focus Speed 4' },
+						{ id: '3', label: 'Focus Speed 3' },
+						{ id: '2', label: 'Focus Speed 2' },
+						{ id: '1', label: 'Focus Speed 1' },
+						{ id: '0', label: 'Focus Speed 0 (slow)' },
+					],
+				},
+			],
+			callback: async (event) => {
+				const s = parseInt(event.options.val) || self.speed.focus
+				const b = String.fromCharCode(0x20 + s)
+				self.VISCA.send(camId + '\x01\x04\x08' + b + '\xFF')
 			},
 		},
 		focusS: {
@@ -379,25 +582,26 @@ function getExposureActionDefinitions(self, camId) {
 				switch (parseInt(event.options.val)) {
 					case 0:
 						self.VISCA.send(camId + '\x01\x04\x39\x00\xFF')
-						self.data.exposureMode = 'Auto'
+						self.state.exposureMode = 'auto'
 						break
 					case 1:
 						self.VISCA.send(camId + '\x01\x04\x39\x03\xFF')
-						self.data.exposureMode = 'Manual'
+						self.state.exposureMode = 'manual'
 						break
 					case 2:
 						self.VISCA.send(camId + '\x01\x04\x39\x0A\xFF')
-						self.data.exposureMode = 'Shutter Priority'
+						self.state.exposureMode = 'shutter pri'
 						break
 					case 3:
 						self.VISCA.send(camId + '\x01\x04\x39\x0B\xFF')
-						self.data.exposureMode = 'Iris Priority'
+						self.state.exposureMode = 'iris pri'
 						break
 					case 4:
 						self.VISCA.send(camId + '\x01\x04\x39\x0E\xFF')
-						self.data.exposureMode = 'Gain Priority'
+						self.state.exposureMode = 'gain pri'
 						break
 				}
+				self.updateVariables()
 				self.checkFeedbacks()
 			},
 		},
@@ -573,7 +777,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		exposureCompOnOff: {
-			name: 'Exposure Compensation On/Off',
+			name: 'Exposure Compensation (on/off)',
 			options: [
 				{
 					type: 'dropdown',
@@ -589,11 +793,12 @@ function getExposureActionDefinitions(self, camId) {
 			callback: async (event) => {
 				if (event.options.bol == '1') {
 					self.VISCA.send(camId + '\x01\x04\x3E\x02\xFF')
-					self.data.expCompState = 'On'
+					self.state.expCompOnOff = 'on'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x3E\x03\xFF')
-					self.data.expCompState = 'Off'
+					self.state.expCompOnOff = 'off'
 				}
+				self.updateVariables()
 				self.checkFeedbacks()
 			},
 		},
@@ -749,11 +954,12 @@ function getExposureActionDefinitions(self, camId) {
 			callback: async (event) => {
 				if (event.options.bol == '1') {
 					self.VISCA.send(camId + '\x01\x04\x33\x02\xFF')
-					self.data.backlightComp = 'On'
+					self.state.backlightComp = 'on'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x33\x03\xFF')
-					self.data.backlightComp = 'Off'
+					self.state.backlightComp = 'off'
 				}
+				self.updateVariables()
 				self.checkFeedbacks()
 			},
 		},
@@ -774,11 +980,12 @@ function getExposureActionDefinitions(self, camId) {
 			callback: async (event) => {
 				if (event.options.bol == '1') {
 					self.VISCA.send(camId + '\x01\x04\x3A\x02\xFF')
-					self.data.spotlightComp = 'On'
+					self.state.spotlightComp = 'on'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x3A\x03\xFF')
-					self.data.spotlightComp = 'Off'
+					self.state.spotlightComp = 'off'
 				}
+				self.updateVariables()
 				self.checkFeedbacks()
 			},
 		},
@@ -1132,7 +1339,7 @@ function getMiscActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				self.data.heldThresholdReached = event.options.bol
+				self.state.heldThresholdReached = event.options.bol
 				self.checkFeedbacks()
 			},
 		},
@@ -1161,7 +1368,9 @@ function getMiscActionDefinitions(self, camId) {
 	}
 }
 
-function getSpeedCodes(speed) {
+function getSpeedCodes(self) {
+	const speed = self.speed
+	self.updateVariables()
 	return {
 		pan: String.fromCharCode(speed.pan),
 		tilt: String.fromCharCode(speed.tilt),
@@ -1186,6 +1395,7 @@ export function getActionsMarkdown() {
 	const self = {
 		config: { id: '128' },
 		speed: { pan: 0x0c, tilt: 0x0c, zoom: 4, focus: 3 },
+		updateVariables: () => {},
 	}
 
 	markdown += formatActionsMarkdown('Pan/Tilt', getPanTiltActionDefinitions(self))

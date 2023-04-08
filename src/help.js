@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 import * as actions from '../src/actions.js'
 import * as presets from '../src/presets.js'
+import * as variables from '../src/variables.js'
 
 // This script is run by 'yarn docs' to generate the 'companion/HELP.md' file based on the definitions in the module.
 
@@ -22,6 +23,9 @@ if (actions.getActionsMarkdown()) {
 }
 if (presets.getPresetsMarkdown()) {
 	markdown += '\n' + presets.getPresetsMarkdown()
+}
+if (variables.getVariablesMarkdown()) {
+	markdown += '\n' + variables.getVariablesMarkdown()
 }
 
 fs.writeFileSync('companion/HELP.md', markdown)

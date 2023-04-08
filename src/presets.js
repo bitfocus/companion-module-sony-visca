@@ -288,12 +288,13 @@ const panTiltPresets = {
 	'panTilt-speedUp': {
 		type: 'button',
 		category: 'Pan/Tilt',
-		name: 'Speed Up',
+		name: 'Pan/Tilt Speed Up',
 		style: {
-			text: 'Speed\\nUp',
+			text: 'Pan/Tilt\\nFaster\\n$(VISCA:panSpeed)/$(VISCA:tiltSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		steps: [
 			{
@@ -310,12 +311,13 @@ const panTiltPresets = {
 	'panTilt-speedDown': {
 		type: 'button',
 		category: 'Pan/Tilt',
-		name: 'Speed Down',
+		name: 'Pan/Tilt Speed Down',
 		style: {
-			text: 'Speed\\nDown',
+			text: 'Pan/Tilt\\nSlower\\n$(VISCA:panSpeed)/$(VISCA:tiltSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		steps: [
 			{
@@ -332,12 +334,13 @@ const panTiltPresets = {
 	'panTilt-speedDefault': {
 		type: 'button',
 		category: 'Pan/Tilt',
-		name: 'Speed Default',
+		name: 'Pan/Tilt Speed Default',
 		style: {
-			text: 'Speed\\nDefault',
+			text: 'Pan/Tilt\\nSpeed\\nDefault',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		steps: [
 			{
@@ -351,13 +354,53 @@ const panTiltPresets = {
 		],
 		feedbacks: [],
 	},
+	'panTilt-slowMode': {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Pan/Tilt Slow Mode (normal/slow)',
+		style: {
+			text: 'ptSlow\\nMode\\n$(VISCA:ptSlowMode)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'ptSlow',
+						options: { bol: '1' },
+					},
+				],
+			},
+			{
+				down: [
+					{
+						actionId: 'ptSlow',
+						options: { bol: '0' },
+					},
+				],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'ptSlowModeOn',
+				options: {},
+				style: {
+					color: COLORS.BLACK,
+					bgcolor: COLORS.ORANGE,
+				},
+			},
+		],
+	},
 }
 
 const lensPresets = {
 	'lens-zoomIn': {
 		type: 'button',
 		category: 'Lens',
-		name: 'Zoom In',
+		name: 'Zoom In (variable speed)',
 		style: {
 			text: 'ZOOM\\nIN',
 			size: '12',
@@ -368,8 +411,10 @@ const lensPresets = {
 			{
 				down: [
 					{
-						actionId: 'zoomI',
-						options: {},
+						actionId: 'zoomInVS',
+						options: {
+							val: 'v',
+						},
 					},
 				],
 				up: [
@@ -385,7 +430,7 @@ const lensPresets = {
 	'lens-zoomOut': {
 		type: 'button',
 		category: 'Lens',
-		name: 'Zoom Out',
+		name: 'Zoom Out (variable speed)',
 		style: {
 			text: 'ZOOM\\nOUT',
 			size: '18',
@@ -396,8 +441,10 @@ const lensPresets = {
 			{
 				down: [
 					{
-						actionId: 'zoomO',
-						options: {},
+						actionId: 'zoomOutVS',
+						options: {
+							val: 'v',
+						},
 					},
 				],
 				up: [
@@ -415,10 +462,11 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Zoom Mode',
 		style: {
-			text: 'Zoom\\nMode',
+			text: 'Zoom\\nMode\\n$(VISCA:zoomMode)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		steps: [
 			{
@@ -452,40 +500,12 @@ const lensPresets = {
 				],
 			},
 		],
-		feedbacks: [
-			{
-				feedbackId: 'zoomMode',
-				options: {
-					option: '3',
-				},
-				style: {
-					text: 'Optical\\nZoom',
-				},
-			},
-			{
-				feedbackId: 'zoomMode',
-				options: {
-					option: '4',
-				},
-				style: {
-					text: 'CI\\nZoom',
-				},
-			},
-			{
-				feedbackId: 'zoomMode',
-				options: {
-					option: '2',
-				},
-				style: {
-					text: 'Digital\\nZoom',
-				},
-			},
-		],
+		feedbacks: [],
 	},
 	'lens-focusFar': {
 		type: 'button',
 		category: 'Lens',
-		name: 'Focus Far',
+		name: 'Focus Far (variable speed)',
 		style: {
 			text: 'FOCUS\\nFAR',
 			size: '18',
@@ -496,8 +516,10 @@ const lensPresets = {
 			{
 				down: [
 					{
-						actionId: 'focusF',
-						options: {},
+						actionId: 'focusFarVS',
+						options: {
+							val: 'v',
+						},
 					},
 				],
 				up: [
@@ -513,7 +535,7 @@ const lensPresets = {
 	'lens-focusNear': {
 		type: 'button',
 		category: 'Lens',
-		name: 'Focus Near',
+		name: 'Focus Near (variable speed)',
 		style: {
 			text: 'FOCUS\\nNEAR',
 			size: '18',
@@ -524,8 +546,10 @@ const lensPresets = {
 			{
 				down: [
 					{
-						actionId: 'focusN',
-						options: {},
+						actionId: 'focusNearVS',
+						options: {
+							val: 'v',
+						},
 					},
 				],
 				up: [
@@ -541,9 +565,9 @@ const lensPresets = {
 	'lens-focusAuto': {
 		type: 'button',
 		category: 'Lens',
-		name: 'Auto/Manual Focus Toggle',
+		name: 'Focus Mode - Auto/Manual',
 		style: {
-			text: 'Auto\\nFocus',
+			text: '$(VISCA:focusMode)\\nFocus',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.DARK_RED,
@@ -572,14 +596,10 @@ const lensPresets = {
 		],
 		feedbacks: [
 			{
-				feedbackId: 'autoFocus',
-				options: {
-					option: '0',
-				},
+				feedbackId: 'manualFocus',
+				options: {},
 				style: {
-					color: COLORS.WHITE,
 					bgcolor: COLORS.BLACK,
-					text: 'Manual\\nFocus',
 				},
 			},
 		],
@@ -606,6 +626,144 @@ const lensPresets = {
 		],
 		feedbacks: [],
 	},
+	'lens-zoomSpeedUp': {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Speed Faster',
+		style: {
+			text: 'Zoom\\nFaster\\n$(VISCA:zoomSpeed)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'zoomSpeedAdjust',
+						options: { val: 'u' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'lens-zoomSpeedDown': {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Speed Slower',
+		style: {
+			text: 'Zoom\\nSlower\\n$(VISCA:zoomSpeed)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'zoomSpeedAdjust',
+						options: { val: 'd' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'lens-zoomSpeedDefault': {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Speed Default (1)',
+		style: {
+			text: 'Zoom\\nSpeed\\nDefault',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'zoomSpeedAdjust',
+						options: { val: '1' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'lens-focusSpeedUp': {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Speed Faster',
+		style: {
+			text: 'Focus\\nFaster\\n$(VISCA:focusSpeed)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'focusSpeedAdjust',
+						options: { val: 'u' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'lens-focusSpeedDown': {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Speed Slower',
+		style: {
+			text: 'Focus\\nSlower\\n$(VISCA:focusSpeed)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'focusSpeedAdjust',
+						options: { val: 'd' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'lens-focusSpeedDefault': {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Speed Default (1)',
+		style: {
+			text: 'Focus\\nSpeed\\nDefault',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'focusSpeedAdjust',
+						options: { val: '1' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
 }
 
 const exposurePresets = {
@@ -614,12 +772,23 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Auto/Manual Exposure Toggle',
 		style: {
-			text: 'Auto\\nExpose',
+			text: '$(VISCA:expMode)\\nExpose',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.DARK_YELLOW,
+			show_topbar: false,
 		},
 		steps: [
+			{
+				down: [
+					{
+						actionId: 'expM',
+						options: {
+							val: '0',
+						},
+					},
+				],
+			},
 			{
 				down: [
 					{
@@ -630,87 +799,17 @@ const exposurePresets = {
 					},
 				],
 			},
-			{
-				down: [
-					{
-						actionId: 'expM',
-						options: {
-							val: '0',
-						},
-					},
-				],
-			},
 		],
 		feedbacks: [
 			{
 				feedbackId: 'exposureManual',
-				options: {
-					option: '1',
-				},
+				options: {},
 				style: {
 					color: COLORS.WHITE,
 					bgcolor: COLORS.BLACK,
-					text: 'Manual\\nExpose',
-				},
-			},
-			{
-				feedbackId: 'exposureIrisPriority',
-				options: {
-					option: '1',
-				},
-				style: {
-					color: COLORS.WHITE,
-					bgcolor: COLORS.BLACK,
-					text: 'Iris\\nPriority\\nExpose',
-				},
-			},
-			{
-				feedbackId: 'exposureShutterPriority',
-				options: {
-					option: '1',
-				},
-				style: {
-					color: COLORS.WHITE,
-					bgcolor: COLORS.BLACK,
-					text: 'Shutter\\nPriority\\nExpose',
-				},
-			},
-			{
-				feedbackId: 'exposureGainPriority',
-				options: {
-					option: '1',
-				},
-				style: {
-					color: COLORS.WHITE,
-					bgcolor: COLORS.BLACK,
-					text: 'Gain\\nPriority\\nExpose',
 				},
 			},
 		],
-	},
-	'exposure-mode': {
-		type: 'button',
-		category: 'Exposure',
-		name: 'Exposure Mode',
-		style: {
-			text: 'EXP\\nMODE',
-			size: '18',
-			color: COLORS.WHITE,
-			bgcolor: COLORS.BLACK,
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: 'expM',
-						options: {
-							val: '0',
-						},
-					},
-				],
-			},
-		],
-		feedbacks: [],
 	},
 	'exposure-irisUp': {
 		type: 'button',
@@ -893,22 +992,13 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Exposure Compensation On/Off',
 		style: {
-			text: 'ExpCmp\\nOn',
+			text: 'Expose\\nComp\\n$(VISCA:expCompOnOff)',
 			size: '18',
-			color: COLORS.BLACK,
-			bgcolor: COLORS.PALE_YELLOW,
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		steps: [
-			{
-				down: [
-					{
-						actionId: 'exposureCompOnOff',
-						options: {
-							bol: '0',
-						},
-					},
-				],
-			},
 			{
 				down: [
 					{
@@ -919,17 +1009,24 @@ const exposurePresets = {
 					},
 				],
 			},
+			{
+				down: [
+					{
+						actionId: 'exposureCompOnOff',
+						options: {
+							bol: '0',
+						},
+					},
+				],
+			},
 		],
 		feedbacks: [
 			{
-				feedbackId: 'exposureCompOnOff',
-				options: {
-					option: '0',
-				},
+				feedbackId: 'exposureCompOn',
+				options: {},
 				style: {
-					color: COLORS.WHITE,
-					bgcolor: COLORS.BLACK,
-					text: 'ExpCmp\\nOff',
+					color: COLORS.BLACK,
+					bgcolor: COLORS.PALE_YELLOW,
 				},
 			},
 		],
@@ -939,10 +1036,11 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Exposure Compensation Up',
 		style: {
-			text: 'ExpCmp\\nUp',
+			text: 'Expose\\nComp\\nUp',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		steps: [
 			{
@@ -961,10 +1059,11 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Exposure Compensation Down',
 		style: {
-			text: 'ExpCmp\\nDown',
+			text: 'Expose\\nComp\\nDown',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		steps: [
 			{
@@ -983,10 +1082,11 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Exposure Compensation Reset',
 		style: {
-			text: 'ExpCmp\\nReset',
+			text: 'Expose\\nComp\\nReset',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		steps: [
 			{
@@ -1005,10 +1105,11 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Backlight Compensation On/Off',
 		style: {
-			text: 'BckLite\\nOff',
+			text: 'BckLite\\nComp\\n$(VISCA:backlightComp)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		steps: [
 			{
@@ -1034,14 +1135,11 @@ const exposurePresets = {
 		],
 		feedbacks: [
 			{
-				feedbackId: 'backlightCompOnOff',
-				options: {
-					option: '1',
-				},
+				feedbackId: 'backlightCompOn',
+				options: {},
 				style: {
 					color: COLORS.BLACK,
 					bgcolor: COLORS.PALE_YELLOW,
-					text: 'BckLite\\nOn',
 				},
 			},
 		],
@@ -1051,10 +1149,11 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Spotlight Compensation On/Off',
 		style: {
-			text: 'SptLite\\nOff',
+			text: 'SptLite\\nComp\\n$(VISCA:spotlightComp)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		steps: [
 			{
@@ -1080,14 +1179,11 @@ const exposurePresets = {
 		],
 		feedbacks: [
 			{
-				feedbackId: 'spotlightCompOnOff',
-				options: {
-					option: '1',
-				},
+				feedbackId: 'spotlightCompOn',
+				options: {},
 				style: {
 					color: COLORS.BLACK,
 					bgcolor: COLORS.PALE_YELLOW,
-					text: 'SptLite\\nOn',
 				},
 			},
 		],
@@ -1622,6 +1718,7 @@ const rotationEnabledPresets = {
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		options: {
 			rotaryActions: true,
@@ -1661,6 +1758,7 @@ const rotationEnabledPresets = {
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		options: {
 			rotaryActions: true,
@@ -1700,6 +1798,7 @@ const rotationEnabledPresets = {
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		options: {
 			rotaryActions: true,
@@ -1739,6 +1838,7 @@ const rotationEnabledPresets = {
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		options: {
 			rotaryActions: true,
@@ -1778,6 +1878,7 @@ const rotationEnabledPresets = {
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		options: {
 			rotaryActions: true,
@@ -1804,7 +1905,16 @@ const rotationEnabledPresets = {
 				],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: 'exposureCompOn',
+				options: {},
+				style: {
+					color: COLORS.BLACK,
+					bgcolor: COLORS.PALE_YELLOW,
+				},
+			},
+		],
 	},
 	'color-wbRedGain': {
 		type: 'button',
@@ -1944,10 +2054,11 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Pan/Tilt Speed - tap for default',
 		style: {
-			text: 'P/T\\nSpeed',
+			text: 'Pan/Tilt\\nSpeed\\n$(VISCA:panSpeed)/$(VISCA:tiltSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
+			show_topbar: false,
 		},
 		options: {
 			rotaryActions: true,
@@ -1993,6 +2104,94 @@ const rotationEnabledPresets = {
 						actionId: 'tiltSpeedAdjust',
 						options: {
 							val: '1',
+						},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'lens-zoomSpeed': {
+		type: 'button',
+		category: 'Rotation Enabled',
+		name: 'Zoom Speed - tap for standard (1)',
+		style: {
+			text: 'Zoom\\nSpeed\\n$(VISCA:zoomSpeed)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'zoomSpeedAdjust',
+						options: {
+							val: '1',
+						},
+					},
+				],
+				rotate_left: [
+					{
+						actionId: 'zoomSpeedAdjust',
+						options: {
+							val: 'd',
+						},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'zoomSpeedAdjust',
+						options: {
+							val: 'u',
+						},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'lens-focusSpeed': {
+		type: 'button',
+		category: 'Rotation Enabled',
+		name: 'Focus Speed - tap for standard (1)',
+		style: {
+			text: 'Focus\\nSpeed\\n$(VISCA:focusSpeed)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		options: {
+			rotaryActions: true,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'focusSpeedAdjust',
+						options: {
+							val: '1',
+						},
+					},
+				],
+				rotate_left: [
+					{
+						actionId: 'focusSpeedAdjust',
+						options: {
+							val: 'd',
+						},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: 'focusSpeedAdjust',
+						options: {
+							val: 'u',
 						},
 					},
 				],

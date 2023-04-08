@@ -4,6 +4,9 @@ export const UpgradeScripts = [
 	 * Remember that once it has been added it cannot be removed!
 	 */
 
+	function pre230(context, props) {
+		return { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
+	},
 	function v23x(context, props) {
 		const result = {
 			updatedActions: [],
@@ -207,8 +210,26 @@ export const UpgradeScripts = [
 					action.options = { bol: '0' }
 					result.updatedActions.push(action)
 					break
-
-				default:
+			}
+		}
+		for (const feedback of props.feedbacks) {
+			switch (feedback.feedbackId) {
+				case 'zoomMode':
+				case 'exposureAuto':
+				case 'exposureIrisPriority':
+				case 'exposureShutterPriority':
+				case 'exposureGainPriority':
+				case 'exposureCompOnOff':
+				case 'backlightCompOnOff':
+				case 'spotlightCompOnOff':
+					feedback.feedbackId = ''
+					feedback.options = {}
+					result.updatedFeedbacks.push(feedback)
+					break
+				case 'autoFocus':
+					feedback.feedbackId = 'manualFocus'
+					feedback.options = {}
+					result.updatedFeedbacks.push(feedback)
 					break
 			}
 		}

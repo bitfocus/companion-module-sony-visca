@@ -12,7 +12,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.data.heldThresholdReached
+				return self.state.heldThresholdReached
 			},
 		},
 		lastPresetUsed: {
@@ -24,341 +24,85 @@ export function getFeedbackDefinitions(self) {
 				bgcolor: COLORS.WHITE,
 			},
 			options: [],
-			callback: function (feedback) {
-				console.log('feedback:')
-				console.dir(feedback)
-				return self.data.heldThresholdReached
+			callback: function () {
+				return self.state.heldThresholdReached
 			},
 		},
-		zoomMode: {
-			type: 'boolean',
-			name: 'Lens - Zoom Mode',
-			description: 'Indicate Zoom Mode',
-			defaultStyle: {
-				color: COLORS.WHITE,
-				bgcolor: COLORS.BLACK,
-				text: 'Optical\\nZoom',
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Zoom Mode',
-					id: 'option',
-					default: '3',
-					choices: [
-						{ id: '3', label: 'Optical Only' },
-						{ id: '4', label: 'Clear Image' },
-						{ id: '2', label: 'Digital Only' },
-					],
-				},
-			],
-			callback: function (feedback) {
-				switch (feedback.options.option) {
-					case '3':
-						if (self.data.zoomMode === '3') {
-							return true
-						}
-						break
-					case '2':
-						if (self.data.zoomMode === '2') {
-							return true
-						}
-						break
-					case '4':
-						if (self.data.zoomMode === '4') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
-			},
-		},
-		autoFocus: {
+		manualFocus: {
 			type: 'boolean',
 			name: 'Lens - Auto Focus State',
-			description: 'Indicate if Auto focus is ON or OFF',
+			description: 'Background Black if Focus is Manual',
 			defaultStyle: {
-				color: COLORS.WHITE,
-				bgcolor: COLORS.DARK_RED,
-				text: 'Auto\\nFocus',
+				bgcolor: COLORS.BLACK,
 			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Focus Mode',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Manual' },
-						{ id: '1', label: 'Auto' },
-					],
-				},
-			],
-			callback: function (feedback) {
-				switch (feedback.options.option) {
-					case '0':
-						if (self.data.oaf === 'Manual') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.oaf === 'Auto') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
-			},
-		},
-		exposureAuto: {
-			type: 'boolean',
-			name: 'Auto Exposure Mode',
-			description: 'Indicates if Exposure Mode is set to Full Auto',
-			defaultStyle: {
-				color: COLORS.WHITE,
-				bgcolor: COLORS.DARK_YELLOW,
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Exposure Mode',
-					id: 'option',
-					default: '0',
-					choices: [
-						{ id: '0', label: 'Other' },
-						{ id: '1', label: 'Auto' },
-					],
-				},
-			],
-			callback: function (feedback) {
-				if (feedback.options.option === '1' && self.data.exposureMode === 'Auto') return true
-				if (feedback.options.option === '0' && self.data.exposureMode !== 'Auto') return true
-				return false
+			options: [],
+			callback: function () {
+				return self.state.focusMode === 'manual'
 			},
 		},
 		exposureManual: {
 			type: 'boolean',
 			name: 'Manual Exposure Mode',
-			description: 'Indicates if Exposure Mode is set to Manual',
+			description: 'Background Black if Exposure Mode is set to Manual',
 			defaultStyle: {
 				color: COLORS.WHITE,
 				bgcolor: COLORS.BLACK,
 			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Exposure Mode',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Other' },
-						{ id: '1', label: 'Manual' },
-					],
-				},
-			],
-			callback: function (feedback) {
-				if (feedback.options.option === '1' && self.data.exposureMode === 'Manual') return true
-				if (feedback.options.option === '0' && self.data.exposureMode !== 'Manual') return true
-				return false
+			options: [],
+			callback: function () {
+				return self.state.exposureMode === 'manual'
 			},
 		},
-		exposureIrisPriority: {
+		exposureCompOn: {
 			type: 'boolean',
-			name: 'Auto Exposure Mode',
-			description: 'Indicates if Exposure Mode is set to Iris Priority',
-			defaultStyle: {
-				color: COLORS.WHITE,
-				bgcolor: COLORS.BLACK,
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Exposure Mode',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Other' },
-						{ id: '1', label: 'Iris Priority' },
-					],
-				},
-			],
-			callback: function (feedback) {
-				if (feedback.options.option === '1' && self.data.exposureMode === 'Iris Priority') return true
-				if (feedback.options.option === '0' && self.data.exposureMode !== 'Iris Priority') return true
-				return false
-			},
-		},
-		exposureShutterPriority: {
-			type: 'boolean',
-			name: 'Auto Exposure Mode',
-			description: 'Indicates if Exposure Mode is set to Shutter Priority',
-			defaultStyle: {
-				color: COLORS.WHITE,
-				bgcolor: COLORS.BLACK,
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Exposure Mode',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Other' },
-						{ id: '1', label: 'Shutter Priority' },
-					],
-				},
-			],
-			callback: function (feedback) {
-				if (feedback.options.option === '1' && self.data.exposureMode === 'Shutter Priority') return true
-				if (feedback.options.option === '0' && self.data.exposureMode !== 'Shutter Priority') return true
-				return false
-			},
-		},
-		exposureGainPriority: {
-			type: 'boolean',
-			name: 'Auto Exposure Mode',
-			description: 'Indicates if Exposure Mode is set to Gain Priority',
-			defaultStyle: {
-				color: COLORS.WHITE,
-				bgcolor: COLORS.BLACK,
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Exposure Mode',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Other' },
-						{ id: '1', label: 'Gain Priority' },
-					],
-				},
-			],
-			callback: function (feedback) {
-				if (feedback.options.option === '1' && self.data.exposureMode === 'Gain Priority') return true
-				if (feedback.options.option === '0' && self.data.exposureMode !== 'Gain Priority') return true
-				return false
-			},
-		},
-		exposureCompOnOff: {
-			type: 'boolean',
-			name: 'Exposure Compensation On/Off',
-			description: 'Indicate if Exposure Compensation is ON or OFF',
+			name: 'Exposure Compensation On',
+			description: 'Highlights if Exposure Compensation is ON',
 			defaultStyle: {
 				color: COLORS.BLACK,
 				bgcolor: COLORS.PALE_YELLOW,
-				text: 'ExpCmp\\nOn',
 			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Exposure Compensation',
-					id: 'option',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' },
-					],
-				},
-			],
-			callback: function (feedback) {
-				switch (feedback.options.option) {
-					case '0':
-						if (self.data.expCompState === 'Off') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.expCompState === 'On') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
+			options: [],
+			callback: function () {
+				return self.state.expCompOnOff === 'on'
 			},
 		},
-		backlightCompOnOff: {
+		backlightCompOn: {
 			type: 'boolean',
-			name: 'Backlight Compensation On/Off',
-			description: 'Indicate if Backlight Compensation is ON or OFF',
+			name: 'Backlight Compensation On',
+			description: 'Highlights if Backlight Compensation is ON',
 			defaultStyle: {
-				color: COLORS.WHITE,
-				bgcolor: COLORS.Black,
-				text: 'BckLite\\nOff',
+				color: COLORS.BLACK,
+				bgcolor: COLORS.PALE_YELLOW,
 			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'BackLight Compensation',
-					id: 'option',
-					default: '0',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' },
-					],
-				},
-			],
-			callback: function (feedback) {
-				switch (feedback.options.option) {
-					case '0':
-						if (self.data.backlightComp === 'Off') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.backlightComp === 'On') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
+			options: [],
+			callback: function () {
+				return self.state.backlightComp === 'on'
 			},
 		},
-		spotlightCompOnOff: {
+		spotlightCompOn: {
 			type: 'boolean',
-			name: 'Spotlight Compensation On/Off',
-			description: 'Indicate if Spotlight Compensation is ON or OFF',
+			name: 'Spotlight Compensation On',
+			description: 'Highlights if Spotlight Compensation is ON',
 			defaultStyle: {
-				color: COLORS.WHITE,
-				bgcolor: COLORS.Black,
-				text: 'SptLite\\nOff',
+				color: COLORS.BLACK,
+				bgcolor: COLORS.PALE_YELLOW,
 			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Spotlight Compensation',
-					id: 'option',
-					default: '0',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' },
-					],
-				},
-			],
-			callback: function (feedback) {
-				switch (feedback.options.option) {
-					case '0':
-						if (self.data.spotlightComp === 'Off') {
-							return true
-						}
-						break
-					case '1':
-						if (self.data.spotlightComp === 'On') {
-							return true
-						}
-						break
-					default:
-						break
-				}
-				return false
+			options: [],
+			callback: function () {
+				return self.state.spotlightComp === 'on'
+			},
+		},
+		ptSlowModeOn: {
+			type: 'boolean',
+			name: 'Pan/Tilt Slow Mode On',
+			description: 'Highlights if Pan/Tilt Slow Mode is On',
+			defaultStyle: {
+				color: COLORS.BLACK,
+				bgcolor: COLORS.ORANGE,
+			},
+			options: [],
+			callback: function () {
+				return self.state.ptSlowMode === 'slow'
 			},
 		},
 	}
