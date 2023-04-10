@@ -25,6 +25,7 @@ class SonyVISCAInstance extends InstanceBase {
 			expCompOnOff: 'off',
 			backlightComp: 'off',
 			spotlightComp: 'off',
+			presetSelector: 1,
 		}
 		this.speed = { pan: 0x0c, tilt: 0x0c, zoom: 1, focus: 1 }
 		this.VISCA = {

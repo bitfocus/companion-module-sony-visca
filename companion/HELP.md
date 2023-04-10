@@ -82,6 +82,7 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 - Save Preset
 - Recall Preset
 - Preset Drive Speed (individual)
+- Modify Preset Selector
 
 ### Miscellaneous Actions
 
@@ -171,8 +172,10 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 
 ### Camera Presets
 
-- Presets 1-64 are available  
+- Presets 1-64 are available
 - Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.*
+- Presets using presetSelector variable
+- Preset Select Increment and Decrement
 
 ### Rotation Enabled Presets
 
@@ -205,4 +208,5 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 | expCompOnOff | Exposure Compensation (on/off) |
 | backlightComp | Backlight Compensation (on/off) |
 | spotlightComp | Spotlight Compensation (on/off) |
+| presetSelector | Preset Selection Variable |
 | lastCmdSent | Last Command Sent (hex values) |

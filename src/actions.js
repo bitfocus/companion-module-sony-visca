@@ -1,4 +1,5 @@
 import { CHOICES } from './choices.js'
+// import { Regex } from '@companion-module/base'
 
 export function getActionDefinitions(self) {
 	const camId = String.fromCharCode(parseInt(self.config.id))
@@ -1194,9 +1195,9 @@ function getPresetActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				self.VISCA.send(
-					camId + '\x01\x04\x3F\x01' + String.fromCharCode(parseInt(event.options.val, 16) & 0xff) + '\xFF'
-				)
+				const presetNumber =
+					event.options.val === 'ps' ? self.state.presetSelector - 1 : parseInt(event.options.val, 16)
+				self.VISCA.send(camId + '\x01\x04\x3F\x01' + String.fromCharCode(presetNumber & 0xff) + '\xFF')
 			},
 		},
 		recallPset: {
@@ -1210,9 +1211,9 @@ function getPresetActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				self.VISCA.send(
-					camId + '\x01\x04\x3F\x02' + String.fromCharCode(parseInt(event.options.val, 16) & 0xff) + '\xFF'
-				)
+				const presetNumber =
+					event.options.val === 'ps' ? self.state.presetSelector - 1 : parseInt(event.options.val, 16)
+				self.VISCA.send(camId + '\x01\x04\x3F\x02' + String.fromCharCode(presetNumber & 0xff) + '\xFF')
 			},
 		},
 		speedPset: {
@@ -1232,13 +1233,55 @@ function getPresetActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
+				const presetNumber =
+					event.options.val === 'ps' ? self.state.presetSelector - 1 : parseInt(event.options.val, 16)
 				self.VISCA.send(
 					camId +
 						'\x01\x7E\x01\x0B' +
-						String.fromCharCode(parseInt(event.options.val, 16) & 0xff) +
+						String.fromCharCode(presetNumber & 0xff) +
 						String.fromCharCode(parseInt(event.options.speed, 16) & 0xff) +
 						'\xFF'
 				)
+			},
+		},
+		modifyPresetSelector: {
+			name: 'Modify Preset Selector',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Modify by (numbers -63 to 63 are valid)',
+					id: 'val',
+					choices: [
+						{ id: '10', label: 'Increase by 10' },
+						{ id: '1', label: 'Increase by 1' },
+						{ id: '-1', label: 'Decrease by 1' },
+						{ id: '-10', label: 'Decrease by 10' },
+					],
+					default: '1',
+					allowCustom: true,
+					regex: '/^(-?6[0-3]|-?[0-5]?[0-9])$/',
+				},
+			],
+			callback: async (event) => {
+				console.log('modifyPresetSelector', event.options.val, event.options.val % 10)
+				const val = parseInt(event.options.val)
+				if (val % 10) {
+					self.state.presetSelector = ((self.state.presetSelector - 1 + (val % 64) + 64) % 64) + 1
+				} else {
+					// user has selected 10 based numbers, expectation is to wrap in increments of 10, not mod 64
+					let r = self.state.presetSelector + val
+					if (r < -5) {
+						r += 70
+					} else if (r < 1) {
+						r += 60
+					} else if (r > 70) {
+						r -= 70
+					} else if (r > 64) {
+						r -= 60
+					}
+					self.state.presetSelector = r
+				}
+				self.updateVariables()
 			},
 		},
 	}

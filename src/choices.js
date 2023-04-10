@@ -178,6 +178,7 @@ export const CHOICES = {
 		{ id: '02', label: 'Preset 3' },
 		{ id: '01', label: 'Preset 2' },
 		{ id: '00', label: 'Preset 1' },
+		{ id: 'ps', label: 'Use presetSelector Variable' },
 	],
 
 	SPEED: [

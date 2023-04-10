@@ -1708,6 +1708,114 @@ for (let i = 0; i < 64; i++) {
 	cameraPresets['presets-Preset' + i] = preset
 }
 
+cameraPresets['presets-PresetPS'] = {
+	type: 'button',
+	category: 'Presets',
+	name: 'Preset using variable presetSelector',
+	style: {
+		text: 'Preset\\n$(VISCA:presetSelector)\\nSelect',
+		size: '18',
+		color: COLORS.WHITE,
+		bgcolor: COLORS.DARK_GRAY,
+		show_topbar: false,
+	},
+	steps: [
+		{
+			down: [],
+			up: [
+				{
+					actionId: 'recallPset',
+					options: {
+						val: 'ps',
+					},
+					delay: 0,
+				},
+			],
+			2000: {
+				options: {
+					runWhileHeld: true,
+				},
+				actions: [
+					{
+						actionId: 'savePset',
+						options: {
+							val: 'ps',
+						},
+						delay: 0,
+					},
+					{
+						actionId: 'buttonFeedback',
+						options: { bol: '1' },
+						delay: 0,
+					},
+				],
+			},
+			2001: [
+				{
+					actionId: 'buttonFeedback',
+					options: { bol: '0' },
+				},
+			],
+		},
+	],
+	feedbacks: [
+		{
+			feedbackId: 'heldFeedback',
+			options: {},
+			style: {
+				color: COLORS.BLACK,
+				bgcolor: COLORS.YELLOW,
+			},
+		},
+	],
+}
+cameraPresets['presets-PresetInc'] = {
+	type: 'button',
+	category: 'Presets',
+	name: 'Increment presetSelector variable',
+	style: {
+		text: 'Preset\\nSelect\\n+1',
+		size: '18',
+		color: COLORS.WHITE,
+		bgcolor: COLORS.DARK_GRAY,
+		show_topbar: false,
+	},
+	steps: [
+		{
+			down: [
+				{
+					actionId: 'modifyPresetSelector',
+					options: { val: '1' },
+				},
+			],
+		},
+	],
+	feedbacks: [],
+}
+cameraPresets['presets-PresetDec'] = {
+	type: 'button',
+	category: 'Presets',
+	name: 'Decrement presetSelector variable',
+	style: {
+		text: 'Preset\\nSelect\\n-1',
+		size: '18',
+		color: COLORS.WHITE,
+		bgcolor: COLORS.DARK_GRAY,
+		show_topbar: false,
+	},
+	steps: [
+		{
+			down: [
+				{
+					actionId: 'modifyPresetSelector',
+					options: { val: '-1' },
+				},
+			],
+		},
+	],
+	feedbacks: [],
+}
+
 const rotationEnabledPresets = {
 	'exposure-iris': {
 		type: 'button',
@@ -2218,8 +2326,10 @@ export function getPresetsMarkdown() {
 	markdown += formatPresetsMarkdown('System', systemPresets)
 	markdown +=
 		'\n### Camera Presets\n\n' +
-		'- Presets 1-64 are available  \n' +
-		'- Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.*\n'
+		'- Presets 1-64 are available\n' +
+		'- Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.*\n' +
+		'- Presets using presetSelector variable\n' +
+		'- Preset Select Increment and Decrement\n'
 	markdown += formatPresetsMarkdown('Rotation Enabled', rotationEnabledPresets)
 	markdown +=
 		'\n*Rotation enabled presets are intended for devices like the Stream Deck+ and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Tapping the knob defaults the setting.*\n'

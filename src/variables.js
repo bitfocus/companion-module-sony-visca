@@ -10,6 +10,7 @@ const variables = [
 	{ variableId: 'expCompOnOff', name: 'Exposure Compensation (on/off)' },
 	{ variableId: 'backlightComp', name: 'Backlight Compensation (on/off)' },
 	{ variableId: 'spotlightComp', name: 'Spotlight Compensation (on/off)' },
+	{ variableId: 'presetSelector', name: 'Preset Selection Variable' },
 	{ variableId: 'lastCmdSent', name: 'Last Command Sent (hex values)' },
 ]
 
@@ -31,6 +32,7 @@ export async function updateVariables() {
 		expCompOnOff: this.state.expCompOnOff,
 		backlightComp: this.state.backlightComp,
 		spotlightComp: this.state.spotlightComp,
+		presetSelector: this.state.presetSelector,
 	})
 }
 
