@@ -1351,7 +1351,7 @@ function getMiscActionDefinitions(self, camId) {
 					type: 'textinput',
 					label: 'Command example: 81 01 06 06 10 FF',
 					id: 'cmd',
-					regex: '/^81 ?([0-9a-fA-F]{2} ?){3,13}[fF][fF]$/',
+					regex: '/^8[0-7] ?([0-9a-fA-F]{2} ?){3,13}[fF][fF]$/',
 				},
 			],
 			callback: async (event) => {
