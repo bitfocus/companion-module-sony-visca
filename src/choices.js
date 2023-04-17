@@ -230,4 +230,9 @@ export const CHOICES = {
 		{ id: '135', label: 'id 7' },
 		{ id: '136', label: 'id 8' },
 	],
+
+	PROTOCOL: [
+		{ id: 'udp', label: 'UDP (try using port 53281) ' },
+		{ id: 'tcp', label: 'TCP (try using port 5678)' },
+	],
 }

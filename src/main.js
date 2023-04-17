@@ -1,4 +1,4 @@
-import { InstanceBase, InstanceStatus, runEntrypoint, UDPHelper } from '@companion-module/base'
+import { InstanceBase, InstanceStatus, runEntrypoint, UDPHelper, TCPHelper } from '@companion-module/base'
 import { CHOICES } from './choices.js'
 import { UpgradeScripts } from './upgrades.js'
 import { getConfigDefinitions } from './config.js'
@@ -35,25 +35,30 @@ class SonyVISCAInstance extends InstanceBase {
 			inquiry: Buffer.from([0x01, 0x10]),
 
 			send: (payload, type = this.VISCA.command) => {
-				const buffer = Buffer.alloc(32)
-				type.copy(buffer)
+				let newBuffer
+				if (this.config.protocol === 'udp') {
+					const buffer = Buffer.alloc(32)
+					type.copy(buffer)
 
-				this.packet_counter = (this.packet_counter + 1) % 0xffffffff
+					this.packet_counter = (this.packet_counter + 1) % 0xffffffff
 
-				buffer.writeUInt16BE(payload.length, 2)
-				buffer.writeUInt32BE(this.packet_counter, 4)
+					buffer.writeUInt16BE(payload.length, 2)
+					buffer.writeUInt32BE(this.packet_counter, 4)
 
-				if (typeof payload == 'string') {
-					buffer.write(payload, 8, 'binary')
-				} else if (typeof payload == 'object' && payload instanceof Buffer) {
-					payload.copy(buffer, 8)
+					if (typeof payload == 'string') {
+						buffer.write(payload, 8, 'binary')
+					} else if (typeof payload == 'object' && payload instanceof Buffer) {
+						payload.copy(buffer, 8)
+					}
+
+					newBuffer = buffer.slice(0, 8 + payload.length)
+				} else {
+					newBuffer = Buffer.from(payload, 'binary')
 				}
 
-				const newBuffer = buffer.slice(0, 8 + payload.length)
 				this.log('debug', 'send: ' + this.viscaToString(newBuffer))
-				let lastCmdSent = this.viscaToString(newBuffer).slice(30)
-				this.setVariableValues({ lastCmdSent: lastCmdSent })
-				this.udp.send(newBuffer)
+				this.setVariableValues({ lastCmdSent: newBuffer.toString('hex') })
+				this.networkHelper.send(newBuffer)
 			},
 		}
 
@@ -61,21 +66,21 @@ class SonyVISCAInstance extends InstanceBase {
 		this.setActionDefinitions(getActionDefinitions(this))
 		this.setPresetDefinitions(getPresetDefinitions(this))
 		this.initVariables()
-		this.init_udp()
+		this.init_network()
 		this.updateVariables()
 	}
 
 	// When module gets deleted
 	async destroy() {
-		if (this.udp) {
-			this.udp.destroy()
-			delete this.udp
+		if (this.networkHelper) {
+			this.networkHelper.destroy()
+			delete this.networkHelper
 		}
 	}
 
 	async configUpdated(config) {
 		this.config = config
-		this.init_udp()
+		this.init_network()
 	}
 
 	// Return config fields for web config
@@ -98,42 +103,45 @@ class SonyVISCAInstance extends InstanceBase {
 		return s
 	}
 
-	init_udp() {
-		if (this.udp) {
-			this.udp.destroy()
-			delete this.udp
-			this.updateStatus(InstanceStatus.Disconnected)
+	init_network() {
+		if (this.networkHelper) {
+			this.networkHelper.destroy()
+			delete this.networkHelper
 		}
 
 		this.updateStatus(InstanceStatus.Connecting)
 
 		if (this.config.host) {
-			this.udp = new UDPHelper(this.config.host, this.config.port)
+			if (this.config.protocol == 'tcp') {
+				this.networkHelper = new TCPHelper(this.config.host, this.config.port)
+			} else {
+				this.networkHelper = new UDPHelper(this.config.host, this.config.port)
+				// Reset sequence number
+				this.VISCA.send('\x01', this.VISCA.control)
+				this.packet_counter = 0
+			}
 
-			// Reset sequence number
-			this.VISCA.send('\x01', this.VISCA.control)
-			this.packet_counter = 0
-
-			this.udp.on('error', (err) => {
+			this.networkHelper.on('error', (err) => {
 				this.updateStatus(InstanceStatus.ConnectionFailure, err.message)
-				this.log('error', 'Network error: ' + err.message)
+				this.log('error', this.config.protocol + ' network error: ' + err.message)
 			})
 
 			// If the status is 'listening', connection should be established
-			this.udp.on('listening', () => {
-				this.log('info', 'UDP listening')
+			this.networkHelper.on('listening', () => {
+				this.log('info', this.config.protocol + ' listening')
 				this.updateStatus(InstanceStatus.Ok)
 			})
 
-			this.udp.on('status_change', (status, message) => {
-				this.log('debug', 'UDP status_change: ' + status)
+			this.networkHelper.on('status_change', (status, message) => {
+				this.log('debug', this.config.protocol + ' status_change: ' + status)
 				this.updateStatus(status, message)
 			})
+
+			this.log('info', this.config.protocol + ' Connection Initialized')
 		} else {
 			this.log('error', 'No host configured')
 			this.updateStatus(InstanceStatus.BadConfig)
 		}
-		this.log('info', 'Connection Initialized')
 	}
 }
 

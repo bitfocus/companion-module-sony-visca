@@ -26,6 +26,14 @@ export function getConfigDefinitions(CHOICES) {
 		},
 		{
 			type: 'dropdown',
+			id: 'protocol',
+			label: 'Protocol',
+			width: 6,
+			default: 'udp',
+			choices: CHOICES.PROTOCOL,
+		},
+		{
+			type: 'dropdown',
 			id: 'id',
 			label: 'camera id',
 			width: 6,
