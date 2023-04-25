@@ -19,7 +19,7 @@ export function getConfigDefinitions(CHOICES) {
 		{
 			type: 'textinput',
 			id: 'port',
-			label: 'Target Port',
+			label: 'Target Port (default: 52381)',
 			width: 6,
 			regex: Regex.PORT,
 			default: '52381',

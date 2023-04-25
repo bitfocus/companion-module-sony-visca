@@ -2,7 +2,7 @@ import { CHOICES } from './choices.js'
 // import { Regex } from '@companion-module/base'
 
 export function getActionDefinitions(self) {
-	const camId = String.fromCharCode(parseInt(self.config.id))
+	const camId = String.fromCharCode(parseInt(self.state.viscaId))
 	let speed = getSpeedCodes(self)
 	return {
 		...getPanTiltActionDefinitions(self, camId, speed),
@@ -1263,7 +1263,6 @@ function getPresetActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				console.log('modifyPresetSelector', event.options.val, event.options.val % 10)
 				const val = parseInt(event.options.val)
 				if (val % 10) {
 					self.state.presetSelector = ((self.state.presetSelector - 1 + (val % 64) + 64) % 64) + 1
@@ -1386,6 +1385,39 @@ function getMiscActionDefinitions(self, camId) {
 				self.checkFeedbacks()
 			},
 		},
+		overrideViscaId: {
+			name: 'Override VISCA ID (serial only)',
+			description: 'Override the VISCA ID for this instance',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'VISCA ID',
+					id: 'id',
+					choices: [
+						{ id: 'c', label: 'Use Id from Config' },
+						{ id: '81', label: 'ViscaId 1' },
+						{ id: '82', label: 'ViscaId 2' },
+						{ id: '83', label: 'ViscaId 3' },
+						{ id: '84', label: 'ViscaId 4' },
+						{ id: '85', label: 'ViscaId 5' },
+						{ id: '86', label: 'ViscaId 6' },
+						{ id: '87', label: 'ViscaId 7' },
+					],
+					default: 'c',
+				},
+			],
+			callback: async (event) => {
+				if (event.options.id == 'c') {
+					self.log('info', 'VISCA ID Override: Restored to config.id')
+					self.state.viscaId = self.config.id
+				} else {
+					self.log('info', 'VISCA ID Override: ' + event.options.id)
+					self.state.viscaId = parseInt(event.options.id, 16)
+				}
+				self.setVariableValues({ viscaId: self.state.viscaId })
+				self.setActionDefinitions(getActionDefinitions(self))
+			},
+		},
 		customCommand: {
 			name: 'Custom Command',
 			description: 'Request additional actions at https://github.com/bitfocus/companion-module-sony-visca/issues/35',
@@ -1438,6 +1470,7 @@ export function getActionsMarkdown() {
 	const self = {
 		config: { id: '128' },
 		speed: { pan: 0x0c, tilt: 0x0c, zoom: 4, focus: 3 },
+		state: { viscaId: 128 },
 		updateVariables: () => {},
 	}
 

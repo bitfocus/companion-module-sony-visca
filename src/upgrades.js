@@ -4,10 +4,10 @@ export const UpgradeScripts = [
 	 * Remember that once it has been added it cannot be removed!
 	 */
 
-	function pre230(context, props) {
+	function pre230(_context, _props) {
 		return { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
 	},
-	function v23x(context, props) {
+	function v23x(_context, props) {
 		const result = {
 			updatedActions: [],
 			updatedConfig: null,

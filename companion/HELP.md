@@ -91,6 +91,7 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 - Menu (on/off/enter)
 - Video Latency (normal/low)
 - Button Feedback (highlight/clear)
+- Override VISCA ID (serial only)
 - Custom Command - *If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)*
 
 ## Presets Implemented
@@ -209,4 +210,5 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 | backlightComp | Backlight Compensation (on/off) |
 | spotlightComp | Spotlight Compensation (on/off) |
 | presetSelector | Preset Selection Variable |
+| viscaId | Specific ViscaID to interact with (serial only) |
 | lastCmdSent | Last Command Sent (hex values) |
