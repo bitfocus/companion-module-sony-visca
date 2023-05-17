@@ -7,11 +7,15 @@ This module uses the Sony Visca protocol to control PTZ cameras. While it is foc
 
 ## Changes
 
+### v2.6.0
+
+- Added Camera model and frame rate choices to config and updated actions to have correct Iris/Gain/Shutter values for each model/frame rate combination.
+
 ### v2.5.0
 
 - Added clearer purpose in README.md
 - Implemented a "viscaId" variable and an "Override VISCA ID" action to enable communications with multiple cameras from the same instance. This is a feature requested in issue #47.  
-**NOTE** It is expected that this feature only works with VISCA over serial. When communicating over IP the cameras ignore the VISCA Id
+  **NOTE** It is expected that this feature only works with VISCA over serial. When communicating over IP the cameras ignore the VISCA Id
 
 ### v2.4.1
 
@@ -35,7 +39,7 @@ This module uses the Sony Visca protocol to control PTZ cameras. While it is foc
 ### v2.2.0
 
 - Add Exposure Compensation actions and presets
-- Add Spotlight Compensation On/Off 
+- Add Spotlight Compensation On/Off
 - Add Zoom Modes and preset to cycle through
 - Add Noise Reduction action
 - Add Latency selection action

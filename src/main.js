@@ -1,5 +1,5 @@
 import { InstanceBase, InstanceStatus, runEntrypoint, UDPHelper } from '@companion-module/base'
-import { CHOICES } from './choices.js'
+import { getChoices } from './choices.js'
 import { UpgradeScripts } from './upgrades.js'
 import { getConfigDefinitions } from './config.js'
 import { getFeedbackDefinitions } from './feedbacks.js'
@@ -16,7 +16,14 @@ class SonyVISCAInstance extends InstanceBase {
 
 	async init(config) {
 		this.updateStatus(InstanceStatus.Disconnected)
+		if (!config.model) {
+			config.model = 'other'
+		}
+		if (!config.frameRate) {
+			config.frameRate = '60'
+		}
 		this.config = config
+		this.choices = getChoices(config)
 		this.state = {
 			ptSlowMode: 'normal',
 			zoomMode: 'optical',
@@ -76,12 +83,14 @@ class SonyVISCAInstance extends InstanceBase {
 
 	async configUpdated(config) {
 		this.config = config
+		this.choices = getChoices(config)
+		this.setActionDefinitions(getActionDefinitions(this))
 		this.init_udp()
 	}
 
 	// Return config fields for web config
 	getConfigFields() {
-		return getConfigDefinitions(CHOICES)
+		return getConfigDefinitions(this.choices)
 	}
 
 	viscaToString(payload) {

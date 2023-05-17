@@ -1,0 +1,15 @@
+export const MODELS = [
+	{ id: 'other', group: '1a', label: 'Other Camera' },
+	{ id: '051C', group: '1a', label: 'BRC -X400' },
+	{ id: '051D', group: '1a', label: 'BRC-X401' },
+	{ id: '0617', group: '1a', label: 'SRG-X400' },
+	{ id: '061C', group: '1a', label: 'SRG-X402' },
+	{ id: '0618', group: '1a', label: 'SRG-X120' },
+	{ id: '061A', group: '1a', label: 'SRG-201M2' },
+	{ id: '061B', group: '1a', label: 'SRG-HD1M2' },
+	{ id: '061F', group: '1b', label: 'SRG-X40UH' },
+	{ id: '0620', group: '1b', label: 'SRG-H40UH' },
+	{ id: '051B', group: '2', label: 'BRC-H780' },
+	{ id: '051A', group: '2', label: 'BRC-H800' },
+	{ id: '0519', group: '2', label: 'BRC-X1000' },
+]

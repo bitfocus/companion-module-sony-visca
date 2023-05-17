@@ -1,4 +1,4 @@
-import { CHOICES } from './choices.js'
+// import { CHOICES } from './choices.js'
 // import { Regex } from '@companion-module/base'
 
 export function getActionDefinitions(self) {
@@ -14,6 +14,7 @@ export function getActionDefinitions(self) {
 	}
 }
 function getPanTiltActionDefinitions(self, camId, speed) {
+	const CHOICES = self.choices
 	return {
 		left: {
 			name: 'Pan Left',
@@ -247,6 +248,7 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 					label: 'speed setting',
 					id: 'speed',
 					choices: CHOICES.SPEED,
+					default: getIdOfDefault(CHOICES.SPEED),
 				},
 			],
 			callback: async (event) => {
@@ -259,6 +261,7 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 }
 
 function getLensActionDefinitions(self, camId) {
+	// const CHOICES = self.choices
 	return {
 		zoomI: {
 			name: 'Zoom In - standard speed',
@@ -560,6 +563,7 @@ function getLensActionDefinitions(self, camId) {
 }
 
 function getExposureActionDefinitions(self, camId) {
+	const CHOICES = self.choices
 	return {
 		// TODO Add variable and rework feedbacks
 		expM: {
@@ -639,7 +643,7 @@ function getExposureActionDefinitions(self, camId) {
 					label: 'Iris adjust',
 					id: 'val',
 					choices: CHOICES.IRIS,
-					default: '15',
+					default: getIdOfDefault(CHOICES.IRIS),
 				},
 			],
 			callback: async (event) => {
@@ -682,7 +686,7 @@ function getExposureActionDefinitions(self, camId) {
 					label: 'Gain setting',
 					id: 'val',
 					choices: CHOICES.GAIN,
-					default: '01',
+					default: getIdOfDefault(CHOICES.GAIN),
 				},
 			],
 			callback: async (event) => {
@@ -725,6 +729,7 @@ function getExposureActionDefinitions(self, camId) {
 					label: 'Shutter setting',
 					id: 'val',
 					choices: CHOICES.SHUTTER,
+					default: getIdOfDefault(CHOICES.SHUTTER),
 				},
 			],
 			callback: async (event) => {
@@ -994,6 +999,7 @@ function getExposureActionDefinitions(self, camId) {
 }
 
 function getColorActionDefinitions(self, camId) {
+	// const CHOICES = self.choices
 	return {
 		whiteBal: {
 			name: 'White Balance Mode (auto/indoor/outdoor/one push/ATW/manual)',
@@ -1183,6 +1189,7 @@ function getColorActionDefinitions(self, camId) {
 }
 
 function getPresetActionDefinitions(self, camId) {
+	const CHOICES = self.choices
 	return {
 		savePset: {
 			name: 'Save Preset',
@@ -1287,6 +1294,7 @@ function getPresetActionDefinitions(self, camId) {
 }
 
 function getMiscActionDefinitions(self, camId) {
+	// const CHOICES = self.choices
 	return {
 		cameraPower: {
 			name: 'Camera Power (on/off)',
@@ -1444,6 +1452,7 @@ function getMiscActionDefinitions(self, camId) {
 }
 
 function getSpeedCodes(self) {
+	// const CHOICES = self.choices
 	const speed = self.speed
 	self.updateVariables()
 	return {
@@ -1485,4 +1494,12 @@ export function getActionsMarkdown() {
 		'Custom Command - *If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)*'
 	)
 	return markdown
+}
+
+function getIdOfDefault(props) {
+	const d = props.find((el) => Object.prototype.hasOwnProperty.call(el, 'default') && el.default)
+	if (d === undefined) {
+		return props[0].id
+	}
+	return d.id
 }
