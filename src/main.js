@@ -1,5 +1,5 @@
 import { InstanceBase, InstanceStatus, runEntrypoint, UDPHelper } from '@companion-module/base'
-import { getChoices } from './choices.js'
+import { getChoices, CHOICES } from './choices.js'
 import { UpgradeScripts } from './upgrades.js'
 import { getConfigDefinitions } from './config.js'
 import { getFeedbackDefinitions } from './feedbacks.js'
@@ -90,7 +90,7 @@ class SonyVISCAInstance extends InstanceBase {
 
 	// Return config fields for web config
 	getConfigFields() {
-		return getConfigDefinitions(this.choices)
+		return getConfigDefinitions(CHOICES)
 	}
 
 	viscaToString(payload) {
