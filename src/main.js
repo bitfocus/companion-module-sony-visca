@@ -23,7 +23,7 @@ class SonyVISCAInstance extends InstanceBase {
 			config.frameRate = '60'
 		}
 		this.config = config
-		this.choices = getChoices(config)
+		this.choices = getChoices(config, this)
 		this.state = {
 			ptSlowMode: 'normal',
 			zoomMode: 'optical',

@@ -1,6 +1,6 @@
 {
     "name": "sony-visca",
-    "version": "2.6.1",
+    "version": "2.7.0",
     "main": "src/main.js",
     "type": "module",
     "scripts": {
