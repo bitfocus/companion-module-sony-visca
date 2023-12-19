@@ -290,7 +290,7 @@ const panTiltPresets = {
 		category: 'Pan/Tilt',
 		name: 'Pan/Tilt Speed Up',
 		style: {
-			text: 'Pan/Tilt\\nFaster\\n$(VISCA:panSpeed)/$(VISCA:tiltSpeed)',
+			text: 'Pan/Tilt\\nFaster\\n$(VISCA:panSpeed) / $(VISCA:tiltSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -313,7 +313,7 @@ const panTiltPresets = {
 		category: 'Pan/Tilt',
 		name: 'Pan/Tilt Speed Down',
 		style: {
-			text: 'Pan/Tilt\\nSlower\\n$(VISCA:panSpeed)/$(VISCA:tiltSpeed)',
+			text: 'Pan/Tilt\\nSlower\\n$(VISCA:panSpeed) / $(VISCA:tiltSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
