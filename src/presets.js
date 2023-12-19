@@ -2162,7 +2162,7 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Pan/Tilt Speed - tap for default',
 		style: {
-			text: 'Pan/Tilt\\nSpeed\\n$(VISCA:panSpeed)/$(VISCA:tiltSpeed)',
+			text: 'Pan/Tilt\\nSpeed\\n$(VISCA:panSpeed) / $(VISCA:tiltSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
