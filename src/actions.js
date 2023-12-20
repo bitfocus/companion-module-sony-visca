@@ -1393,6 +1393,28 @@ function getMiscActionDefinitions(self, camId) {
 				self.checkFeedbacks()
 			},
 		},
+		internalRecording: {
+			name: 'Recording Button (press/release)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Press/Release',
+					id: 'bol',
+					choices: [
+						{ id: 1, label: 'Press' },
+						{ id: 0, label: 'Release' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				if (event.options.bol == 1) {
+					self.VISCA.send(camId + '\x01\x7E\x04\x1D\x01\xFF')
+				} else {
+					self.VISCA.send(camId + '\x01\x7E\x04\x1D\x00\xFF')
+				}
+			},
+		},
 		overrideViscaId: {
 			name: 'Override VISCA ID (serial only)',
 			description: 'Override the VISCA ID for this instance',
