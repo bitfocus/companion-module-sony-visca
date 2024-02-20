@@ -7,6 +7,10 @@ This module uses the Sony Visca protocol to control PTZ cameras. While it is foc
 
 ## Changes
 
+### v2.7.1
+
+- Fixed issue that required disabling and re-enabling a new instance when added to companion.
+
 ### v2.7.0
 
 - Added selection of and some specific settings for ILME-FR7, ILME-FR7k, SRG-120DH, SRG-201SE, SRG-300SE, and SRG-301SE cameras.

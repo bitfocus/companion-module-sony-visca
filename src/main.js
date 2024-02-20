@@ -83,7 +83,7 @@ class SonyVISCAInstance extends InstanceBase {
 
 	async configUpdated(config) {
 		this.config = config
-		this.choices = getChoices(config)
+		this.choices = getChoices(config, this)
 		this.setActionDefinitions(getActionDefinitions(this))
 		this.init_udp()
 	}
