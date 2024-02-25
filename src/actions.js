@@ -1326,13 +1326,22 @@ function getMiscActionDefinitions(self, camId) {
 					],
 					default: '0',
 				},
+				{
+					type: 'dropdown',
+					label: 'Color',
+					id: 'color',
+					choices: [
+						{ id: '0', label: 'Red' },
+						{ id: '1', label: 'Green' },
+					],
+					default: '0',
+				},
 			],
 			callback: async (event) => {
-				if (event.options.bol == 1) {
-					self.VISCA.send(camId + '\x01\x7E\x01\x0A\x00\x02\xFF')
-				} else {
-					self.VISCA.send(camId + '\x01\x7E\x01\x0A\x00\x03\xFF')
-				}
+				const color = event.options.color == '1' ? '\x04\x1A' : '\x01\x0A';
+				const onOff = event.options.bol == '1' ? '\x02' : '\x03';
+		
+				self.VISCA.send(camId + '\x01\x7E' + color + '\x00' + onOff + '\xFF');
 			},
 		},
 		menu: {
