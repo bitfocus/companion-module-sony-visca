@@ -1641,6 +1641,34 @@ const systemPresets = {
 		],
 		feedbacks: [],
 	},
+	'system-startStopRecording':{
+		type: 'button',
+		category: 'System',
+		name: 'Recording Button (press/release)',
+		style: {
+			text: 'Start\nStop\nRec',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'internalRecording',
+						options: { bol: 1},
+					},
+				],
+				up: [
+					{
+						actionId: 'internalRecording',
+						options: { bol: 0},
+					},
+				],
+			},
+		],
+	},
 }
 
 const cameraPresets = {}
