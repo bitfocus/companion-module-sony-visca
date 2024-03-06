@@ -1641,7 +1641,7 @@ const systemPresets = {
 		],
 		feedbacks: [],
 	},
-	'system-startStopRecording':{
+	'system-startStopRecording': {
 		type: 'button',
 		category: 'System',
 		name: 'Recording Button (press/release)',
@@ -1657,13 +1657,13 @@ const systemPresets = {
 				down: [
 					{
 						actionId: 'internalRecording',
-						options: { bol: 1},
+						options: { bol: 1 },
 					},
 				],
 				up: [
 					{
 						actionId: 'internalRecording',
-						options: { bol: 0},
+						options: { bol: 0 },
 					},
 				],
 			},

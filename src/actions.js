@@ -1338,10 +1338,9 @@ function getMiscActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				const color = event.options.color == '1' ? '\x04\x1A' : '\x01\x0A';
-				const onOff = event.options.bol == '1' ? '\x02' : '\x03';
-		
-				self.VISCA.send(camId + '\x01\x7E' + color + '\x00' + onOff + '\xFF');
+				const color = event.options.color == '1' ? '\x04\x1A' : '\x01\x0A'
+				const onOff = event.options.bol == '1' ? '\x02' : '\x03'
+				self.VISCA.send(camId + '\x01\x7E' + color + '\x00' + onOff + '\xFF')
 			},
 		},
 		menu: {
