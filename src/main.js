@@ -6,12 +6,14 @@ import { getFeedbackDefinitions } from './feedbacks.js'
 import { getActionDefinitions } from './actions.js'
 import { getPresetDefinitions } from './presets.js'
 import { initVariables, updateVariables } from './variables.js'
+import { Visca } from './visca.js'
 
 class SonyVISCAInstance extends InstanceBase {
 	constructor(internal) {
 		super(internal)
 		this.initVariables = initVariables
 		this.updateVariables = updateVariables
+		this.VISCA = new Visca(this)
 	}
 
 	async init(config) {
@@ -36,34 +38,6 @@ class SonyVISCAInstance extends InstanceBase {
 			presetSelector: 1,
 		}
 		this.speed = { pan: 0x0c, tilt: 0x0c, zoom: 1, focus: 1 }
-		this.VISCA = {
-			// VISCA Communication Types
-			command: Buffer.from([0x01, 0x00]),
-			control: Buffer.from([0x02, 0x00]),
-			inquiry: Buffer.from([0x01, 0x10]),
-
-			send: (payload, type = this.VISCA.command) => {
-				const buffer = Buffer.alloc(32)
-				type.copy(buffer)
-
-				this.packet_counter = (this.packet_counter + 1) % 0xffffffff
-
-				buffer.writeUInt16BE(payload.length, 2)
-				buffer.writeUInt32BE(this.packet_counter, 4)
-
-				if (typeof payload == 'string') {
-					buffer.write(payload, 8, 'binary')
-				} else if (typeof payload == 'object' && payload instanceof Buffer) {
-					payload.copy(buffer, 8)
-				}
-
-				const newBuffer = buffer.slice(0, 8 + payload.length)
-				this.log('debug', 'send: ' + this.viscaToString(newBuffer))
-				let lastCmdSent = this.viscaToString(newBuffer).slice(30)
-				this.setVariableValues({ lastCmdSent: lastCmdSent })
-				this.udp.send(newBuffer)
-			},
-		}
 
 		this.setFeedbackDefinitions(getFeedbackDefinitions(this))
 		this.setActionDefinitions(getActionDefinitions(this))
@@ -91,21 +65,6 @@ class SonyVISCAInstance extends InstanceBase {
 	// Return config fields for web config
 	getConfigFields() {
 		return getConfigDefinitions(CHOICES)
-	}
-
-	viscaToString(payload) {
-		let response = payload.toString('hex').replaceAll(' ', '')
-
-		let s = response.substr(0, 2)
-		for (let i = 2; i < response.length; i = i + 2) {
-			if (i == 4 || i == 8 || i == 16) {
-				s += ' | '
-			} else {
-				s += ' '
-			}
-			s += response.substr(i, 2)
-		}
-		return s
 	}
 
 	init_udp() {
