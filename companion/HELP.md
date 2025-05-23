@@ -4,8 +4,6 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 
 **Please Note**: Not all Sony PTZ cameras support all VISCA commands. Please check the official "Technical Manual" of your exact model to see what commands it supports, in case one of the commands in this module is not working for you.
 
-
-
 ## Configuration
 
 - Type in the IP address of the device.
@@ -17,8 +15,9 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 ### Camera Configuration
 
 - ILME-FR7
-  - Set DIP 3 (setup) to On
+  - Set SETUP DIP Switch 3 to On to enable VISCA over IP
   - Repower the camera
+  - Ensure you are sending to ID 1 (by default)
 
 ## Actions Implemented
 
