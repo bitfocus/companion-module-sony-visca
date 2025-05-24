@@ -14,7 +14,7 @@ export function getConfigDefinitions(CHOICES) {
 			type: 'textinput',
 			id: 'host',
 			label: 'Target IP',
-			width: 4,
+			width: 3,
 			regex: Regex.IP,
 		},
 		{
@@ -29,8 +29,8 @@ export function getConfigDefinitions(CHOICES) {
 			type: 'dropdown',
 			id: 'id',
 			label: 'Camera Id',
-			width: 2,
-			default: '128',
+			width: 3,
+			default: '129',
 			choices: CHOICES.CAMERA_ID,
 		},
 		{

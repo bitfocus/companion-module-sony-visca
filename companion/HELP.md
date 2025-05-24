@@ -7,17 +7,16 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 ## Configuration
 
 - Type in the IP address of the device.
-- Type in the port of the device (default is 52381).
-- You can also specify the Camera ID.
+- Type in the port of the device (default is 52381)
+- You can also specify the Camera ID  
+(In most cases **id 1** is the best choice)
+## Enabling VISCA over IP on your camera
 
-**Please Note**: On some Sony PTZ cameras, for example the ILME-FR7 you may need to enable VISCA before control works remotely, please see below for details
+Several Sony PTZ camera models do not enable VISCA over IP by default. On some models you can enable it using the on screen menu.
 
-### Camera Configuration
+Most models have dip switches on the back of the cameras with descriptions of their functions on the bottom of the camera. In many cases, such as the "IMLE-FR7" setting switch three to the on position and re-powering the camera enables VISCA over IP.
 
-- ILME-FR7
-  - Set SETUP DIP Switch 3 to On to enable VISCA over IP
-  - Repower the camera
-  - Ensure you are sending to ID 1 (by default)
+Please refer to the manual for your camera for specific instructions.
 
 ## Actions Implemented
 
@@ -100,6 +99,7 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 - Menu (on/off/enter)
 - Video Latency (normal/low)
 - Button Feedback (highlight/clear)
+- Recording Button (press/release)
 - Override VISCA ID (serial only)
 - Custom Command - *If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)*
 
@@ -179,6 +179,7 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 - Camera Power Off
 - Menu/Back Button
 - Menu Enter Button
+- Recording Button (press/release)
 
 ### Camera Presets
 

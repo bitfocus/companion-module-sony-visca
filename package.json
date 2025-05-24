@@ -1,32 +1,36 @@
 {
-    "name": "sony-visca",
-    "version": "2.7.1",
-    "main": "src/main.js",
-    "type": "module",
-    "scripts": {
-        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-        "format": "prettier -w .",
-        "lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg --ignore-pattern test",
-        "lint": "yarn lint:raw .",
-        "docs": "node src/help.js"
-    },
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/bitfocus/companion-module-sony-visca.git"
-    },
-    "engines": {
-        "npm": "please-use-yarn",
-        "yarn": "^1.22",
-        "node": ">=18.12 <19"
-    },
-    "dependencies": {
-        "@companion-module/base": "~1.4.1",
-        "typescript": "^4.9.5"
-    },
-    "devDependencies": {
-        "@companion-module/tools": "^1.0.1",
-        "jest": "^29.5.0"
-    },
-    "prettier": "@companion-module/tools/.prettierrc.json"
+	"name": "sony-visca",
+	"version": "2.7.2",
+	"main": "src/main.js",
+	"type": "module",
+	"sourceType": "module",
+	"scripts": {
+		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+		"format": "prettier -w .",
+		"lint:raw": "eslint",
+		"lint": "yarn lint:raw .",
+		"docs": "node src/help.js"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-sony-visca.git"
+	},
+	"engines": {
+		"npm": "please-use-yarn",
+		"yarn": "^4",
+		"node": ">=22 <23"
+	},
+	"dependencies": {
+		"@companion-module/base": "~1.12.0"
+	},
+	"devDependencies": {
+		"@companion-module/tools": "^2.3.0",
+		"eslint": "^9.27.0",
+		"eslint-plugin-jest": "^28.11.0",
+		"jest": "^29.7.0",
+		"prettier": "^3.5.3"
+	},
+	"prettier": "@companion-module/tools/.prettierrc.json",
+	"packageManager": "yarn@4.9.1"
 }

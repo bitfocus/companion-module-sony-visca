@@ -95,7 +95,7 @@ class SonyVISCAInstance extends InstanceBase {
 			})
 
 			this.udp.on('status_change', (status, message) => {
-				this.log('debug', 'UDP status_change: ' + status)
+				this.log('info', 'UDP status_change: ' + status)
 				this.updateStatus(status, message)
 			})
 		} else {

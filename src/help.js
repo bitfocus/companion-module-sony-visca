@@ -15,8 +15,17 @@ let markdown =
 	'## Configuration\n' +
 	'\n' +
 	'- Type in the IP address of the device.\n' +
-	'- Type in the port of the device (default is 52381).\n' +
-	'- You can also specify the Camera ID.\n'
+	'- Type in the port of the device (default is 52381)\n' +
+	'- You can also specify the Camera ID  \n' +
+	'(In most cases **id 1** is the best choice)' +
+	'\n' +
+	'## Enabling VISCA over IP on your camera\n' +
+	'\n' +
+	'Several Sony PTZ camera models do not enable VISCA over IP by default. On some models you can enable it using the on screen menu.\n' +
+	'\n' +
+	'Most models have dip switches on the back of the cameras with descriptions of their functions on the bottom of the camera. In many cases, such as the "IMLE-FR7" setting switch three to the on position and re-powering the camera enables VISCA over IP.\n' +
+	'\n' +
+	'Please refer to the manual for your camera for specific instructions.\n'
 
 if (actions.getActionsMarkdown()) {
 	markdown += '\n' + actions.getActionsMarkdown()

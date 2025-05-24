@@ -21,7 +21,7 @@ export function getChoices(config, self) {
 	} else {
 		self.log(
 			'error',
-			`${config.frameRate} is not a valid frame rate group for the ${model.label} providing choices for 50Hz based frame rates`
+			`${config.frameRate} is not a valid frame rate group for the ${model.label} providing choices for 50Hz based frame rates`,
 		)
 		c.SHUTTER = _choices[group]['50'].SHUTTER
 	}
@@ -1108,7 +1108,7 @@ export const CHOICES = {
 
 	CAMERA_ID: [
 		{ id: '128', label: 'id 0' },
-		{ id: '129', label: 'id 1' },
+		{ id: '129', label: 'id 1 (default)' },
 		{ id: '130', label: 'id 2' },
 		{ id: '131', label: 'id 3' },
 		{ id: '132', label: 'id 4' },

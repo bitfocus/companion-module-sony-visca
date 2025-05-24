@@ -12,7 +12,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.heldThresholdReached
+				return self.state.heldThresholdReached ? true : false
 			},
 		},
 		lastPresetUsed: {
@@ -25,7 +25,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.heldThresholdReached
+				// return self.state.heldThresholdReached
 			},
 		},
 		manualFocus: {

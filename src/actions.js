@@ -1247,7 +1247,7 @@ function getPresetActionDefinitions(self, camId) {
 						'\x01\x7E\x01\x0B' +
 						String.fromCharCode(presetNumber & 0xff) +
 						String.fromCharCode(parseInt(event.options.speed, 16) & 0xff) +
-						'\xFF'
+						'\xFF',
 				)
 			},
 		},
@@ -1397,7 +1397,7 @@ function getMiscActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				self.state.heldThresholdReached = event.options.bol
+				self.state.heldThresholdReached = parseInt(event.options.bol)
 				self.checkFeedbacks()
 			},
 		},
@@ -1471,7 +1471,7 @@ function getMiscActionDefinitions(self, camId) {
 				self.log('info', 'Custom Command: ' + self.viscaToString(event.options.cmd))
 				self.log(
 					'info',
-					'Please consider requesting this command to be added to the module at https://github.com/bitfocus/companion-module-sony-visca/issues/35'
+					'Please consider requesting this command to be added to the module at https://github.com/bitfocus/companion-module-sony-visca/issues/35',
 				)
 				const hexData = event.options.cmd.replace(/\s+/g, '')
 				const tempBuffer = Buffer.from(hexData, 'hex')
@@ -1510,6 +1510,12 @@ export function getActionsMarkdown() {
 		config: { id: '128' },
 		speed: { pan: 0x0c, tilt: 0x0c, zoom: 4, focus: 3 },
 		state: { viscaId: 128 },
+		choices: {
+			SPEED: [{ id: 0, label: 0 }],
+			IRIS: [{ id: '00', label: 'Auto' }],
+			GAIN: [{ id: '00', label: 'Auto' }],
+			SHUTTER: [{ id: '00', label: 'Auto' }],
+		},
 		updateVariables: () => {},
 	}
 
@@ -1521,7 +1527,7 @@ export function getActionsMarkdown() {
 	markdown += formatActionsMarkdown('Miscellaneous', getMiscActionDefinitions(self))
 	markdown = markdown.replace(
 		'Custom Command',
-		'Custom Command - *If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)*'
+		'Custom Command - *If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)*',
 	)
 	return markdown
 }
