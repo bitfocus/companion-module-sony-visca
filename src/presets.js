@@ -1681,7 +1681,7 @@ for (let i = 0; i < 64; i++) {
 			text: 'Preset\\n' + (i + 1),
 			size: '18',
 			color: COLORS.WHITE,
-			bgcolor: COLORS.DARK_GRAY,
+			bgcolor: COLORS.CHARCOAL,
 		},
 		steps: [
 			{
@@ -1735,7 +1735,41 @@ for (let i = 0; i < 64; i++) {
 	}
 	cameraPresets['presets-Preset' + i] = preset
 }
-
+for (let i = 1; i < 65; i++) {
+	const preset = {
+		type: 'button',
+		category: 'Presets',
+		name: 'Set presetSelector variable',
+		style: {
+			text: 'Select\\nPreset\\n' + i,
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.DARK_GRAY,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'setPresetSelector',
+						options: { val: i },
+					},
+				],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'selectedPreset',
+				options: { preset: i },
+				style: {
+					color: COLORS.BLACK,
+					bgcolor: COLORS.WHITE,
+				},
+			},
+		],
+	}
+	cameraPresets['presets-PresetSelector' + i] = preset
+}
 cameraPresets['presets-PresetPS'] = {
 	type: 'button',
 	category: 'Presets',
@@ -1744,7 +1778,7 @@ cameraPresets['presets-PresetPS'] = {
 		text: 'Preset\\n$(VISCA:presetSelector)\\nSelect',
 		size: '18',
 		color: COLORS.WHITE,
-		bgcolor: COLORS.DARK_GRAY,
+		bgcolor: COLORS.DARKER_GRAY,
 		show_topbar: false,
 	},
 	steps: [
@@ -2357,7 +2391,7 @@ export function getPresetsMarkdown() {
 		'- Presets 1-64 are available\n' +
 		'- Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.*\n' +
 		'- Presets using presetSelector variable\n' +
-		'- Preset Select Increment and Decrement\n'
+		'- Preset Selector Set, Increment and Decrement\n'
 	markdown += formatPresetsMarkdown('Rotation Enabled', rotationEnabledPresets)
 	markdown +=
 		'\n*Rotation enabled presets are intended for devices like the Stream Deck+ and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Tapping the knob defaults the setting.*\n'

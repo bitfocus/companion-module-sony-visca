@@ -2,6 +2,7 @@ import { combineRgb } from '@companion-module/base'
 
 export const COLORS = {
 	BLACK: combineRgb(0, 0, 0),
+	DARKER_GRAY: combineRgb(48, 48, 48),
 	DARK_GRAY: combineRgb(72, 72, 72),
 	GRAY: combineRgb(128, 128, 128),
 	WHITE: combineRgb(255, 255, 255),
@@ -25,7 +26,9 @@ export const COLORS = {
 
 	BLUE: combineRgb(0, 0, 255),
 	DARK_BLUE: combineRgb(0, 0, 102),
+	CHARCOAL: combineRgb(54, 69, 79),
 	MEDIUM_BLUE: combineRgb(0, 0, 153),
+	SLATE: combineRgb(112, 128, 144),
 	PALE_BLUE: combineRgb(128, 128, 255),
 
 	CYAN: combineRgb(0, 255, 255),

@@ -90,6 +90,7 @@ Please refer to the manual for your camera for specific instructions.
 - Save Preset
 - Recall Preset
 - Preset Drive Speed (individual)
+- Set Preset Selector
 - Modify Preset Selector
 
 ### Miscellaneous Actions
@@ -186,7 +187,7 @@ Please refer to the manual for your camera for specific instructions.
 - Presets 1-64 are available
 - Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.*
 - Presets using presetSelector variable
-- Preset Select Increment and Decrement
+- Preset Selector Set, Increment and Decrement
 
 ### Rotation Enabled Presets
 

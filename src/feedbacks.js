@@ -28,6 +28,19 @@ export function getFeedbackDefinitions(self) {
 				// return self.state.heldThresholdReached
 			},
 		},
+		selectedPreset: {
+			type: 'boolean',
+			name: 'Selected Preset',
+			description: 'Highlight the selected preset',
+			defaultStyle: {
+				color: COLORS.BLACK,
+				bgcolor: COLORS.WHITE,
+			},
+			options: [],
+			callback: function (feedback) {
+				return feedback.options.preset === self.state.presetSelector
+			},
+		},
 		manualFocus: {
 			type: 'boolean',
 			name: 'Lens - Auto Focus State',

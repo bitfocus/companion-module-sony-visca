@@ -1251,6 +1251,22 @@ function getPresetActionDefinitions(self, camId) {
 				)
 			},
 		},
+		setPresetSelector: {
+			name: 'Set Preset Selector',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Number',
+					id: 'val',
+					choices: CHOICES.PRESET,
+				},
+			],
+			callback: async (event) => {
+				self.state.presetSelector = parseInt(event.options.val)
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
 		modifyPresetSelector: {
 			name: 'Modify Preset Selector',
 			options: [
@@ -1288,6 +1304,7 @@ function getPresetActionDefinitions(self, camId) {
 					self.state.presetSelector = r
 				}
 				self.updateVariables()
+				self.checkFeedbacks()
 			},
 		},
 	}

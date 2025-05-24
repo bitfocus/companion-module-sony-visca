@@ -7,10 +7,13 @@ This module uses the Sony Visca protocol to control PTZ cameras. While it is foc
 
 ## Changes
 
-### v2.7.2
+### v2.7.3
 
 - Added details for enabling VISCA to HELP.md
 - Updated dependencies
+- Fixed bug that prevented presets from highlighting when saving
+- Fixed default camera Id in new configs
+- Finished Camera Preset Selection action and feedback #77
 
 ### v2.7.1
 
