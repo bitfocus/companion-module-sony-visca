@@ -10,6 +10,15 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 - Type in the port of the device (default is 52381).
 - You can also specify the Camera ID.
 
+**Please Note**: On some Sony PTZ cameras, for example the ILME-FR7 you may need to enable VISCA before control works remotely, please see below for details
+
+### Camera Configuration
+
+- ILME-FR7
+  - Set SETUP DIP Switch 3 to On to enable VISCA over IP
+  - Repower the camera
+  - Ensure you are sending to ID 1 (by default)
+
 ## Actions Implemented
 
 ### Pan/Tilt Actions
