@@ -9,7 +9,8 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 - Type in the IP address of the device.
 - Type in the port of the device (default is 52381)
 - You can also specify the Camera ID  
-(In most cases **id 1** is the best choice)
+  (In most cases **id 1** is the best choice)
+
 ## Enabling VISCA over IP on your camera
 
 Several Sony PTZ camera models do not enable VISCA over IP by default. On some models you can enable it using the on screen menu.
@@ -102,7 +103,7 @@ Please refer to the manual for your camera for specific instructions.
 - Button Feedback (highlight/clear)
 - Recording Button (press/release)
 - Override VISCA ID (serial only)
-- Custom Command - *If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)*
+- Custom Command - _If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)_
 
 ## Presets Implemented
 
@@ -185,7 +186,7 @@ Please refer to the manual for your camera for specific instructions.
 ### Camera Presets
 
 - Presets 1-64 are available
-- Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.*
+- Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.\*
 - Presets using presetSelector variable
 - Preset Selector Set, Increment and Decrement
 
@@ -203,23 +204,23 @@ Please refer to the manual for your camera for specific instructions.
 - Zoom Speed - tap for standard (1)
 - Focus Speed - tap for standard (1)
 
-*Rotation enabled presets are intended for devices like the Stream Deck+ and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Tapping the knob defaults the setting.*
+_Rotation enabled presets are intended for devices like the Stream Deck+ and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Tapping the knob defaults the setting._
 
 ## Variables Implemented
 
-| Id | Name |
-|----|------|
-| ptSlowMode | Pan/Tilt Slow mode (slow/normal) |
-| panSpeed | Pan Speed |
-| tiltSpeed | Tilt Speed |
-| zoomSpeed | Zoom Speed |
-| focusSpeed | Focus Speed |
-| zoomMode | Zoom Mode (optical/digital/clr img) |
-| focusMode | Focus Mode (auto/manual) |
-| expMode | Exposure Mode |
-| expCompOnOff | Exposure Compensation (on/off) |
-| backlightComp | Backlight Compensation (on/off) |
-| spotlightComp | Spotlight Compensation (on/off) |
-| presetSelector | Preset Selection Variable |
-| viscaId | Specific ViscaID to interact with (serial only) |
-| lastCmdSent | Last Command Sent (hex values) |
+| Id             | Name                                            |
+| -------------- | ----------------------------------------------- |
+| ptSlowMode     | Pan/Tilt Slow mode (slow/normal)                |
+| panSpeed       | Pan Speed                                       |
+| tiltSpeed      | Tilt Speed                                      |
+| zoomSpeed      | Zoom Speed                                      |
+| focusSpeed     | Focus Speed                                     |
+| zoomMode       | Zoom Mode (optical/digital/clr img)             |
+| focusMode      | Focus Mode (auto/manual)                        |
+| expMode        | Exposure Mode                                   |
+| expCompOnOff   | Exposure Compensation (on/off)                  |
+| backlightComp  | Backlight Compensation (on/off)                 |
+| spotlightComp  | Spotlight Compensation (on/off)                 |
+| presetSelector | Preset Selection Variable                       |
+| viscaId        | Specific ViscaID to interact with (serial only) |
+| lastCmdSent    | Last Command Sent (hex values)                  |

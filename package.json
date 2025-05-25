@@ -1,9 +1,8 @@
 {
 	"name": "sony-visca",
-	"version": "2.7.3",
+	"version": "2.7.4",
 	"main": "src/main.js",
 	"type": "module",
-	"sourceType": "module",
 	"scripts": {
 		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
 		"format": "prettier -w .",
@@ -22,12 +21,11 @@
 		"node": ">=22 <23"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.12.0"
+		"@companion-module/base": "~1.11.0"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^2.3.0",
 		"eslint": "^9.27.0",
-		"eslint-plugin-jest": "^28.11.0",
 		"jest": "^29.7.0",
 		"prettier": "^3.5.3"
 	},
