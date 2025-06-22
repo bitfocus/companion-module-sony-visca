@@ -7,7 +7,6 @@ export const MODELS = [
 	{ id: '0519', group: '2', label: 'BRC-X1000' },
 	{ id: '051E', group: '4', label: 'ILME-FR7' },
 	{ id: '051Ek', group: '4', label: 'ILME-FR7K' },
-	{ id: '0519', group: '2', label: 'BRC-X1000' },
 	{ id: '0511', group: '3a', label: 'SRG-120DH' },
 	{ id: '061A', group: '1a', label: 'SRG-201M2' },
 	{ id: '0516a', group: '3b', label: 'SRG-201SE' },
