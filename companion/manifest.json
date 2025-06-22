@@ -29,6 +29,6 @@
 		"entrypoint": "../src/main.js"
 	},
 	"manufacturer": "Sony",
-	"products": ["VISCA", "BRC-H780", "BRC-H800", "BRC-X400/X401", "BRC-X1000", "ILME-FR7/FR7K", "SRG-120DH", "SRG-201M2/201SE", "SRG-300SE", "SRG-301SE", "SRG-H40UH", "SRG-HD1M2", "SRG-X120", "SRG-X400", "SRG-X402"],
+	"products": ["VISCA", "BRC-H780", "BRC-H800", "BRC-X400/X401", "BRC-X1000", "ILME-FR7/FR7K", "SRG-120DH", "SRG-201M2/201SE", "SRG-300SE", "SRG-301SE", "SRG-H40UH", "SRG-HD1M2", "SRG-X40UH", "SRG-X120", "SRG-X400", "SRG-X402"],
 	"keywords": ["Protocol", "Camera", "VISCA", "PTZ"]
 }
