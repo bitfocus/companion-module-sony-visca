@@ -1485,13 +1485,13 @@ function getMiscActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				self.log('info', 'Custom Command: ' + self.viscaToString(event.options.cmd))
+				const hexData = event.options.cmd.replace(/\s+/g, '')
+				const tempBuffer = Buffer.from(hexData, 'hex')
+				self.log('info', 'Custom Command: ' + self.VISCA.msgToString(tempBuffer, false))
 				self.log(
 					'info',
 					'Please consider requesting this command to be added to the module at https://github.com/bitfocus/companion-module-sony-visca/issues/35',
 				)
-				const hexData = event.options.cmd.replace(/\s+/g, '')
-				const tempBuffer = Buffer.from(hexData, 'hex')
 				self.VISCA.send(tempBuffer)
 			},
 		},
