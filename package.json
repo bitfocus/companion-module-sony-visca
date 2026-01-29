@@ -24,7 +24,7 @@
 		"@companion-module/base": "~1.11.0"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^2.3.0",
+		"@companion-module/tools": "^2.6.1",
 		"eslint": "^9.27.0",
 		"jest": "^29.7.0",
 		"prettier": "^3.5.3"
