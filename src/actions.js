@@ -1481,10 +1481,12 @@ function getMiscActionDefinitions(self, camId) {
 					type: 'textinput',
 					label: 'Command example: 81 01 06 06 10 FF',
 					id: 'cmd',
-					regex: '/^8[0-7] ?([0-9a-fA-F]{2} ?){3,13}[fF][fF]$/',
+					regex: '/^(\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)|((8[0-7]|\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)) ?((([0-9a-fA-F]{2})|\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)) ?){1,13}))$/',
+					useVariables: true,
 				},
 			],
-			callback: async (event) => {
+			callback: async (event, context) => {
+				event.options.cmd = await context.parseVariablesInString(event.options.cmd)
 				self.log('info', 'Custom Command: ' + self.viscaToString(event.options.cmd))
 				self.log(
 					'info',
