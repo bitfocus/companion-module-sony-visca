@@ -220,6 +220,7 @@ Please refer to the manual for your camera for specific instructions.
 | expCompOnOff | Exposure Compensation (on/off) |
 | backlightComp | Backlight Compensation (on/off) |
 | spotlightComp | Spotlight Compensation (on/off) |
+| recordingStatus | Recording status (unknown/standby/recording) |
 | presetSelector | Preset Selection Variable |
 | viscaId | Specific ViscaID to interact with (serial only) |
 | lastCmdSent | Last Command Sent (hex values) |
