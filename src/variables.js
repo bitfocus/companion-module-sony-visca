@@ -10,6 +10,7 @@ const variables = [
 	{ variableId: 'expCompOnOff', name: 'Exposure Compensation (on/off)' },
 	{ variableId: 'backlightComp', name: 'Backlight Compensation (on/off)' },
 	{ variableId: 'spotlightComp', name: 'Spotlight Compensation (on/off)' },
+	{ variableId: 'recordingStatus', name: 'Recording status (unknown/standby/recording)' },
 	{ variableId: 'presetSelector', name: 'Preset Selection Variable' },
 	{ variableId: 'viscaId', name: 'Specific ViscaID to interact with (serial only)' },
 	{ variableId: 'lastCmdSent', name: 'Last Command Sent (hex values)' },
@@ -33,6 +34,7 @@ export async function updateVariables() {
 		expCompOnOff: this.state.expCompOnOff,
 		backlightComp: this.state.backlightComp,
 		spotlightComp: this.state.spotlightComp,
+		recordingStatus: this.state.recordingStatus,
 		presetSelector: this.state.presetSelector,
 		viscaId: this.state.viscaId - 0x80,
 	})
