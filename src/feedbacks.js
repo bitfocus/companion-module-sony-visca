@@ -105,6 +105,32 @@ export function getFeedbackDefinitions(self) {
 				return self.state.spotlightComp === 'on'
 			},
 		},
+		recordingActive: {
+			type: 'boolean',
+			name: 'Recording Active',
+			description: 'Highlights when camera recording status is active',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_RED,
+			},
+			options: [],
+			callback: function () {
+				return self.state.recordingStatus === 'recording'
+			},
+		},
+		recordingPulse: {
+			type: 'boolean',
+			name: 'Recording Active Pulse',
+			description: 'Pulse overlay for active recording state',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: COLORS.RED,
+			},
+			options: [],
+			callback: function () {
+				return self.state.recordingStatus === 'recording' && self.state.recordingPulsePhase
+			},
+		},
 		ptSlowModeOn: {
 			type: 'boolean',
 			name: 'Pan/Tilt Slow Mode On',

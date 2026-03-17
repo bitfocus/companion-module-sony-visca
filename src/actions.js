@@ -623,8 +623,38 @@ function getExposureActionDefinitions(self, camId) {
 					],
 					default: '1',
 				},
+				...(isFr7Model(self)
+					? [
+							{
+								type: 'dropdown',
+								label: 'Step',
+								id: 'step',
+								choices: [
+									{ id: '10', label: 'Fine' },
+									{ id: '20', label: 'Medium' },
+									{ id: '40', label: 'Coarse' },
+								],
+								default: '20',
+								allowCustom: true,
+								regex: '/^(?!00)[0-9a-fA-F]{2}$/',
+							},
+						]
+					: []),
 			],
 			callback: async (event) => {
+				if (isFr7Model(self)) {
+					const direction = parseInt(event.options.val)
+					if (direction !== 1 && direction !== 2) {
+						return
+					}
+					const step = getHexStep(event.options.step)
+					let cmd = Buffer.from(camId + '\x01\x7E\x04\x4B\x00\x00\x00\xFF', 'binary')
+					cmd.writeUInt8(direction === 1 ? 0x02 : 0x03, 5)
+					cmd.writeUInt8((step & 0xf0) >> 4, 6)
+					cmd.writeUInt8(step & 0x0f, 7)
+					self.VISCA.send(cmd)
+					return
+				}
 				switch (parseInt(event.options.val)) {
 					case 1:
 						self.VISCA.send(camId + '\x01\x04\x0B\x02\xFF')
@@ -666,8 +696,35 @@ function getExposureActionDefinitions(self, camId) {
 						{ id: '2', label: 'Gain Down' },
 					],
 				},
+				...(isFr7Model(self)
+					? [
+							{
+								type: 'dropdown',
+								label: 'Step',
+								id: 'step',
+								choices: [
+									{ id: '01', label: 'Single' },
+									{ id: '10', label: 'Fine' },
+									{ id: '20', label: 'Medium' },
+									{ id: '40', label: 'Coarse' },
+								],
+								default: '01',
+								allowCustom: true,
+								regex: '/^(?!00)[0-9a-fA-F]{2}$/',
+							},
+						]
+					: []),
 			],
 			callback: async (event) => {
+				if (isFr7Model(self)) {
+					const direction = parseInt(event.options.val)
+					if (direction !== 1 && direction !== 2) {
+						return
+					}
+					const step = getHexStep(event.options.step)
+					await sendFr7GainAdjust(self, camId, direction, step)
+					return
+				}
 				switch (parseInt(event.options.val)) {
 					case 1:
 						self.VISCA.send(camId + '\x01\x04\x0C\x02\xFF')
@@ -1437,6 +1494,9 @@ function getMiscActionDefinitions(self, camId) {
 					self.VISCA.send(camId + '\x01\x7E\x04\x1D\x01\xFF')
 				} else {
 					self.VISCA.send(camId + '\x01\x7E\x04\x1D\x00\xFF')
+					if (isFr7Model(self)) {
+						self.VISCA.send(camId + '\x09\x7E\x04\x1E\xFF', self.VISCA.inquiry)
+					}
 				}
 			},
 		},
@@ -1485,13 +1545,13 @@ function getMiscActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				self.log('info', 'Custom Command: ' + self.viscaToString(event.options.cmd))
+				const hexData = event.options.cmd.replace(/\s+/g, '')
+				const tempBuffer = Buffer.from(hexData, 'hex')
+				self.log('info', 'Custom Command: ' + self.VISCA.msgToString(tempBuffer, false))
 				self.log(
 					'info',
 					'Please consider requesting this command to be added to the module at https://github.com/bitfocus/companion-module-sony-visca/issues/35',
 				)
-				const hexData = event.options.cmd.replace(/\s+/g, '')
-				const tempBuffer = Buffer.from(hexData, 'hex')
 				self.VISCA.send(tempBuffer)
 			},
 		},
@@ -1555,4 +1615,41 @@ function getIdOfDefault(props) {
 		return props[0].id
 	}
 	return d.id
+}
+
+function isFr7Model(self) {
+	const model = self?.config?.model
+	return model === '051E' || model === '051Ek'
+}
+
+async function sendFr7GainAdjust(self, camId, direction, step) {
+	const directMenuPress = Buffer.from(camId + '\x01\x7E\x04\x72\x02\x01\xFF', 'binary')
+	const directMenuRelease = Buffer.from(camId + '\x01\x7E\x04\x72\x02\x00\xFF', 'binary')
+	let cmd = Buffer.from(camId + '\x01\x7E\x04\x41\x00\x00\x00\xFF', 'binary')
+	cmd.writeUInt8(direction === 1 ? 0x02 : 0x03, 5)
+	cmd.writeUInt8((step & 0xf0) >> 4, 6)
+	cmd.writeUInt8(step & 0x0f, 7)
+
+	// Open ISO/Gain direct menu, move the dial, then toggle the same menu target off again.
+	self.VISCA.send(directMenuPress)
+	await delayMs(50)
+	self.VISCA.send(directMenuRelease)
+	await delayMs(50)
+	self.VISCA.send(cmd)
+	await delayMs(50)
+	self.VISCA.send(directMenuPress)
+	await delayMs(50)
+	self.VISCA.send(directMenuRelease)
+}
+
+function delayMs(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function getHexStep(stepInput, fallback = 1) {
+	const step = parseInt(stepInput, 16)
+	if (Number.isNaN(step) || step < 1) {
+		return fallback
+	}
+	return Math.min(step, 0xff)
 }

@@ -826,7 +826,7 @@ const exposurePresets = {
 				down: [
 					{
 						actionId: 'irisAdjust',
-						options: { val: '1' },
+						options: { val: '1', step: '20' },
 					},
 				],
 			},
@@ -848,7 +848,7 @@ const exposurePresets = {
 				down: [
 					{
 						actionId: 'irisAdjust',
-						options: { val: '2' },
+						options: { val: '2', step: '20' },
 					},
 				],
 			},
@@ -870,7 +870,7 @@ const exposurePresets = {
 				down: [
 					{
 						actionId: 'gainAdjust',
-						options: { val: '1' },
+						options: { val: '1', step: '01' },
 					},
 				],
 			},
@@ -892,7 +892,7 @@ const exposurePresets = {
 				down: [
 					{
 						actionId: 'gainAdjust',
-						options: { val: '2' },
+						options: { val: '2', step: '01' },
 					},
 				],
 			},
@@ -1668,6 +1668,24 @@ const systemPresets = {
 				],
 			},
 		],
+		feedbacks: [
+			{
+				feedbackId: 'recordingActive',
+				options: {},
+				style: {
+					color: COLORS.WHITE,
+					bgcolor: COLORS.DARK_RED,
+				},
+			},
+			{
+				feedbackId: 'recordingPulse',
+				options: {},
+				style: {
+					color: COLORS.WHITE,
+					bgcolor: COLORS.RED,
+				},
+			},
+		],
 	},
 }
 
@@ -1946,13 +1964,13 @@ const rotationEnabledPresets = {
 				rotate_left: [
 					{
 						actionId: 'gainAdjust',
-						options: { val: '2' },
+						options: { val: '2', step: '01' },
 					},
 				],
 				rotate_right: [
 					{
 						actionId: 'gainAdjust',
-						options: { val: '1' },
+						options: { val: '1', step: '01' },
 					},
 				],
 			},
