@@ -71,8 +71,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Exposure Compensation On',
 			description: 'Highlights if Exposure Compensation is ON',
 			defaultStyle: {
-				color: COLORS.BLACK,
-				bgcolor: COLORS.PALE_YELLOW,
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
 			},
 			options: [],
 			callback: function () {
@@ -84,8 +84,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Backlight Compensation On',
 			description: 'Highlights if Backlight Compensation is ON',
 			defaultStyle: {
-				color: COLORS.BLACK,
-				bgcolor: COLORS.PALE_YELLOW,
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
 			},
 			options: [],
 			callback: function () {
@@ -97,8 +97,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Spotlight Compensation On',
 			description: 'Highlights if Spotlight Compensation is ON',
 			defaultStyle: {
-				color: COLORS.BLACK,
-				bgcolor: COLORS.PALE_YELLOW,
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
 			},
 			options: [],
 			callback: function () {
@@ -136,8 +136,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Pan/Tilt Slow Mode On',
 			description: 'Highlights if Pan/Tilt Slow Mode is On',
 			defaultStyle: {
-				color: COLORS.BLACK,
-				bgcolor: COLORS.ORANGE,
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
 			},
 			options: [],
 			callback: function () {
@@ -149,8 +149,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Auto Focus Active',
 			description: 'Highlights when Auto Focus is active',
 			defaultStyle: {
-				color: COLORS.BLACK,
-				bgcolor: COLORS.PALE_YELLOW,
+				color: COLORS.WHITE,
+				bgcolor: COLORS.RED,
 			},
 			options: [],
 			callback: function () {
@@ -162,8 +162,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Auto Exposure Active',
 			description: 'Highlights when Exposure Mode is Auto',
 			defaultStyle: {
-				color: COLORS.BLACK,
-				bgcolor: COLORS.PALE_YELLOW,
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
 			},
 			options: [],
 			callback: function () {
@@ -175,8 +175,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Camera Power On',
 			description: 'Highlights when camera reports power is on',
 			defaultStyle: {
-				color: COLORS.BLACK,
-				bgcolor: COLORS.PALE_YELLOW,
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
 			},
 			options: [],
 			callback: function () {

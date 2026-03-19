@@ -8,6 +8,7 @@ import {
 	image_up_right,
 	image_down_left,
 	image_down_right,
+	image_rotary_bg,
 } from './images.js'
 
 export function getPresetDefinitions() {
@@ -290,7 +291,7 @@ const panTiltPresets = {
 		category: 'Pan/Tilt',
 		name: 'Pan/Tilt Speed Up',
 		style: {
-			text: 'Pan/Tilt\\nFaster\\n$(VISCA:panSpeed)/$(VISCA:tiltSpeed)',
+			text: 'Pan/Tilt\\nFaster\\n$(sony-visca:panSpeed)/$(sony-visca:tiltSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -313,7 +314,7 @@ const panTiltPresets = {
 		category: 'Pan/Tilt',
 		name: 'Pan/Tilt Speed Down',
 		style: {
-			text: 'Pan/Tilt\\nSlower\\n$(VISCA:panSpeed)/$(VISCA:tiltSpeed)',
+			text: 'Pan/Tilt\\nSlower\\n$(sony-visca:panSpeed)/$(sony-visca:tiltSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -359,7 +360,7 @@ const panTiltPresets = {
 		category: 'Pan/Tilt',
 		name: 'Pan/Tilt Slow Mode (normal/slow)',
 		style: {
-			text: 'ptSlow\\nMode\\n$(VISCA:ptSlowMode)',
+			text: 'ptSlow\\nMode\\n$(sony-visca:ptSlowMode)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -370,15 +371,7 @@ const panTiltPresets = {
 				down: [
 					{
 						actionId: 'ptSlow',
-						options: { bol: '1' },
-					},
-				],
-			},
-			{
-				down: [
-					{
-						actionId: 'ptSlow',
-						options: { bol: '0' },
+						options: { bol: '2' },
 					},
 				],
 			},
@@ -388,8 +381,8 @@ const panTiltPresets = {
 				feedbackId: 'ptSlowModeOn',
 				options: {},
 				style: {
-					color: COLORS.BLACK,
-					bgcolor: COLORS.ORANGE,
+					color: COLORS.WHITE,
+					bgcolor: COLORS.DARK_ORANGE,
 				},
 			},
 		],
@@ -462,7 +455,7 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Zoom Mode',
 		style: {
-			text: 'Zoom\\nMode\\n$(VISCA:zoomMode)',
+			text: 'Zoom\\nMode\\n$(sony-visca:zoomMode)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -567,7 +560,7 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Focus Mode - Auto/Manual',
 		style: {
-			text: '$(VISCA:focusMode)\\nFocus',
+			text: '$(sony-visca:focusMode)\\nFocus',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.DARK_RED,
@@ -577,19 +570,7 @@ const lensPresets = {
 				down: [
 					{
 						actionId: 'focusM',
-						options: {
-							bol: '1',
-						},
-					},
-				],
-			},
-			{
-				down: [
-					{
-						actionId: 'focusM',
-						options: {
-							bol: '0',
-						},
+						options: { bol: '2' },
 					},
 				],
 			},
@@ -631,7 +612,7 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Zoom Speed Faster',
 		style: {
-			text: 'Zoom\\nFaster\\n$(VISCA:zoomSpeed)',
+			text: 'Zoom\\nFaster\\n$(sony-visca:zoomSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -654,7 +635,7 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Zoom Speed Slower',
 		style: {
-			text: 'Zoom\\nSlower\\n$(VISCA:zoomSpeed)',
+			text: 'Zoom\\nSlower\\n$(sony-visca:zoomSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -700,7 +681,7 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Focus Speed Faster',
 		style: {
-			text: 'Focus\\nFaster\\n$(VISCA:focusSpeed)',
+			text: 'Focus\\nFaster\\n$(sony-visca:focusSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -723,7 +704,7 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Focus Speed Slower',
 		style: {
-			text: 'Focus\\nSlower\\n$(VISCA:focusSpeed)',
+			text: 'Focus\\nSlower\\n$(sony-visca:focusSpeed)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -772,7 +753,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Auto/Manual Exposure Toggle',
 		style: {
-			text: '$(VISCA:expMode)\\nExpose',
+			text: '$(sony-visca:expMode)\\nExpose',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.DARK_YELLOW,
@@ -992,7 +973,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Exposure Compensation On/Off',
 		style: {
-			text: 'Expose\\nComp\\n$(VISCA:expCompOnOff)',
+			text: 'Expose\\nComp\\n$(sony-visca:expCompOnOff)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -1003,19 +984,7 @@ const exposurePresets = {
 				down: [
 					{
 						actionId: 'exposureCompOnOff',
-						options: {
-							bol: '1',
-						},
-					},
-				],
-			},
-			{
-				down: [
-					{
-						actionId: 'exposureCompOnOff',
-						options: {
-							bol: '0',
-						},
+						options: { bol: '2' },
 					},
 				],
 			},
@@ -1025,8 +994,8 @@ const exposurePresets = {
 				feedbackId: 'exposureCompOn',
 				options: {},
 				style: {
-					color: COLORS.BLACK,
-					bgcolor: COLORS.PALE_YELLOW,
+					color: COLORS.WHITE,
+					bgcolor: COLORS.DARK_ORANGE,
 				},
 			},
 		],
@@ -1105,7 +1074,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Backlight Compensation On/Off',
 		style: {
-			text: 'BckLite\\nComp\\n$(VISCA:backlightComp)',
+			text: 'BckLite\\nComp\\n$(sony-visca:backlightComp)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -1116,19 +1085,7 @@ const exposurePresets = {
 				down: [
 					{
 						actionId: 'backlightComp',
-						options: {
-							bol: '1',
-						},
-					},
-				],
-			},
-			{
-				down: [
-					{
-						actionId: 'backlightComp',
-						options: {
-							bol: '0',
-						},
+						options: { bol: '2' },
 					},
 				],
 			},
@@ -1138,8 +1095,8 @@ const exposurePresets = {
 				feedbackId: 'backlightCompOn',
 				options: {},
 				style: {
-					color: COLORS.BLACK,
-					bgcolor: COLORS.PALE_YELLOW,
+					color: COLORS.WHITE,
+					bgcolor: COLORS.DARK_ORANGE,
 				},
 			},
 		],
@@ -1149,7 +1106,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Spotlight Compensation On/Off',
 		style: {
-			text: 'SptLite\\nComp\\n$(VISCA:spotlightComp)',
+			text: 'SptLite\\nComp\\n$(sony-visca:spotlightComp)',
 			size: '18',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -1160,19 +1117,7 @@ const exposurePresets = {
 				down: [
 					{
 						actionId: 'spotlightComp',
-						options: {
-							bol: '1',
-						},
-					},
-				],
-			},
-			{
-				down: [
-					{
-						actionId: 'spotlightComp',
-						options: {
-							bol: '0',
-						},
+						options: { bol: '2' },
 					},
 				],
 			},
@@ -1182,8 +1127,8 @@ const exposurePresets = {
 				feedbackId: 'spotlightCompOn',
 				options: {},
 				style: {
-					color: COLORS.BLACK,
-					bgcolor: COLORS.PALE_YELLOW,
+					color: COLORS.WHITE,
+					bgcolor: COLORS.DARK_ORANGE,
 				},
 			},
 		],
@@ -1793,7 +1738,7 @@ cameraPresets['presets-PresetPS'] = {
 	category: 'Presets',
 	name: 'Preset using variable presetSelector',
 	style: {
-		text: 'Preset\\n$(VISCA:presetSelector)\\nSelect',
+		text: 'Preset\\n$(sony-visca:presetSelector)\\nSelect',
 		size: '18',
 		color: COLORS.WHITE,
 		bgcolor: COLORS.DARKER_GRAY,
@@ -1902,8 +1847,9 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Iris - tap to open iris',
 		style: {
-			text: 'Iris',
-			size: '18',
+			text: 'Iris\\n$(sony-visca:irisLevel)\\n$(sony-visca:irisPositionBar)',
+			size: '14',
+			png64: image_rotary_bg,
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -1942,8 +1888,9 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Gain - tap to set to 0dB',
 		style: {
-			text: 'Gain',
-			size: '18',
+			text: 'Gain\\n$(sony-visca:gainLevel)',
+			size: '14',
+			png64: image_rotary_bg,
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -1982,8 +1929,9 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Shutter - tap for default (1/60 or 1/50)',
 		style: {
-			text: 'Shutter',
-			size: '18',
+			text: 'Shutter\\n$(sony-visca:shutterSpeed)',
+			size: '14',
+			png64: image_rotary_bg,
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -2024,6 +1972,7 @@ const rotationEnabledPresets = {
 		style: {
 			text: 'Bright',
 			size: '18',
+			png64: image_rotary_bg,
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -2060,10 +2009,11 @@ const rotationEnabledPresets = {
 	'exposure-Compensation': {
 		type: 'button',
 		category: 'Rotation Enabled',
-		name: 'Exposure Compensation - tap to reset',
+		name: 'Exposure Compensation - tap to reset, hold to toggle',
 		style: {
-			text: 'Expose\\nComp',
-			size: '18',
+			text: 'Expose\\nComp\\n$(sony-visca:expCompLevel)',
+			size: '14',
+			png64: image_rotary_bg,
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -2073,12 +2023,23 @@ const rotationEnabledPresets = {
 		},
 		steps: [
 			{
-				down: [
+				up: [
 					{
 						actionId: 'exposureComp',
 						options: { val: '3' },
 					},
 				],
+				1000: {
+					options: {
+						runWhileHeld: true,
+					},
+					actions: [
+						{
+							actionId: 'exposureCompOnOff',
+							options: { bol: '2' },
+						},
+					],
+				},
 				rotate_left: [
 					{
 						actionId: 'exposureComp',
@@ -2098,8 +2059,8 @@ const rotationEnabledPresets = {
 				feedbackId: 'exposureCompOn',
 				options: {},
 				style: {
-					color: COLORS.BLACK,
-					bgcolor: COLORS.PALE_YELLOW,
+					color: COLORS.WHITE,
+					bgcolor: COLORS.DARK_ORANGE,
 				},
 			},
 		],
@@ -2109,8 +2070,9 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Red Gain - tap for default (192)',
 		style: {
-			text: 'Red\\nGain',
-			size: '18',
+			text: 'Red\\nGain\\n$(sony-visca:redGain)',
+			size: '14',
+			png64: image_rotary_bg,
 			color: COLORS.PALE_RED,
 			bgcolor: COLORS.BLACK,
 		},
@@ -2157,8 +2119,9 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Blue Gain - tap for default (192)',
 		style: {
-			text: 'Blue\\nGain',
-			size: '18',
+			text: 'Blue\\nGain\\n$(sony-visca:blueGain)',
+			size: '14',
+			png64: image_rotary_bg,
 			color: COLORS.PALE_BLUE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -2205,8 +2168,9 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'White Balance Offset - tap to reset',
 		style: {
-			text: 'WB\\nOffset',
-			size: '18',
+			text: 'WB\\nOffset\\n$(sony-visca:wbOffset)',
+			size: '14',
+			png64: image_rotary_bg,
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -2242,8 +2206,9 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Pan/Tilt Speed - tap for default',
 		style: {
-			text: 'Pan/Tilt\\nSpeed\\n$(VISCA:panSpeed)/$(VISCA:tiltSpeed)',
-			size: '18',
+			text: 'Pan/Tilt\\nSpeed\\n$(sony-visca:panSpeed)/$(sony-visca:tiltSpeed)',
+			size: '14',
+			png64: image_rotary_bg,
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -2304,8 +2269,9 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Zoom Speed - tap for standard (1)',
 		style: {
-			text: 'Zoom\\nSpeed\\n$(VISCA:zoomSpeed)',
-			size: '18',
+			text: 'Zoom\\nSpeed\\n$(sony-visca:zoomSpeed)',
+			size: '14',
+			png64: image_rotary_bg,
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -2348,8 +2314,9 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Focus Speed - tap for standard (1)',
 		style: {
-			text: 'Focus\\nSpeed\\n$(VISCA:focusSpeed)',
-			size: '18',
+			text: 'Focus\\nSpeed\\n$(sony-visca:focusSpeed)',
+			size: '14',
+			png64: image_rotary_bg,
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,

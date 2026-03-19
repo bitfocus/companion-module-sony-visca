@@ -172,6 +172,7 @@ export const INQUIRY_BLOCKS = {
 			{ variable: 'slowShutter', type: 'flag', byte: 9, bit: 0, on: 'auto', off: 'manual' },
 			{ variable: 'shutterSpeed', type: 'choiceLookup', byte: 10, mask: 0xff, choiceKey: 'SHUTTER' },
 			{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0xff, choiceKey: 'IRIS' },
+			{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0xff },
 			{ variable: 'gainLevel', type: 'choiceLookup', byte: 12, mask: 0xff, choiceKey: 'GAIN' },
 			{ variable: 'expCompLevel', type: 'offset', byte: 14, mask: 0x0f, center: 7 },
 		],

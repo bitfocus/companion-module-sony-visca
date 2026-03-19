@@ -208,6 +208,19 @@ class SonyVISCAInstance extends InstanceBase {
 				}
 			}
 		}
+		// CAM_PanTiltPosInq: 8x 09 06 12 FF → y0 50 0p 0p 0p 0p 0t 0t 0t 0t FF
+		callbacks['090612'] = (payload) => {
+			if (payload.length >= 10 && payload[1] === 0x50) {
+				const panRaw =
+					((payload[2] & 0x0f) << 12) | ((payload[3] & 0x0f) << 8) | ((payload[4] & 0x0f) << 4) | (payload[5] & 0x0f)
+				const tiltRaw =
+					((payload[6] & 0x0f) << 12) | ((payload[7] & 0x0f) << 8) | ((payload[8] & 0x0f) << 4) | (payload[9] & 0x0f)
+				// Convert to signed 16-bit
+				this.state.panPosition = panRaw > 0x7fff ? panRaw - 0x10000 : panRaw
+				this.state.tiltPosition = tiltRaw > 0x7fff ? tiltRaw - 0x10000 : tiltRaw
+				this.updateVariables()
+			}
+		}
 		this.VISCA.initializeInquiries(callbacks)
 		this.setupLowPriorityInquiries()
 	}

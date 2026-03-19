@@ -1,3 +1,27 @@
+// Pan/tilt position ranges (signed 16-bit)
+const PAN_MIN = -0x2200 // 0xDE00 signed = left limit
+const PAN_MAX = 0x2200 // right limit
+// Tilt range depends on image flip setting
+const TILT_MIN_FLIP_OFF = -0x0400 // 0xFC00 = -1024 (bottom, flip off: -20°)
+const TILT_MAX_FLIP_OFF = 0x1200 // +4608 (top, flip off: +90°)
+const TILT_MIN_FLIP_ON = -0x1200 // 0xEE00 = -4608 (bottom, flip on: -90°)
+const TILT_MAX_FLIP_ON = 0x0400 // +1024 (top, flip on: +20°)
+
+function progressBar(pct, width = 10, start = '', end = '') {
+	if (pct != null && pct >= 0 && pct <= 100) {
+		const filled = Math.floor((pct * width) / 100)
+		return start + '.'.repeat(filled) + '|' + '.'.repeat(width - filled) + end
+	}
+	return '---'
+}
+
+function normalizePct(val, low, high) {
+	if (val == null || low === high) return null
+	const pct = ((val - low) / (high - low)) * 100
+	if (pct < 0 || pct > 100) return null
+	return Math.round(pct)
+}
+
 const variables = [
 	// Existing variables
 	{ variableId: 'ptSlowMode', name: 'Pan/Tilt Slow mode (slow/normal)' },
@@ -15,6 +39,14 @@ const variables = [
 	{ variableId: 'presetSelector', name: 'Preset Selection Variable' },
 	{ variableId: 'viscaId', name: 'Specific ViscaID to interact with (serial only)' },
 	{ variableId: 'lastCmdSent', name: 'Last Command Sent (hex values)' },
+	// Position bars
+	{ variableId: 'panPosition', name: 'Pan Position' },
+	{ variableId: 'tiltPosition', name: 'Tilt Position' },
+	{ variableId: 'panPositionBar', name: 'Pan Position Bar' },
+	{ variableId: 'tiltPositionBar', name: 'Tilt Position Bar' },
+	{ variableId: 'zoomPositionBar', name: 'Zoom Position Bar' },
+	{ variableId: 'focusPositionBar', name: 'Focus Position Bar' },
+	{ variableId: 'irisPositionBar', name: 'Iris Position Bar' },
 	// Block 097e7e00 — Lens Control
 	{ variableId: 'zoomPosition', name: 'Zoom Position' },
 	{ variableId: 'focusPosition', name: 'Focus Position' },
@@ -99,7 +131,32 @@ export function initVariables() {
 }
 
 export async function updateVariables() {
+	// Calculate position percentages
+	const panPct = normalizePct(this.state.panPosition, PAN_MIN, PAN_MAX)
+	const tiltMin = this.state.imageFlip === 'on' ? TILT_MIN_FLIP_ON : TILT_MIN_FLIP_OFF
+	const tiltMax = this.state.imageFlip === 'on' ? TILT_MAX_FLIP_ON : TILT_MAX_FLIP_OFF
+	const tiltPct = normalizePct(this.state.tiltPosition, tiltMin, tiltMax)
+	const zoomPct = normalizePct(this.state.zoomPosition, 0, 0xffff)
+	const focusPct = normalizePct(this.state.focusPosition, 0, 0xffff)
+	// Iris range: find min/max byte values from the model's IRIS choices
+	const irisChoices = this.choices?.IRIS
+	let irisPct = null
+	if (irisChoices && this.state.irisRaw != null) {
+		const irisIds = irisChoices.map((c) => parseInt(c.id, 16)).filter((v) => !isNaN(v))
+		const irisMin = Math.min(...irisIds)
+		const irisMax = Math.max(...irisIds)
+		irisPct = normalizePct(this.state.irisRaw, irisMin, irisMax)
+	}
+
 	this.setVariableValues({
+		// Position bars
+		panPosition: this.state.panPosition,
+		tiltPosition: this.state.tiltPosition,
+		panPositionBar: progressBar(panPct, 10, 'L', 'R'),
+		tiltPositionBar: progressBar(tiltPct, 10, 'D', 'U'),
+		zoomPositionBar: progressBar(zoomPct, 10, 'W', 'T'),
+		focusPositionBar: progressBar(focusPct, 10, 'N', 'F'),
+		irisPositionBar: progressBar(irisPct, 10, 'C', 'O'),
 		// Existing
 		panSpeed: this.speed.pan,
 		ptSlowMode: this.state.ptSlowMode,

@@ -96,12 +96,15 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 					choices: [
 						{ id: '0', label: 'Off' },
 						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
 					],
 					default: '0',
 				},
 			],
 			callback: async (event) => {
-				if (event.options.bol == '0') {
+				let val = event.options.bol
+				if (val == '2') val = self.state.ptSlowMode === 'slow' ? '0' : '1'
+				if (val == '0') {
 					self.VISCA.send(camId + '\x01\x06\x44\x03\xFF')
 					self.state.ptSlowMode = 'normal'
 				} else {
@@ -256,6 +259,123 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 				self.speed.pan = parseInt(event.options.speed, 16)
 				self.speed.tilt = parseInt(event.options.speed, 16)
 				speed = getSpeedCodes(self)
+			},
+		},
+		ptReset: {
+			name: 'Pan/Tilt Reset',
+			options: [],
+			callback: async () => {
+				self.VISCA.send(camId + '\x01\x06\x05\xFF')
+			},
+		},
+		ptAbsolute: {
+			name: 'Pan/Tilt Absolute Position',
+			options: [
+				{
+					type: 'number',
+					label: 'Pan Speed (1-24)',
+					id: 'speed',
+					min: 1,
+					max: 24,
+					default: 12,
+				},
+				{
+					type: 'number',
+					label: 'Pan Position (-8704 to 8704)',
+					id: 'pan',
+					min: -8704,
+					max: 8704,
+					default: 0,
+				},
+				{
+					type: 'number',
+					label: 'Tilt Position (-1024 to 4608)',
+					id: 'tilt',
+					min: -4608,
+					max: 4608,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const spd = Math.min(Math.max(parseInt(event.options.speed), 1), 24)
+				const pan = parseInt(event.options.pan) & 0xffff
+				const tilt = parseInt(event.options.tilt) & 0xffff
+				let cmd = Buffer.alloc(15)
+				cmd.writeUInt8(parseInt(self.state.viscaId), 0)
+				cmd.writeUInt8(0x01, 1)
+				cmd.writeUInt8(0x06, 2)
+				cmd.writeUInt8(0x02, 3)
+				cmd.writeUInt8(spd, 4)
+				cmd.writeUInt8(0x00, 5)
+				cmd.writeUInt8((pan >> 12) & 0x0f, 6)
+				cmd.writeUInt8((pan >> 8) & 0x0f, 7)
+				cmd.writeUInt8((pan >> 4) & 0x0f, 8)
+				cmd.writeUInt8(pan & 0x0f, 9)
+				cmd.writeUInt8((tilt >> 12) & 0x0f, 10)
+				cmd.writeUInt8((tilt >> 8) & 0x0f, 11)
+				cmd.writeUInt8((tilt >> 4) & 0x0f, 12)
+				cmd.writeUInt8(tilt & 0x0f, 13)
+				cmd.writeUInt8(0xff, 14)
+				self.VISCA.send(cmd)
+			},
+		},
+		ptSpeedType: {
+			name: 'Pan/Tilt Speed Type',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Speed Type',
+					id: 'val',
+					choices: [
+						{ id: '08', label: 'Normal' },
+						{ id: '04', label: 'Extended Range' },
+						{ id: '18', label: 'Extended Step' },
+					],
+					default: '08',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x06\x45' + String.fromCharCode(parseInt(event.options.val, 16) & 0xff) + '\xFF')
+			},
+		},
+		panReverse: {
+			name: 'Pan Reverse (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Pan Reverse',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId + '\x01\x7E\x01\x06\x00' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF',
+				)
+			},
+		},
+		tiltReverse: {
+			name: 'Tilt Reverse (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Tilt Reverse',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId + '\x01\x7E\x01\x09\x00' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF',
+				)
 			},
 		},
 	}
@@ -462,12 +582,15 @@ function getLensActionDefinitions(self, camId) {
 					choices: [
 						{ id: '0', label: 'Auto Focus' },
 						{ id: '1', label: 'Manual Focus' },
+						{ id: '2', label: 'Toggle' },
 					],
 					default: '0',
 				},
 			],
 			callback: async (event) => {
-				if (event.options.bol == '1') {
+				let val = event.options.bol
+				if (val == '2') val = self.state.focusMode === 'manual' ? '0' : '1'
+				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x38\x03\xFF')
 					self.state.focusMode = 'manual'
 				} else {
@@ -558,6 +681,204 @@ function getLensActionDefinitions(self, camId) {
 			options: [],
 			callback: async () => {
 				self.VISCA.send(camId + '\x01\x04\x18\x01\xFF')
+			},
+		},
+		focusInfinity: {
+			name: 'Focus Infinity',
+			options: [],
+			callback: async () => {
+				self.VISCA.send(camId + '\x01\x04\x18\x02\xFF')
+			},
+		},
+		focusDirect: {
+			name: 'Focus Direct Position',
+			options: [
+				{
+					type: 'number',
+					label: 'Focus Position (0-65535)',
+					id: 'val',
+					min: 0,
+					max: 65535,
+					default: 32768,
+				},
+			],
+			callback: async (event) => {
+				const pos = parseInt(event.options.val) & 0xffff
+				let cmd = Buffer.from(camId + '\x01\x04\x48\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((pos >> 12) & 0x0f, 4)
+				cmd.writeUInt8((pos >> 8) & 0x0f, 5)
+				cmd.writeUInt8((pos >> 4) & 0x0f, 6)
+				cmd.writeUInt8(pos & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
+		zoomDirect: {
+			name: 'Zoom Direct Position',
+			options: [
+				{
+					type: 'number',
+					label: 'Zoom Position (0-65535)',
+					id: 'val',
+					min: 0,
+					max: 65535,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const pos = parseInt(event.options.val) & 0xffff
+				let cmd = Buffer.from(camId + '\x01\x04\x47\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((pos >> 12) & 0x0f, 4)
+				cmd.writeUInt8((pos >> 8) & 0x0f, 5)
+				cmd.writeUInt8((pos >> 4) & 0x0f, 6)
+				cmd.writeUInt8(pos & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
+		teleConvert: {
+			name: 'Tele Convert (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Tele Convert On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.teleConvert === 'on' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x7E\x04\x36\x02\xFF')
+				} else {
+					self.VISCA.send(camId + '\x01\x7E\x04\x36\x03\xFF')
+				}
+			},
+		},
+		afMode: {
+			name: 'AF Mode (Normal/Interval/Zoom Trigger)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'AF Mode',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Normal' },
+						{ id: '1', label: 'Interval' },
+						{ id: '2', label: 'Zoom Trigger' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x57' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+				const modes = { 0: 'normal', 1: 'interval', 2: 'zoom trigger' }
+				self.state.afMode = modes[parseInt(event.options.val)] ?? self.state.afMode
+				self.updateVariables()
+			},
+		},
+		afSensitivity: {
+			name: 'AF Sensitivity (Normal/Low)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'AF Sensitivity',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'Normal' },
+						{ id: '3', label: 'Low' },
+					],
+					default: '2',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x58' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+				self.state.afSensitivity = event.options.val === '3' ? 'low' : 'normal'
+				self.updateVariables()
+			},
+		},
+		afIntervalTime: {
+			name: 'AF Interval Time',
+			options: [
+				{
+					type: 'number',
+					label: 'Operating Time (0-255)',
+					id: 'opTime',
+					min: 0,
+					max: 255,
+					default: 5,
+				},
+				{
+					type: 'number',
+					label: 'Staying Time (0-255)',
+					id: 'stayTime',
+					min: 0,
+					max: 255,
+					default: 5,
+				},
+			],
+			callback: async (event) => {
+				const op = parseInt(event.options.opTime) & 0xff
+				const stay = parseInt(event.options.stayTime) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x04\x27\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((op >> 4) & 0x0f, 4)
+				cmd.writeUInt8(op & 0x0f, 5)
+				cmd.writeUInt8((stay >> 4) & 0x0f, 6)
+				cmd.writeUInt8(stay & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
+		focusNearLimitDirect: {
+			name: 'Focus Near Limit Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Focus Near Limit Position (0-65535)',
+					id: 'val',
+					min: 0,
+					max: 65535,
+					default: 4096,
+				},
+			],
+			callback: async (event) => {
+				const pos = parseInt(event.options.val) & 0xffff
+				let cmd = Buffer.from(camId + '\x01\x04\x28\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((pos >> 12) & 0x0f, 4)
+				cmd.writeUInt8((pos >> 8) & 0x0f, 5)
+				cmd.writeUInt8((pos >> 4) & 0x0f, 6)
+				cmd.writeUInt8(pos & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
+		zoomSpeedType: {
+			name: 'Zoom Speed Type',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Speed Type',
+					id: 'val',
+					choices: [
+						{ id: '08', label: 'Normal' },
+						{ id: '04', label: 'Extended Range' },
+					],
+					default: '08',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId + '\x01\x7E\x04\x57' + String.fromCharCode(parseInt(event.options.val, 16) & 0xff) + '\xFF',
+				)
+			},
+		},
+		lensInit: {
+			name: 'Lens Init',
+			options: [],
+			callback: async () => {
+				self.VISCA.send(camId + '\x01\x04\x19\x01\xFF')
 			},
 		},
 	}
@@ -850,12 +1171,15 @@ function getExposureActionDefinitions(self, camId) {
 					choices: [
 						{ id: '0', label: 'Off' },
 						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
 					],
 					default: '0',
 				},
 			],
 			callback: async (event) => {
-				if (event.options.bol == '1') {
+				let val = event.options.bol
+				if (val == '2') val = self.state.expCompOnOff === 'on' ? '0' : '1'
+				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x3E\x02\xFF')
 					self.state.expCompOnOff = 'on'
 				} else {
@@ -1011,12 +1335,15 @@ function getExposureActionDefinitions(self, camId) {
 					choices: [
 						{ id: '0', label: 'Off' },
 						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
 					],
 					default: '0',
 				},
 			],
 			callback: async (event) => {
-				if (event.options.bol == '1') {
+				let val = event.options.bol
+				if (val == '2') val = self.state.backlightComp === 'on' ? '0' : '1'
+				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x33\x02\xFF')
 					self.state.backlightComp = 'on'
 				} else {
@@ -1037,12 +1364,15 @@ function getExposureActionDefinitions(self, camId) {
 					choices: [
 						{ id: '0', label: 'Off' },
 						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
 					],
 					default: '0',
 				},
 			],
 			callback: async (event) => {
-				if (event.options.bol == '1') {
+				let val = event.options.bol
+				if (val == '2') val = self.state.spotlightComp === 'on' ? '0' : '1'
+				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x3A\x02\xFF')
 					self.state.spotlightComp = 'on'
 				} else {
@@ -1051,6 +1381,508 @@ function getExposureActionDefinitions(self, camId) {
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
+			},
+		},
+		autoSlowShutter: {
+			name: 'Auto Slow Shutter (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Auto Slow Shutter On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.slowShutter === 'auto' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x04\x5A\x02\xFF')
+					self.state.slowShutter = 'auto'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x5A\x03\xFF')
+					self.state.slowShutter = 'manual'
+				}
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
+		highSensitivity: {
+			name: 'High Sensitivity (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'High Sensitivity On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.highSensitivity === 'on' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x04\x5E\x02\xFF')
+					self.state.highSensitivity = 'on'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x5E\x03\xFF')
+					self.state.highSensitivity = 'off'
+				}
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
+		gainLimitSet: {
+			name: 'Set Gain Limit',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Gain Limit',
+					id: 'val',
+					choices: CHOICES.GAIN_LIMIT ?? [{ id: '09', label: '24 db' }],
+					default: CHOICES.GAIN_LIMIT ? getIdOfDefault(CHOICES.GAIN_LIMIT) : '09',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x2C' + String.fromCharCode(parseInt(event.options.val, 16) & 0x0f) + '\xFF')
+			},
+		},
+		maxShutterSet: {
+			name: 'Set Max Shutter',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Max Shutter',
+					id: 'val',
+					choices: CHOICES.MAX_SHUTTER ?? CHOICES.SHUTTER,
+					default: CHOICES.MAX_SHUTTER ? getIdOfDefault(CHOICES.MAX_SHUTTER) : getIdOfDefault(CHOICES.SHUTTER),
+				},
+			],
+			callback: async (event) => {
+				let cmd = Buffer.from(camId + '\x01\x05\x2A\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((parseInt(event.options.val, 16) & 0xf0) >> 4, 5)
+				cmd.writeUInt8(parseInt(event.options.val, 16) & 0x0f, 6)
+				self.VISCA.send(cmd)
+			},
+		},
+		minShutterSet: {
+			name: 'Set Min Shutter',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Min Shutter',
+					id: 'val',
+					choices: CHOICES.SHUTTER,
+					default: getIdOfDefault(CHOICES.SHUTTER),
+				},
+			],
+			callback: async (event) => {
+				let cmd = Buffer.from(camId + '\x01\x05\x2A\x01\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((parseInt(event.options.val, 16) & 0xf0) >> 4, 5)
+				cmd.writeUInt8(parseInt(event.options.val, 16) & 0x0f, 6)
+				self.VISCA.send(cmd)
+			},
+		},
+		visibilityEnhancer: {
+			name: 'Visibility Enhancer (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Visibility Enhancer On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.ve === 'on' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x04\x3D\x06\xFF')
+					self.state.ve = 'on'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x3D\x03\xFF')
+					self.state.ve = 'off'
+				}
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
+		veSettings: {
+			name: 'Visibility Enhancer Settings',
+			options: [
+				{
+					type: 'number',
+					label: 'Effect Level (0-6)',
+					id: 'level',
+					min: 0,
+					max: 6,
+					default: 3,
+				},
+				{
+					type: 'dropdown',
+					label: 'Brightness Compensation',
+					id: 'brightness',
+					choices: [
+						{ id: '0', label: 'Very Dark' },
+						{ id: '1', label: 'Dark' },
+						{ id: '2', label: 'Standard' },
+						{ id: '3', label: 'Bright' },
+					],
+					default: '2',
+				},
+				{
+					type: 'dropdown',
+					label: 'Compensation Level',
+					id: 'compLevel',
+					choices: [
+						{ id: '0', label: 'Low' },
+						{ id: '1', label: 'Mid' },
+						{ id: '2', label: 'High' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				const level = parseInt(event.options.level) & 0x0f
+				const brightness = parseInt(event.options.brightness) & 0x0f
+				const comp = parseInt(event.options.compLevel) & 0x0f
+				self.VISCA.send(
+					camId +
+						'\x01\x04\x2D\x00' +
+						String.fromCharCode(level) +
+						String.fromCharCode(brightness) +
+						String.fromCharCode(comp) +
+						'\x00\x00\x00\x00\xFF',
+				)
+			},
+		},
+		aeSpeedDirect: {
+			name: 'AE Speed Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'AE Speed (1-48)',
+					id: 'val',
+					min: 1,
+					max: 48,
+					default: 1,
+				},
+			],
+			callback: async (event) => {
+				const speed = Math.min(Math.max(parseInt(event.options.val), 1), 48)
+				self.VISCA.send(camId + '\x01\x04\x5D' + String.fromCharCode(speed & 0xff) + '\xFF')
+			},
+		},
+		gainPointOnOff: {
+			name: 'Gain Point (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Gain Point On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				if (event.options.bol == '1') {
+					self.VISCA.send(camId + '\x01\x05\x0C\x02\xFF')
+				} else {
+					self.VISCA.send(camId + '\x01\x05\x0C\x03\xFF')
+				}
+			},
+		},
+		gainPointPosition: {
+			name: 'Gain Point Position',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Gain Point Position',
+					id: 'val',
+					choices: CHOICES.GAIN,
+					default: getIdOfDefault(CHOICES.GAIN),
+				},
+			],
+			callback: async (event) => {
+				let cmd = Buffer.from(camId + '\x01\x05\x4C\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((parseInt(event.options.val, 16) & 0xf0) >> 4, 4)
+				cmd.writeUInt8(parseInt(event.options.val, 16) & 0x0f, 5)
+				self.VISCA.send(cmd)
+			},
+		},
+		defog: {
+			name: 'Defog (on/off with level)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Defog On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '3', label: 'Off' },
+						{ id: '2', label: 'On' },
+					],
+					default: '3',
+				},
+				{
+					type: 'dropdown',
+					label: 'Level',
+					id: 'level',
+					choices: [
+						{ id: '1', label: 'Weak' },
+						{ id: '2', label: 'Medium' },
+						{ id: '3', label: 'Strong' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				const onOff = parseInt(event.options.bol) & 0x0f
+				const level = event.options.bol === '3' ? 0 : parseInt(event.options.level) & 0x0f
+				self.VISCA.send(camId + '\x01\x04\x37' + String.fromCharCode(onOff) + String.fromCharCode(level) + '\xFF')
+			},
+		},
+		irCorrection: {
+			name: 'IR Correction (Standard/IR Light)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'IR Correction',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Standard' },
+						{ id: '1', label: 'IR Light' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x11' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		noiseReduction2d3d: {
+			name: '2D/3D Noise Reduction (separate)',
+			options: [
+				{
+					type: 'dropdown',
+					label: '2D NR Level',
+					id: 'nr2d',
+					choices: [
+						{ id: '0', label: '0 - Off' },
+						{ id: '1', label: '1' },
+						{ id: '2', label: '2' },
+						{ id: '3', label: '3' },
+						{ id: '4', label: '4' },
+						{ id: '5', label: '5' },
+					],
+					default: '3',
+				},
+				{
+					type: 'dropdown',
+					label: '3D NR Level',
+					id: 'nr3d',
+					choices: [
+						{ id: '0', label: '0 - Off' },
+						{ id: '1', label: '1' },
+						{ id: '2', label: '2' },
+						{ id: '3', label: '3' },
+						{ id: '4', label: '4' },
+						{ id: '5', label: '5' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				const nr2d = parseInt(event.options.nr2d) & 0x0f
+				const nr3d = parseInt(event.options.nr3d) & 0x0f
+				self.VISCA.send(camId + '\x01\x05\x53' + String.fromCharCode(nr2d) + String.fromCharCode(nr3d) + '\xFF')
+			},
+		},
+		// FR7 ND controls
+		ndFilterMode: {
+			name: 'ND Filter Mode (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Preset' },
+						{ id: '1', label: 'Variable' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x52' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		ndVariableAdjust: {
+			name: 'ND Variable Adjust (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Adjust',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'Up' },
+						{ id: '3', label: 'Down' },
+					],
+					default: '2',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x12' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		ndVariableDirect: {
+			name: 'ND Variable Direct (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'ND Value',
+					id: 'val',
+					choices: [
+						{ id: '00', label: '1/4' },
+						{ id: '01', label: '1/5' },
+						{ id: '02', label: '1/6' },
+						{ id: '03', label: '1/7' },
+						{ id: '04', label: '1/8' },
+						{ id: '05', label: '1/10' },
+						{ id: '06', label: '1/11' },
+						{ id: '07', label: '1/13' },
+						{ id: '08', label: '1/16' },
+						{ id: '09', label: '1/19' },
+						{ id: '0A', label: '1/23' },
+						{ id: '0B', label: '1/27' },
+						{ id: '0C', label: '1/32' },
+						{ id: '0D', label: '1/38' },
+						{ id: '0E', label: '1/45' },
+						{ id: '0F', label: '1/54' },
+						{ id: '10', label: '1/64' },
+						{ id: '11', label: '1/76' },
+						{ id: '12', label: '1/91' },
+						{ id: '13', label: '1/108' },
+						{ id: '14', label: '1/128' },
+					],
+					default: '08',
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val, 16) & 0xff
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x04\x42\x00\x00' +
+						String.fromCharCode((val >> 4) & 0x0f) +
+						String.fromCharCode(val & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		autoNdFilter: {
+			name: 'Auto ND Filter (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Auto ND',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'On' },
+						{ id: '3', label: 'Off' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x53' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		ndClear: {
+			name: 'ND Clear/Filtered (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'ND Clear',
+					id: 'val',
+					choices: [
+						{ id: '3', label: 'Clear' },
+						{ id: '2', label: 'Filtered' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x54' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		autoIris: {
+			name: 'Auto Iris (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Auto Iris',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'On' },
+						{ id: '3', label: 'Off' },
+					],
+					default: '2',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x05\x34' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		autoShutter: {
+			name: 'Auto Shutter (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Auto Shutter',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'On' },
+						{ id: '3', label: 'Off' },
+					],
+					default: '2',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x05\x35' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		agc: {
+			name: 'AGC (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'AGC',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'On' },
+						{ id: '3', label: 'Off' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x01\x75' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
 			},
 		},
 	}
@@ -1243,6 +2075,756 @@ function getColorActionDefinitions(self, camId) {
 				}
 			},
 		},
+		wbSpeedDirect: {
+			name: 'White Balance Speed Direct',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'WB Speed',
+					id: 'val',
+					choices: [
+						{ id: '1', label: '1 (Slow)' },
+						{ id: '2', label: '2' },
+						{ id: '3', label: '3' },
+						{ id: '4', label: '4' },
+						{ id: '5', label: '5 (Fast)' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x56' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		chromaSuppress: {
+			name: 'Chroma Suppress',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Chroma Suppress Level',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: '1 (Weak)' },
+						{ id: '2', label: '2' },
+						{ id: '3', label: '3 (Strong)' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x5F' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		colorMatrixSelect: {
+			name: 'Color Matrix Select',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Color Matrix',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'STD' },
+						{ id: '3', label: 'OFF' },
+						{ id: '4', label: 'High SAT' },
+						{ id: '5', label: 'FL Light' },
+						{ id: '6', label: 'Movie' },
+						{ id: '7', label: 'Still' },
+						{ id: '8', label: 'Cinema' },
+						{ id: '9', label: 'Pro' },
+						{ id: 'A', label: 'ITU709' },
+						{ id: 'B', label: 'B&W' },
+					],
+					default: '2',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId + '\x01\x7E\x01\x3D' + String.fromCharCode(parseInt(event.options.val, 16) & 0x0f) + '\xFF',
+				)
+			},
+		},
+		colorLevelAdjust: {
+			name: 'Color Level Adjust (up/down/reset)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Adjust',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'Up' },
+						{ id: '3', label: 'Down' },
+						{ id: '0', label: 'Reset' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x09' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		colorLevelDirect: {
+			name: 'Color Level Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Color Level (0-14)',
+					id: 'val',
+					min: 0,
+					max: 14,
+					default: 7,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0x0f
+				self.VISCA.send(camId + '\x01\x04\x49\x00\x00\x00' + String.fromCharCode(val) + '\xFF')
+			},
+		},
+		colorPhaseAdjust: {
+			name: 'Color Phase Adjust (up/down/reset)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Adjust',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'Up' },
+						{ id: '3', label: 'Down' },
+						{ id: '0', label: 'Reset' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x0F' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		colorPhaseDirect: {
+			name: 'Color Phase Direct',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Color Phase (-7 to +7)',
+					id: 'val',
+					choices: [
+						{ id: '0E', label: '+7' },
+						{ id: '0D', label: '+6' },
+						{ id: '0C', label: '+5' },
+						{ id: '0B', label: '+4' },
+						{ id: '0A', label: '+3' },
+						{ id: '09', label: '+2' },
+						{ id: '08', label: '+1' },
+						{ id: '07', label: '0' },
+						{ id: '06', label: '-1' },
+						{ id: '05', label: '-2' },
+						{ id: '04', label: '-3' },
+						{ id: '03', label: '-4' },
+						{ id: '02', label: '-5' },
+						{ id: '01', label: '-6' },
+						{ id: '00', label: '-7' },
+					],
+					default: '07',
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val, 16) & 0x0f
+				self.VISCA.send(camId + '\x01\x04\x4F\x00\x00\x00' + String.fromCharCode(val) + '\xFF')
+			},
+		},
+		gammaSelect: {
+			name: 'Gamma Select',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Gamma',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'STD' },
+						{ id: '1', label: 'Straight' },
+						{ id: '2', label: 'Pattern' },
+						{ id: '8', label: 'Movie' },
+						{ id: '9', label: 'Still' },
+						{ id: 'A', label: 'CINE1' },
+						{ id: 'B', label: 'CINE2' },
+						{ id: 'C', label: 'CINE3' },
+						{ id: 'D', label: 'CINE4' },
+						{ id: 'E', label: 'ITU709' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x5B' + String.fromCharCode(parseInt(event.options.val, 16) & 0x0f) + '\xFF')
+			},
+		},
+		gammaLevelDirect: {
+			name: 'Gamma Level Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Gamma Level (0-14)',
+					id: 'val',
+					min: 0,
+					max: 14,
+					default: 7,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x7E\x01\x71\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((val >> 4) & 0x0f, 5)
+				cmd.writeUInt8(val & 0x0f, 6)
+				self.VISCA.send(cmd)
+			},
+		},
+		kneeSetting: {
+			name: 'Knee Setting (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Knee Setting On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.kneeSetting === 'on' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x7E\x01\x6D\x02\xFF')
+					self.state.kneeSetting = 'on'
+				} else {
+					self.VISCA.send(camId + '\x01\x7E\x01\x6D\x03\xFF')
+					self.state.kneeSetting = 'off'
+				}
+				self.updateVariables()
+			},
+		},
+		kneeMode: {
+			name: 'Knee Mode (Auto/Manual)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Knee Mode',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Auto' },
+						{ id: '4', label: 'Manual' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x01\x54' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+				self.state.kneeMode = event.options.val === '4' ? 'Manual' : 'Auto'
+				self.updateVariables()
+			},
+		},
+		detailLevelDirect: {
+			name: 'Detail Level Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Detail Level (0-15)',
+					id: 'val',
+					min: 0,
+					max: 15,
+					default: 4,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x04\x42\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((val >> 4) & 0x0f, 6)
+				cmd.writeUInt8(val & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
+		detailSettings: {
+			name: 'Detail Sub-settings',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Setting',
+					id: 'setting',
+					choices: [
+						{ id: '01', label: 'Detail Mode' },
+						{ id: '02', label: 'Detail Bandwidth' },
+						{ id: '03', label: 'Crispening' },
+						{ id: '04', label: 'HV Balance' },
+						{ id: '05', label: 'BW Balance' },
+						{ id: '06', label: 'Limit' },
+						{ id: '07', label: 'Highlight Detail' },
+						{ id: '08', label: 'Super Low' },
+					],
+					default: '01',
+				},
+				{
+					type: 'number',
+					label: 'Value',
+					id: 'val',
+					tooltip:
+						'Mode: 0=Auto,1=Manual | Bandwidth: 0-4 | Crispening: 0-7 | HV Balance: 5-9 | BW Balance: 0-4 | Limit: 0-7 | Highlight Detail: 0-4 | Super Low: 0-7',
+					min: 0,
+					max: 9,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const setting = parseInt(event.options.setting, 16) & 0x0f
+				const val = parseInt(event.options.val) & 0x0f
+				self.VISCA.send(camId + '\x01\x05\x42' + String.fromCharCode(setting) + String.fromCharCode(val) + '\xFF')
+			},
+		},
+		blackLevelAdjust: {
+			name: 'Black Level Adjust (up/down/reset)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Adjust',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'Up' },
+						{ id: '3', label: 'Down' },
+						{ id: '0', label: 'Reset' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x15' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		blackLevelDirect: {
+			name: 'Black Level Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Black Level (0-96)',
+					id: 'val',
+					min: 0,
+					max: 96,
+					default: 48,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x7E\x04\x45\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((val >> 4) & 0x0f, 5)
+				cmd.writeUInt8(val & 0x0f, 6)
+				self.VISCA.send(cmd)
+			},
+		},
+		pictureProfile: {
+			name: 'Picture Profile Select',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Picture Profile',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'PP1' },
+						{ id: '1', label: 'PP2' },
+						{ id: '2', label: 'PP3' },
+						{ id: '3', label: 'PP4' },
+						{ id: '4', label: 'PP5' },
+						{ id: '5', label: 'PP6' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x5F' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		colorMatrixCorrection: {
+			name: 'Color Matrix Correction',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Channel',
+					id: 'channel',
+					choices: [
+						{ id: '7A', label: 'R-G' },
+						{ id: '7B', label: 'R-B' },
+						{ id: '7C', label: 'G-R' },
+						{ id: '7D', label: 'G-B' },
+						{ id: '7E', label: 'B-R' },
+						{ id: '7F', label: 'B-G' },
+					],
+					default: '7A',
+				},
+				{
+					type: 'number',
+					label: 'Value (-99 to +99)',
+					id: 'val',
+					min: -99,
+					max: 99,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const raw = (parseInt(event.options.val) + 99) & 0xff
+				const channelByte = parseInt(event.options.channel, 16) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x7E\x01\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8(channelByte, 4)
+				cmd.writeUInt8((raw >> 4) & 0x0f, 5)
+				cmd.writeUInt8(raw & 0x0f, 6)
+				self.VISCA.send(cmd)
+			},
+		},
+		gammaPatternDirect: {
+			name: 'Gamma Pattern Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Pattern (1-512)',
+					id: 'val',
+					min: 1,
+					max: 512,
+					default: 1,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0xfff
+				self.VISCA.send(
+					camId +
+						'\x01\x05\x5B' +
+						String.fromCharCode((val >> 8) & 0x0f) +
+						String.fromCharCode((val >> 4) & 0x0f) +
+						String.fromCharCode(val & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		gammaOffsetDirect: {
+			name: 'Gamma Offset Direct',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Polarity',
+					id: 'polarity',
+					choices: [
+						{ id: '0', label: '+' },
+						{ id: '1', label: '−' },
+					],
+					default: '0',
+				},
+				{
+					type: 'number',
+					label: 'Width (0-64)',
+					id: 'width',
+					min: 0,
+					max: 64,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const pol = parseInt(event.options.polarity) & 0x0f
+				const width = parseInt(event.options.width) & 0xff
+				self.VISCA.send(
+					camId +
+						'\x01\x04\x1E\x00\x00\x00' +
+						String.fromCharCode(pol) +
+						String.fromCharCode((width >> 4) & 0x0f) +
+						String.fromCharCode(width & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		kneeSlopeDirect: {
+			name: 'Knee Slope Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Knee Slope (0-14)',
+					id: 'val',
+					min: 0,
+					max: 14,
+					default: 7,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x7E\x01\x6F\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((val >> 4) & 0x0f, 5)
+				cmd.writeUInt8(val & 0x0f, 6)
+				self.VISCA.send(cmd)
+			},
+		},
+		kneePointDirect: {
+			name: 'Knee Point Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Knee Point (0-12)',
+					id: 'val',
+					min: 0,
+					max: 12,
+					default: 6,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x7E\x01\x6E\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((val >> 4) & 0x0f, 5)
+				cmd.writeUInt8(val & 0x0f, 6)
+				self.VISCA.send(cmd)
+			},
+		},
+		blackGammaLevel: {
+			name: 'Black Gamma Level Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Black Gamma Level (0-14)',
+					id: 'val',
+					min: 0,
+					max: 14,
+					default: 7,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x7E\x01\x72\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((val >> 4) & 0x0f, 5)
+				cmd.writeUInt8(val & 0x0f, 6)
+				self.VISCA.send(cmd)
+			},
+		},
+		blackGammaRange: {
+			name: 'Black Gamma Range',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Range',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Low' },
+						{ id: '1', label: 'Mid' },
+						{ id: '2', label: 'High' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x05\x5C' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		// FR7 White Balance extended
+		presetWhiteDirect: {
+			name: 'Preset White Direct (FR7)',
+			options: [
+				{
+					type: 'number',
+					label: 'Color Temperature (2000-15000 K)',
+					id: 'val',
+					min: 2000,
+					max: 15000,
+					default: 5600,
+				},
+			],
+			callback: async (event) => {
+				const val = Math.min(Math.max(parseInt(event.options.val), 2000), 15000)
+				let cmd = Buffer.from(camId + '\x01\x05\x43\x01\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((val >> 12) & 0x0f, 5)
+				cmd.writeUInt8((val >> 8) & 0x0f, 6)
+				cmd.writeUInt8((val >> 4) & 0x0f, 7)
+				cmd.writeUInt8(val & 0x0f, 8)
+				self.VISCA.send(cmd)
+			},
+		},
+		tintDirect: {
+			name: 'Tint Direct (FR7)',
+			options: [
+				{
+					type: 'number',
+					label: 'Tint (-99 to +99)',
+					id: 'val',
+					min: -99,
+					max: 99,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const raw = (parseInt(event.options.val) + 99) & 0xff
+				self.VISCA.send(
+					camId +
+						'\x01\x05\x44\x02\x00\x00' +
+						String.fromCharCode((raw >> 4) & 0x0f) +
+						String.fromCharCode(raw & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		offsetColorTempDirect: {
+			name: 'Offset Color Temp Direct (FR7)',
+			options: [
+				{
+					type: 'number',
+					label: 'Offset Color Temp (-99 to +99)',
+					id: 'val',
+					min: -99,
+					max: 99,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const raw = (parseInt(event.options.val) + 99) & 0xff
+				self.VISCA.send(
+					camId +
+						'\x01\x05\x45\x00\x00\x00' +
+						String.fromCharCode((raw >> 4) & 0x0f) +
+						String.fromCharCode(raw & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		offsetTintDirect: {
+			name: 'Offset Tint Direct (FR7)',
+			options: [
+				{
+					type: 'number',
+					label: 'Offset Tint (-99 to +99)',
+					id: 'val',
+					min: -99,
+					max: 99,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const raw = (parseInt(event.options.val) + 99) & 0xff
+				self.VISCA.send(
+					camId +
+						'\x01\x05\x46\x00\x00\x00' +
+						String.fromCharCode((raw >> 4) & 0x0f) +
+						String.fromCharCode(raw & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		// FR7 Master/R/B Black and Gain
+		masterBlackDirect: {
+			name: 'Master Black Direct (FR7)',
+			options: [
+				{
+					type: 'number',
+					label: 'Master Black (-99 to +99)',
+					id: 'val',
+					min: -99,
+					max: 99,
+					default: 0,
+					step: 0.1,
+				},
+			],
+			callback: async (event) => {
+				// 0x0000 = -99.0, 0x03DE = 0.0, 0x07BC = +99.0
+				const raw = Math.round((parseFloat(event.options.val) + 99) * 10) & 0xffff
+				let cmd = Buffer.from(camId + '\x01\x05\x48\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((raw >> 12) & 0x0f, 4)
+				cmd.writeUInt8((raw >> 8) & 0x0f, 5)
+				cmd.writeUInt8((raw >> 4) & 0x0f, 6)
+				cmd.writeUInt8(raw & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
+		rGainDirect: {
+			name: 'R Gain Direct (FR7)',
+			options: [
+				{
+					type: 'number',
+					label: 'R Gain (-99 to +99)',
+					id: 'val',
+					min: -99,
+					max: 99,
+					default: 0,
+					step: 0.1,
+				},
+			],
+			callback: async (event) => {
+				const raw = Math.round((parseFloat(event.options.val) + 99) * 10) & 0xffff
+				let cmd = Buffer.from(camId + '\x01\x7E\x04\x46\x02\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((raw >> 12) & 0x0f, 5)
+				cmd.writeUInt8((raw >> 8) & 0x0f, 6)
+				cmd.writeUInt8((raw >> 4) & 0x0f, 7)
+				cmd.writeUInt8(raw & 0x0f, 8)
+				self.VISCA.send(cmd)
+			},
+		},
+		bGainDirect: {
+			name: 'B Gain Direct (FR7)',
+			options: [
+				{
+					type: 'number',
+					label: 'B Gain (-99 to +99)',
+					id: 'val',
+					min: -99,
+					max: 99,
+					default: 0,
+					step: 0.1,
+				},
+			],
+			callback: async (event) => {
+				const raw = Math.round((parseFloat(event.options.val) + 99) * 10) & 0xffff
+				let cmd = Buffer.from(camId + '\x01\x7E\x04\x56\x02\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((raw >> 12) & 0x0f, 5)
+				cmd.writeUInt8((raw >> 8) & 0x0f, 6)
+				cmd.writeUInt8((raw >> 4) & 0x0f, 7)
+				cmd.writeUInt8(raw & 0x0f, 8)
+				self.VISCA.send(cmd)
+			},
+		},
+		rBlackDirect: {
+			name: 'R Black Direct (FR7)',
+			options: [
+				{
+					type: 'number',
+					label: 'R Black (-99 to +99)',
+					id: 'val',
+					min: -99,
+					max: 99,
+					default: 0,
+					step: 0.1,
+				},
+			],
+			callback: async (event) => {
+				const raw = Math.round((parseFloat(event.options.val) + 99) * 10) & 0xffff
+				let cmd = Buffer.from(camId + '\x01\x7E\x04\x43\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((raw >> 12) & 0x0f, 4)
+				cmd.writeUInt8((raw >> 8) & 0x0f, 5)
+				cmd.writeUInt8((raw >> 4) & 0x0f, 6)
+				cmd.writeUInt8(raw & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
+		bBlackDirect: {
+			name: 'B Black Direct (FR7)',
+			options: [
+				{
+					type: 'number',
+					label: 'B Black (-99 to +99)',
+					id: 'val',
+					min: -99,
+					max: 99,
+					default: 0,
+					step: 0.1,
+				},
+			],
+			callback: async (event) => {
+				const raw = Math.round((parseFloat(event.options.val) + 99) * 10) & 0xffff
+				let cmd = Buffer.from(camId + '\x01\x7E\x04\x44\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((raw >> 12) & 0x0f, 4)
+				cmd.writeUInt8((raw >> 8) & 0x0f, 5)
+				cmd.writeUInt8((raw >> 4) & 0x0f, 6)
+				cmd.writeUInt8(raw & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
 	}
 }
 
@@ -1365,11 +2947,70 @@ function getPresetActionDefinitions(self, camId) {
 				self.checkFeedbacks()
 			},
 		},
+		presetSpeedSelect: {
+			name: 'Preset Speed Select (Compatible/Separate/Common)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Speed Mode',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Compatible' },
+						{ id: '1', label: 'Separate' },
+						{ id: '2', label: 'Common' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x1B' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		presetSpeedCommon: {
+			name: 'Preset Drive Speed (common)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Speed',
+					id: 'speed',
+					choices: CHOICES.SPEED,
+					default: getIdOfDefault(CHOICES.SPEED),
+				},
+			],
+			callback: async (event) => {
+				const speed = parseInt(event.options.speed, 16) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x7E\x04\x1C\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((speed >> 4) & 0x0f, 5)
+				cmd.writeUInt8(speed & 0x0f, 6)
+				self.VISCA.send(cmd)
+			},
+		},
+		presetMode: {
+			name: 'Preset Mode (Mode1/Mode2/Trace)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Mode',
+					id: 'val',
+					choices: [
+						{ id: '00', label: 'Mode 1' },
+						{ id: '01', label: 'Mode 2' },
+						{ id: '10', label: 'Trace' },
+					],
+					default: '00',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId + '\x01\x7E\x04\x3D' + String.fromCharCode(parseInt(event.options.val, 16) & 0xff) + '\xFF',
+				)
+			},
+		},
 	}
 }
 
 function getMiscActionDefinitions(self, camId) {
-	// const CHOICES = self.choices
+	const CHOICES = self.choices
 	return {
 		cameraPower: {
 			name: 'Camera Power (on/off)',
@@ -1381,11 +3022,14 @@ function getMiscActionDefinitions(self, camId) {
 					choices: [
 						{ id: '03', label: 'Off' },
 						{ id: '02', label: 'On' },
+						{ id: 'toggle', label: 'Toggle' },
 					],
 				},
 			],
 			callback: async (event) => {
-				self.VISCA.send(camId + '\x01\x04\x00' + String.fromCharCode(parseInt(event.options.val, 16) & 0xff) + '\xFF')
+				let val = event.options.val
+				if (val == 'toggle') val = self.state.power === 'on' ? '03' : '02'
+				self.VISCA.send(camId + '\x01\x04\x00' + String.fromCharCode(parseInt(val, 16) & 0xff) + '\xFF')
 			},
 		},
 		tally: {
@@ -1534,6 +3178,869 @@ function getMiscActionDefinitions(self, camId) {
 				self.setActionDefinitions(getActionDefinitions(self))
 			},
 		},
+		flickerCancel: {
+			name: 'Flicker Cancel (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Flicker Cancel On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.flickerCancel === 'on' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x04\x32\x02\xFF')
+					self.state.flickerCancel = 'on'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x32\x03\xFF')
+					self.state.flickerCancel = 'off'
+				}
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
+		imageStabilizer: {
+			name: 'Image Stabilizer (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Image Stabilizer On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.imageStabilizer === 'on' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x04\x34\x02\xFF')
+					self.state.imageStabilizer = 'on'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x34\x03\xFF')
+					self.state.imageStabilizer = 'off'
+				}
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
+		highResolution: {
+			name: 'High Resolution (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'High Resolution On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.highResolution === 'on' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x04\x52\x02\xFF')
+					self.state.highResolution = 'on'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x52\x03\xFF')
+					self.state.highResolution = 'off'
+				}
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
+		ICR: {
+			name: 'ICR / Night Mode (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'ICR On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off (Day)' },
+						{ id: '1', label: 'On (Night)' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.IRCutFilter === 'on' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x04\x01\x02\xFF')
+					self.state.IRCutFilter = 'on'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x01\x03\xFF')
+					self.state.IRCutFilter = 'off'
+				}
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
+		autoICR: {
+			name: 'Auto ICR (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Auto ICR On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.IRCutFilterAuto === 'auto' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x04\x51\x02\xFF')
+					self.state.IRCutFilterAuto = 'auto'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x51\x03\xFF')
+					self.state.IRCutFilterAuto = 'manual'
+				}
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
+		imgFlip: {
+			name: 'Image Flip (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Image Flip On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				const val = event.options.bol
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x04\x66\x02\xFF')
+					self.state.imageFlip = 'on'
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x66\x03\xFF')
+					self.state.imageFlip = 'off'
+				}
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
+		colorBar: {
+			name: 'Color Bar (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Color Bar On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				const val = event.options.bol
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x04\x7D\x02\xFF')
+				} else {
+					self.VISCA.send(camId + '\x01\x04\x7D\x03\xFF')
+				}
+			},
+		},
+		ptzTrace: {
+			name: 'PTZ Trace',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Operation',
+					id: 'op',
+					choices: [
+						{ id: 'recStart', label: 'Record Start' },
+						{ id: 'recStop', label: 'Record Stop' },
+						{ id: 'playPrepare', label: 'Play Prepare' },
+						{ id: 'playStart', label: 'Play Start' },
+						{ id: 'delete', label: 'Delete' },
+					],
+					default: 'playPrepare',
+				},
+				{
+					type: 'number',
+					label: 'Trace Number (0-15)',
+					id: 'num',
+					min: 0,
+					max: 15,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const num = parseInt(event.options.num) & 0x0f
+				switch (event.options.op) {
+					case 'recStart':
+						self.VISCA.send(camId + '\x01\x7E\x04\x20\x00' + String.fromCharCode(num) + '\x02\xFF')
+						break
+					case 'recStop':
+						self.VISCA.send(camId + '\x01\x7E\x04\x20\x00\x00\x03\xFF')
+						break
+					case 'playPrepare':
+						self.VISCA.send(camId + '\x01\x7E\x04\x20\x01' + String.fromCharCode(num) + '\x01\xFF')
+						break
+					case 'playStart':
+						self.VISCA.send(camId + '\x01\x7E\x04\x20\x01\x00\x02\xFF')
+						break
+					case 'delete':
+						self.VISCA.send(camId + '\x01\x7E\x04\x20\x02' + String.fromCharCode(num) + '\x00\xFF')
+						break
+				}
+			},
+		},
+		ptLimit: {
+			name: 'Pan/Tilt Limit (set/clear)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'action',
+					choices: [
+						{ id: 'set', label: 'Set' },
+						{ id: 'clear', label: 'Clear' },
+					],
+					default: 'set',
+				},
+				{
+					type: 'dropdown',
+					label: 'Corner',
+					id: 'corner',
+					choices: [
+						{ id: '1', label: 'Up-Right' },
+						{ id: '0', label: 'Down-Left' },
+					],
+					default: '1',
+				},
+				{
+					type: 'number',
+					label: 'Pan Position (-8704 to 8704)',
+					id: 'pan',
+					min: -8704,
+					max: 8704,
+					default: 0,
+				},
+				{
+					type: 'number',
+					label: 'Tilt Position (-1024 to 4608)',
+					id: 'tilt',
+					min: -1024,
+					max: 4608,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const corner = parseInt(event.options.corner) & 0x0f
+				if (event.options.action === 'clear') {
+					self.VISCA.send(
+						camId + '\x01\x06\x07\x01' + String.fromCharCode(corner) + '\x07\x0F\x0F\x0F\x07\x0F\x0F\x0F\xFF',
+					)
+					return
+				}
+				const pan = parseInt(event.options.pan) & 0xffff
+				const tilt = parseInt(event.options.tilt) & 0xffff
+				let cmd = Buffer.from(camId + '\x01\x06\x07\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8(corner, 4)
+				cmd.writeUInt8((pan >> 12) & 0x0f, 5)
+				cmd.writeUInt8((pan >> 8) & 0x0f, 6)
+				cmd.writeUInt8((pan >> 4) & 0x0f, 7)
+				cmd.writeUInt8(pan & 0x0f, 8)
+				cmd.writeUInt8((tilt >> 12) & 0x0f, 9)
+				cmd.writeUInt8((tilt >> 8) & 0x0f, 10)
+				cmd.writeUInt8((tilt >> 4) & 0x0f, 11)
+				cmd.writeUInt8(tilt & 0x0f, 12)
+				self.VISCA.send(cmd)
+			},
+		},
+		hPhaseAdjust: {
+			name: 'H Phase (up/down)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Adjust',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'Up' },
+						{ id: '3', label: 'Down' },
+					],
+					default: '2',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId + '\x01\x7E\x01\x5B\x00' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF',
+				)
+			},
+		},
+		hPhaseDirect: {
+			name: 'H Phase Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'H Phase (0-959)',
+					id: 'val',
+					min: 0,
+					max: 959,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0xfff
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x01\x5B\x00' +
+						String.fromCharCode((val >> 8) & 0x0f) +
+						String.fromCharCode((val >> 4) & 0x0f) +
+						String.fromCharCode(val & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		osdDirect: {
+			name: 'OSD On/Off',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Output',
+					id: 'output',
+					choices: [
+						{ id: '0', label: 'SDI' },
+						{ id: '1', label: 'HDMI' },
+					],
+					default: '0',
+				},
+				{
+					type: 'dropdown',
+					label: 'On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '2', label: 'On' },
+						{ id: '3', label: 'Off' },
+					],
+					default: '2',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x04\x76' +
+						String.fromCharCode(parseInt(event.options.output) & 0x0f) +
+						String.fromCharCode(parseInt(event.options.bol) & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		cameraIdDirect: {
+			name: 'Camera ID Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Camera ID (0-65535)',
+					id: 'val',
+					min: 0,
+					max: 65535,
+					default: 0,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0xffff
+				let cmd = Buffer.from(camId + '\x01\x04\x22\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((val >> 12) & 0x0f, 4)
+				cmd.writeUInt8((val >> 8) & 0x0f, 5)
+				cmd.writeUInt8((val >> 4) & 0x0f, 6)
+				cmd.writeUInt8(val & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
+		hdmiColorSpace: {
+			name: 'HDMI Color Space',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Color Space',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'YCbCr' },
+						{ id: '1', label: 'RGB' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId + '\x01\x7E\x01\x03\x00' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF',
+				)
+			},
+		},
+		irReceive: {
+			name: 'IR Receive (on/off/toggle)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'IR Receive',
+					id: 'val',
+					choices: [
+						{ id: '02', label: 'On' },
+						{ id: '03', label: 'Off' },
+						{ id: '10', label: 'Toggle' },
+					],
+					default: '02',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x06\x08' + String.fromCharCode(parseInt(event.options.val, 16) & 0xff) + '\xFF')
+			},
+		},
+		callMode: {
+			name: 'Preset Call Mode (Freeze/Normal)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Call Mode',
+					id: 'val',
+					choices: [
+						{ id: '3', label: 'Normal' },
+						{ id: '2', label: 'Freeze' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x3B' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		colorBarOverlayName: {
+			name: 'Color Bar Overlay Name (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Overlay Name On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '2', label: 'On' },
+						{ id: '3', label: 'Off' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x77' + String.fromCharCode(parseInt(event.options.bol) & 0x0f) + '\xFF')
+			},
+		},
+		autoIcrThreshold: {
+			name: 'Auto ICR Threshold Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Threshold (0-255)',
+					id: 'val',
+					min: 0,
+					max: 255,
+					default: 128,
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x04\x21\x00\x00\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((val >> 4) & 0x0f, 6)
+				cmd.writeUInt8(val & 0x0f, 7)
+				self.VISCA.send(cmd)
+			},
+		},
+		tallyLevel: {
+			name: 'Tally Level Direct',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Tally Level',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '4', label: 'On (Low)' },
+						{ id: '5', label: 'On (High)' },
+					],
+					default: '5',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId + '\x01\x7E\x01\x0A\x01' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF',
+				)
+			},
+		},
+		ndFilter: {
+			name: 'ND Filter',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'ND Filter',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: '1/4' },
+						{ id: '2', label: '1/16' },
+						{ id: '3', label: '1/64' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x01\x53' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		hdmiVideoFormat: {
+			name: 'HDMI Video Format',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Format',
+					id: 'val',
+					choices: [
+						{ id: '00', label: '1080/59.94p' },
+						{ id: '02', label: '1080/29.97p' },
+						{ id: '03', label: '1080/59.94i' },
+						{ id: '04', label: '720/59.94p' },
+						{ id: '08', label: '1080/50p' },
+						{ id: '0A', label: '1080/25p' },
+						{ id: '0B', label: '1080/50i' },
+						{ id: '0C', label: '720/50p' },
+						{ id: '18', label: '480/59.94p' },
+						{ id: '22', label: '4K/29.97p' },
+						{ id: '26', label: '4K/25p' },
+						{ id: '28', label: '1080/23.98p' },
+						{ id: '2A', label: '4K/23.98p' },
+					],
+					default: '00',
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val, 16) & 0xff
+				let cmd = Buffer.from(camId + '\x01\x7E\x01\x1E\x00\x00\xFF', 'binary')
+				cmd.writeUInt8((val >> 4) & 0x0f, 5)
+				cmd.writeUInt8(val & 0x0f, 6)
+				self.VISCA.send(cmd)
+			},
+		},
+		// FR7 specific misc actions
+		pushAfMf: {
+			name: 'Push AF / Push MF (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'val',
+					choices: [
+						{ id: '1', label: 'Press' },
+						{ id: '0', label: 'Release' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x58' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		ptzAutoFraming: {
+			name: 'PTZ Auto Framing (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Auto Framing',
+					id: 'val',
+					choices: [
+						{ id: '1', label: 'On (Start)' },
+						{ id: '0', label: 'Off (Stop)' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x3A' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		audioLevelControl: {
+			name: 'Audio Level Control (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Channel',
+					id: 'channel',
+					choices: [
+						{ id: '1', label: 'CH1' },
+						{ id: '2', label: 'CH2' },
+					],
+					default: '1',
+				},
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					choices: [
+						{ id: '0', label: 'Manual' },
+						{ id: '1', label: 'Auto' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x04\x60' +
+						String.fromCharCode(parseInt(event.options.channel) & 0x0f) +
+						String.fromCharCode(parseInt(event.options.mode) & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		audioInputLevel: {
+			name: 'Audio Input Level Direct (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Channel',
+					id: 'channel',
+					choices: [
+						{ id: '0', label: 'Master' },
+						{ id: '1', label: 'CH1' },
+						{ id: '2', label: 'CH2' },
+					],
+					default: '0',
+				},
+				{
+					type: 'number',
+					label: 'Level (0-99)',
+					id: 'level',
+					min: 0,
+					max: 99,
+					default: 50,
+				},
+			],
+			callback: async (event) => {
+				const ch = parseInt(event.options.channel) & 0x0f
+				const level = parseInt(event.options.level) & 0xff
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x04\x61' +
+						String.fromCharCode(ch) +
+						'\x00\x00' +
+						String.fromCharCode((level >> 4) & 0x0f) +
+						String.fromCharCode(level & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		audioInputLevelAdjust: {
+			name: 'Audio Input Level Adjust (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Direction',
+					id: 'dir',
+					choices: [
+						{ id: '2', label: 'Up' },
+						{ id: '3', label: 'Down' },
+					],
+					default: '2',
+				},
+				{
+					type: 'dropdown',
+					label: 'Channel',
+					id: 'channel',
+					choices: [
+						{ id: '0', label: 'Master' },
+						{ id: '1', label: 'CH1' },
+						{ id: '2', label: 'CH2' },
+					],
+					default: '0',
+				},
+				{
+					type: 'number',
+					label: 'Step (1-10)',
+					id: 'step',
+					min: 1,
+					max: 10,
+					default: 1,
+				},
+			],
+			callback: async (event) => {
+				const dir = parseInt(event.options.dir) & 0x0f
+				const ch = parseInt(event.options.channel) & 0x0f
+				const step = parseInt(event.options.step) & 0xff
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x04\x62' +
+						String.fromCharCode(dir) +
+						String.fromCharCode(ch) +
+						String.fromCharCode((step >> 4) & 0x0f) +
+						String.fromCharCode(step & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		displayButton: {
+			name: 'Display Button (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'val',
+					choices: [
+						{ id: '1', label: 'Press' },
+						{ id: '0', label: 'Release' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x75' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		assignableButton: {
+			name: 'Assignable Button (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Button',
+					id: 'button',
+					choices: [
+						{ id: '01', label: 'Assignable 1' },
+						{ id: '02', label: 'Assignable 2' },
+						{ id: '03', label: 'Assignable 3' },
+						{ id: '04', label: 'Assignable 4' },
+						{ id: '05', label: 'Assignable 5' },
+						{ id: '06', label: 'Assignable 6' },
+						{ id: '07', label: 'Assignable 7' },
+						{ id: '08', label: 'Assignable 8' },
+						{ id: '09', label: 'Assignable 9' },
+						{ id: '7F', label: 'Focus Hold' },
+					],
+					default: '01',
+				},
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'action',
+					choices: [
+						{ id: '1', label: 'Press' },
+						{ id: '0', label: 'Release' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x04\x73' +
+						String.fromCharCode(parseInt(event.options.button, 16) & 0xff) +
+						String.fromCharCode(parseInt(event.options.action) & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		directMenu: {
+			name: 'Direct Menu (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Menu Item',
+					id: 'item',
+					choices: [
+						{ id: '00', label: 'ND Filter' },
+						{ id: '01', label: 'Iris' },
+						{ id: '02', label: 'ISO/Gain' },
+						{ id: '03', label: 'Shutter' },
+						{ id: '04', label: 'AE Level/Mode' },
+						{ id: '7F', label: 'Exit' },
+					],
+					default: '00',
+				},
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'action',
+					choices: [
+						{ id: '1', label: 'Press' },
+						{ id: '0', label: 'Release' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x04\x72' +
+						String.fromCharCode(parseInt(event.options.item, 16) & 0xff) +
+						String.fromCharCode(parseInt(event.options.action) & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		presetSeparateDuration: {
+			name: 'Preset Separate Duration (FR7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Number',
+					id: 'preset',
+					choices: CHOICES.PRESET,
+					default: '00',
+				},
+				{
+					type: 'number',
+					label: 'Duration in seconds (1-99)',
+					id: 'duration',
+					min: 1,
+					max: 99,
+					default: 5,
+				},
+			],
+			callback: async (event) => {
+				const preset =
+					event.options.preset === 'ps' ? self.state.presetSelector - 1 : parseInt(event.options.preset, 16)
+				// Duration: 0x00A = 1 sec, 0x3DE = 99 sec, in 0.1 sec increments
+				const dur = Math.round(parseFloat(event.options.duration) * 10) & 0xfff
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x04\x67' +
+						String.fromCharCode(preset & 0xff) +
+						String.fromCharCode((dur >> 8) & 0x0f) +
+						String.fromCharCode((dur >> 4) & 0x0f) +
+						String.fromCharCode(dur & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
 		customCommand: {
 			name: 'Custom Command',
 			description: 'Request additional actions at https://github.com/bitfocus/companion-module-sony-visca/issues/35',
@@ -1596,6 +4103,7 @@ export function getActionsMarkdown() {
 			IRIS: [{ id: '00', label: 'Auto' }],
 			GAIN: [{ id: '00', label: 'Auto' }],
 			SHUTTER: [{ id: '00', label: 'Auto' }],
+			PRESET: [{ id: '00', label: 'Preset 1' }],
 		},
 		updateVariables: () => {},
 	}

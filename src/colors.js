@@ -13,6 +13,7 @@ export const COLORS = {
 	PALE_RED: combineRgb(255, 128, 128),
 
 	ORANGE: combineRgb(255, 128, 0),
+	DARK_ORANGE: combineRgb(223, 85, 0),
 	PALE_ORANGE: combineRgb(255, 191, 128),
 
 	YELLOW: combineRgb(255, 255, 0),
