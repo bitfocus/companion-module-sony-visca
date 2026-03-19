@@ -79,6 +79,19 @@ const _choices = {
 			{ id: '10', label: '45 db' },
 			{ id: '11', label: '48 db' },
 		],
+		// Gain Limit: values shown are for high-sensitivity Off; with high-sensitivity On, add 12 dB to each
+		GAIN_LIMIT: [
+			{ id: '04', label: '9 db' },
+			{ id: '05', label: '12 db' },
+			{ id: '06', label: '15 db' },
+			{ id: '07', label: '18 db' },
+			{ id: '08', label: '21 db' },
+			{ id: '09', label: '24 db', default: true },
+			{ id: '0A', label: '27 db' },
+			{ id: '0B', label: '30 db' },
+			{ id: '0C', label: '33 db' },
+			{ id: '0D', label: '36 db' },
+		],
 		// The following setting vary by the current frame rate of the camera
 		60: {
 			SHUTTER: [
@@ -391,8 +404,7 @@ const _choices = {
 	// Group 2 models: BRC-H780, BRC-H800, BRC-X1000
 	2: {
 		IRIS: [
-			{ id: '16', label: 'ƒ 2.6', default: true },
-			{ id: '15', label: 'ƒ 2.8' },
+			{ id: '15', label: 'ƒ 2.8', default: true },
 			{ id: '14', label: 'ƒ 3.1' },
 			{ id: '13', label: 'ƒ 3.4' },
 			{ id: '12', label: 'ƒ 3.7' },
@@ -425,6 +437,15 @@ const _choices = {
 			{ id: '0B', label: '30 db' },
 			{ id: '0C', label: '33 db' },
 		],
+		GAIN_LIMIT: [
+			{ id: '04', label: '9 db' },
+			{ id: '05', label: '12 db' },
+			{ id: '06', label: '15 db' },
+			{ id: '07', label: '18 db' },
+			{ id: '08', label: '21 db' },
+			{ id: '09', label: '24 db', default: true },
+			{ id: '0F', label: 'Off' },
+		],
 		// The following setting vary by the current frame rate of the camera
 		60: {
 			SHUTTER: [
@@ -450,8 +471,6 @@ const _choices = {
 				{ id: '15', label: '1/10000' },
 			],
 			MAX_SHUTTER: [
-				{ id: '02', label: '1/8' },
-				{ id: '03', label: '1/15' },
 				{ id: '04', label: '1/30' },
 				{ id: '05', label: '1/50' },
 				{ id: '06', label: '1/60', default: true },
@@ -496,8 +515,6 @@ const _choices = {
 				{ id: '15', label: '1/10000' },
 			],
 			MAX_SHUTTER: [
-				{ id: '02', label: '1/6' },
-				{ id: '03', label: '1/12' },
 				{ id: '04', label: '1/25' },
 				{ id: '05', label: '1/30' },
 				{ id: '06', label: '1/50', default: true },
@@ -543,8 +560,6 @@ const _choices = {
 				{ id: '15', label: '1/10000' },
 			],
 			MAX_SHUTTER: [
-				{ id: '01', label: '1/6' },
-				{ id: '02', label: '1/12' },
 				{ id: '03', label: '1/24', default: true },
 				{ id: '04', label: '1/25' },
 				{ id: '05', label: '1/40' },

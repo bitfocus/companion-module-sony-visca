@@ -144,6 +144,45 @@ export function getFeedbackDefinitions(self) {
 				return self.state.ptSlowMode === 'slow'
 			},
 		},
+		autoFocusOn: {
+			type: 'boolean',
+			name: 'Auto Focus Active',
+			description: 'Highlights when Auto Focus is active',
+			defaultStyle: {
+				color: COLORS.BLACK,
+				bgcolor: COLORS.PALE_YELLOW,
+			},
+			options: [],
+			callback: function () {
+				return self.state.focusMode === 'auto'
+			},
+		},
+		autoExposureOn: {
+			type: 'boolean',
+			name: 'Auto Exposure Active',
+			description: 'Highlights when Exposure Mode is Auto',
+			defaultStyle: {
+				color: COLORS.BLACK,
+				bgcolor: COLORS.PALE_YELLOW,
+			},
+			options: [],
+			callback: function () {
+				return self.state.exposureMode === 'auto'
+			},
+		},
+		powerOn: {
+			type: 'boolean',
+			name: 'Camera Power On',
+			description: 'Highlights when camera reports power is on',
+			defaultStyle: {
+				color: COLORS.BLACK,
+				bgcolor: COLORS.PALE_YELLOW,
+			},
+			options: [],
+			callback: function () {
+				return self.state.power === 'on'
+			},
+		},
 	}
 
 	return feedbacks

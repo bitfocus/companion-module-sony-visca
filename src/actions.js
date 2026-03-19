@@ -110,6 +110,7 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
+				self.VISCA.sendLowPriorityInquiry('090644')
 			},
 		},
 		panSpeedAdjust: {
@@ -1541,7 +1542,8 @@ function getMiscActionDefinitions(self, camId) {
 					type: 'textinput',
 					label: 'Command example: 81 01 06 06 10 FF',
 					id: 'cmd',
-					regex: '/^(\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)|((8[0-7]|\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)) ?((([0-9a-fA-F]{2})|\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)) ?){1,13}))$/',
+					regex:
+						'/^(\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)|((8[0-7]|\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)) ?((([0-9a-fA-F]{2})|\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)) ?){1,13}))$/',
 					useVariables: true,
 				},
 			],

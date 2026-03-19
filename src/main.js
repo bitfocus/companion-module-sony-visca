@@ -1,4 +1,4 @@
-import { InstanceBase, InstanceStatus, runEntrypoint, UDPHelper } from '@companion-module/base'
+import { InstanceBase, InstanceStatus, runEntrypoint } from '@companion-module/base'
 import { getChoices, CHOICES } from './choices.js'
 import { UpgradeScripts } from './upgrades.js'
 import { getConfigDefinitions } from './config.js'
@@ -6,6 +6,9 @@ import { getFeedbackDefinitions } from './feedbacks.js'
 import { getActionDefinitions } from './actions.js'
 import { getPresetDefinitions } from './presets.js'
 import { initVariables, updateVariables } from './variables.js'
+import { MODELS } from './models.js'
+import { INQUIRY_BLOCKS, parseInquiryResponse } from './inquiries.js'
+import { INQUIRY_PROFILES } from './inquiry-profiles.js'
 import { Visca } from './visca.js'
 
 class SonyVISCAInstance extends InstanceBase {
@@ -16,6 +19,9 @@ class SonyVISCAInstance extends InstanceBase {
 		this.VISCA = new Visca(this)
 		this.recordingStatusPollInterval = undefined
 		this.recordingPulseInterval = undefined
+		this.udpSocket = null
+		this.viscaHost = null
+		this.viscaPort = 52381
 	}
 
 	async init(config) {
@@ -48,17 +54,23 @@ class SonyVISCAInstance extends InstanceBase {
 		this.setPresetDefinitions(getPresetDefinitions(this))
 		this.initVariables()
 		this.startRecordingPulseTimer()
+		this.setupInquiries()
 		this.init_udp()
 		this.updateVariables()
 	}
 
 	// When module gets deleted
 	async destroy() {
+		this.VISCA.stopPolling()
 		this.clearRecordingStatusPollTimer()
 		this.clearRecordingPulseTimer()
-		if (this.udp) {
-			this.udp.destroy()
-			delete this.udp
+		if (this.udpSocket) {
+			try {
+				this.udpSocket.close()
+			} catch {
+				// ignore
+			}
+			this.udpSocket = null
 		}
 	}
 
@@ -69,6 +81,8 @@ class SonyVISCAInstance extends InstanceBase {
 		if (!this.isFr7Model()) {
 			this.updateRecordingStatus('unknown')
 		}
+		this.VISCA.stopPolling()
+		this.setupInquiries()
 		this.init_udp()
 	}
 
@@ -79,40 +93,41 @@ class SonyVISCAInstance extends InstanceBase {
 
 	init_udp() {
 		this.clearRecordingStatusPollTimer()
-		if (this.udp) {
-			this.udp.destroy()
-			delete this.udp
+		if (this.udpSocket) {
+			try {
+				this.udpSocket.close()
+			} catch {
+				// ignore
+			}
+			this.udpSocket = null
 			this.updateStatus(InstanceStatus.Disconnected)
 		}
 
 		this.updateStatus(InstanceStatus.Connecting)
 
 		if (this.config.host) {
-			this.udp = new UDPHelper(this.config.host, this.config.port)
+			this.viscaHost = this.config.host
+			this.viscaPort = parseInt(this.config.port) || 52381
 
-			// Reset sequence number
-			this.VISCA.send('\x01', this.VISCA.control)
-			this.packet_counter = 0
+			const msgHandler = (msg, rinfo) => {
+				if (rinfo.address === this.viscaHost) {
+					this.VISCA.handleResponse(msg)
+				}
+			}
 
-			this.udp.on('error', (err) => {
+			this.udpSocket = this.createSharedUdpSocket('udp4', msgHandler)
+
+			this.udpSocket.on('error', (err) => {
 				this.updateStatus(InstanceStatus.ConnectionFailure, err.message)
 				this.log('error', 'Network error: ' + err.message)
 			})
 
-			// If the status is 'listening', connection should be established
-			this.udp.on('listening', () => {
-				this.log('info', 'UDP listening')
+			this.udpSocket.bind(this.viscaPort, '', () => {
+				this.log('info', `SharedUDP listening on port ${this.viscaPort}`)
 				this.updateStatus(InstanceStatus.Ok)
 				this.startRecordingStatusPollTimer()
-			})
-
-			this.udp.on('status_change', (status, message) => {
-				this.log('info', 'UDP status_change: ' + status)
-				this.updateStatus(status, message)
-			})
-
-			this.udp.on('data', (msg) => {
-				this.processUdpData(msg)
+				this.VISCA.resetSequenceNumber()
+				this.VISCA.startLowPriorityPolling()
 			})
 		} else {
 			this.log('error', 'No host configured')
@@ -141,7 +156,7 @@ class SonyVISCAInstance extends InstanceBase {
 
 	startRecordingStatusPollTimer() {
 		this.clearRecordingStatusPollTimer()
-		if (!this.isFr7Model() || !this.udp || this.udp.isDestroyed) {
+		if (!this.isFr7Model() || !this.udpSocket) {
 			return
 		}
 		this.sendRecordingStatusInquiry()
@@ -166,58 +181,52 @@ class SonyVISCAInstance extends InstanceBase {
 	}
 
 	sendRecordingStatusInquiry() {
-		if (!this.isFr7Model() || !this.udp || this.udp.isDestroyed) {
+		if (!this.isFr7Model() || !this.udpSocket) {
 			return
 		}
 		const camId = String.fromCharCode(parseInt(this.state.viscaId))
-		this.VISCA.send(camId + '\x09\x7E\x04\x1E\xFF', this.VISCA.inquiry)
+		this.VISCA.send(camId + '\x09\x7E\x04\x1E\xFF', this.VISCA.inquiry, (payload) => {
+			if (payload.length >= 4 && payload[1] === 0x50) {
+				const status = payload[2] & 0x0f
+				if (status === 0) this.updateRecordingStatus('standby')
+				else if (status === 1) this.updateRecordingStatus('recording')
+			}
+		})
 	}
 
-	processUdpData(msg) {
-		if (!Buffer.isBuffer(msg) || msg.length < 12) {
-			return
-		}
-
-		const payloadLength = msg.readUInt16BE(2)
-		const payloadStart = 8
-		const payloadEnd = payloadStart + payloadLength
-		if (payloadLength < 4 || payloadEnd > msg.length) {
-			return
-		}
-
-		const payload = msg.subarray(payloadStart, payloadEnd)
-
-		this.logViscaErrorPayload(payload)
-
-		// FR7 recording status inquiry response: y0 50 0p FF, p: 0 standby, 1 recording
-		if ((payload[0] & 0xf0) === 0x90 && payload.length === 4 && payload[1] === 0x50 && payload[3] === 0xff) {
-			const status = payload[2] & 0x0f
-			if (status === 0) {
-				this.updateRecordingStatus('standby')
-			} else if (status === 1) {
-				this.updateRecordingStatus('recording')
+	setupInquiries() {
+		const model = MODELS.find((m) => m.id === this.config.model)
+		const profileKeys = INQUIRY_PROFILES[model?.group] ?? INQUIRY_PROFILES['1a']
+		const callbacks = {}
+		for (const key of profileKeys) {
+			const blockDef = INQUIRY_BLOCKS[key]
+			if (!blockDef) continue
+			callbacks[key] = (payload) => {
+				if (parseInquiryResponse(blockDef, payload, this.state, this.choices)) {
+					this.updateVariables()
+					this.checkFeedbacks()
+				}
 			}
 		}
+		this.VISCA.initializeInquiries(callbacks)
+		this.setupLowPriorityInquiries()
 	}
 
-	logViscaErrorPayload(payload) {
-		// Camera error packet format: z0 6y zz FF
-		if ((payload[0] & 0xf0) !== 0x90 || payload.length !== 4 || (payload[1] & 0xf0) !== 0x60 || payload[3] !== 0xff) {
-			return
+	setupLowPriorityInquiries() {
+		const callbacks = {
+			// CAM_PanTiltSlowInq: 8x 09 06 44 FF → y0 50 0p FF (p: 2=On, 3=Off)
+			'090644': (payload) => {
+				if (payload.length >= 3 && payload[1] === 0x50) {
+					const prev = this.state.ptSlowMode
+					this.state.ptSlowMode = payload[2] === 0x02 ? 'slow' : 'normal'
+					if (this.state.ptSlowMode !== prev) {
+						this.updateVariables()
+						this.checkFeedbacks()
+					}
+				}
+			},
 		}
-
-		const errorCode = payload[2]
-		const knownErrors = {
-			0x01: 'Message length error',
-			0x02: 'Syntax error',
-			0x03: 'Command buffer full',
-			0x04: 'Command canceled',
-			0x05: 'No socket',
-			0x41: 'Command not executable',
-		}
-		const errorText = knownErrors[errorCode] ?? 'Unknown VISCA error'
-		this.log('warn', `VISCA error 0x${errorCode.toString(16).padStart(2, '0')}: ${errorText}`)
-		this.log('debug', `VISCA error payload: ${this.VISCA.msgToString(payload, false)}`)
+		this.VISCA.initializeLowPriorityInquiries(callbacks)
 	}
 
 	updateRecordingStatus(status) {

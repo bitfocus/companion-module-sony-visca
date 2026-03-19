@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>VISCA Vendor and Model IDs</title>
+		<style>
+			body {
+				font-family: Arial, Helvetica, sans-serif;
+				margin: 2em;
+				color: #222;
+			}
+			h1 {
+				font-size: 1.4em;
+			}
+			h2 {
+				font-size: 1.2em;
+				margin-top: 2em;
+			}
+			h3 {
+				font-size: 1.05em;
+				margin-top: 1.5em;
+			}
+			ul {
+				margin: 0.5em 0;
+				padding-left: 1.5em;
+			}
+			table {
+				border-collapse: collapse;
+				margin: 1em 0;
+				width: 100%;
+			}
+			th,
+			td {
+				border: 1px solid #bbb;
+				padding: 4px 8px;
+				text-align: left;
+				vertical-align: top;
+				font-size: 0.9em;
+			}
+			th {
+				background: #f0f0f0;
+			}
+			td.packet {
+				font-family: Consolas, 'Courier New', monospace;
+				white-space: nowrap;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>VISCA Vendor and Model IDs</h1>
+		<p>
+			This document lists known Vendor IDs and Model IDs returned by the <code>CAM_VersionInq</code> command across
+			VISCA-compatible cameras.
+		</p>
+
+		<h2>CAM_VersionInq Response Formats</h2>
+		<p>Different manufacturers implement the <code>CAM_VersionInq</code> response differently.</p>
+
+		<h3>Sony Format</h3>
+		<table>
+			<tr>
+				<th>Field</th>
+				<th>Bytes</th>
+				<th>Description</th>
+			</tr>
+			<tr>
+				<td>Inquiry Packet</td>
+				<td class="packet">8x 09 00 02 FF</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Response</td>
+				<td class="packet">y0 50 GG GG HH HH JJ JJ KK FF</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>GGGG</td>
+				<td></td>
+				<td>Vendor ID</td>
+			</tr>
+			<tr>
+				<td>HHHH</td>
+				<td></td>
+				<td>Model ID</td>
+			</tr>
+			<tr>
+				<td>JJJJ</td>
+				<td></td>
+				<td>ROM Revision</td>
+			</tr>
+			<tr>
+				<td>KK</td>
+				<td></td>
+				<td>Maximum Socket Number (typically 02)</td>
+			</tr>
+		</table>
+
+		<h3>PTZOptics Format</h3>
+		<table>
+			<tr>
+				<th>Field</th>
+				<th>Bytes</th>
+				<th>Description</th>
+			</tr>
+			<tr>
+				<td>Inquiry Packet</td>
+				<td class="packet">81 09 00 02 FF</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Response</td>
+				<td class="packet">90 50 ab cd mn pq rs tu vw FF</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>ab</td>
+				<td></td>
+				<td>Factory Code (00=VHD, 01=MR, 08=T)</td>
+			</tr>
+			<tr>
+				<td>cd</td>
+				<td></td>
+				<td>Hardware Version</td>
+			</tr>
+			<tr>
+				<td>mnpq</td>
+				<td></td>
+				<td>ARM Version</td>
+			</tr>
+			<tr>
+				<td>rstu</td>
+				<td></td>
+				<td>FPGA Version</td>
+			</tr>
+			<tr>
+				<td>vw</td>
+				<td></td>
+				<td>Camera Model (01=C Type, 02=M Type, 03=S Type)</td>
+			</tr>
+		</table>
+
+		<h2>Vendor IDs</h2>
+		<table>
+			<tr>
+				<th>Vendor ID</th>
+				<th>Manufacturer</th>
+			</tr>
+			<tr>
+				<td class="packet">0001</td>
+				<td>Sony</td>
+			</tr>
+		</table>
+
+		<h2>Sony Model IDs</h2>
+		<table>
+			<tr>
+				<th>Model ID</th>
+				<th>Camera Model</th>
+				<th>Source Document</th>
+			</tr>
+			<tr>
+				<td class="packet">0511</td>
+				<td>SRG-120DH</td>
+				<td>Sony SRG-120DH Tech Manual (AES71001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">0516</td>
+				<td>SRG-300SE / SRG-301SE / SRG-201SE</td>
+				<td>Sony SRG-300SE Tech Manual (C092100121)</td>
+			</tr>
+			<tr>
+				<td class="packet">0519</td>
+				<td>BRC-X1000</td>
+				<td>Sony BRC-X1000 VISCA (C4561001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">051A</td>
+				<td>BRC-H800</td>
+				<td>Sony BRC-X1000 VISCA (C4561001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">051B</td>
+				<td>BRC-H780</td>
+				<td>Sony BRC-X1000 VISCA (C4561001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">051C</td>
+				<td>BRC-X400</td>
+				<td>Sony BRC-X400 VISCA (E0421001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">051D</td>
+				<td>BRC-X401</td>
+				<td>Sony BRC-X400 VISCA (E0421001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">051E</td>
+				<td>ILME-FR7 / ILME-FR7K</td>
+				<td>Sony ILME-FR7 VISCA v4.00</td>
+			</tr>
+			<tr>
+				<td class="packet">0617</td>
+				<td>SRG-X400</td>
+				<td>Sony BRC-X400 VISCA (E0421001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">0618</td>
+				<td>SRG-X120</td>
+				<td>Sony BRC-X400 VISCA (E0421001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">061A</td>
+				<td>SRG-201M2</td>
+				<td>Sony BRC-X400 VISCA (E0421001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">061B</td>
+				<td>SRG-HD1M2</td>
+				<td>Sony BRC-X400 VISCA (E0421001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">061C</td>
+				<td>SRG-X402</td>
+				<td>Sony BRC-X400 VISCA (E0421001M)</td>
+			</tr>
+			<tr>
+				<td class="packet">061F</td>
+				<td>SRG-X40UH</td>
+				<td>Sony SRG-X40UH VISCA-CGI (50462901M)</td>
+			</tr>
+			<tr>
+				<td class="packet">0620</td>
+				<td>SRG-H40UH</td>
+				<td>Sony SRG-X40UH VISCA-CGI (50462901M)</td>
+			</tr>
+			<tr>
+				<td class="packet">0621</td>
+				<td>SRG-A40</td>
+				<td>Sony SRG-A40 VISCA (50531551M)</td>
+			</tr>
+			<tr>
+				<td class="packet">0622</td>
+				<td>SRG-A12</td>
+				<td>Sony SRG-A40 VISCA (50531551M)</td>
+			</tr>
+		</table>
+	</body>
+</html>
