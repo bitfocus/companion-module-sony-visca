@@ -22,7 +22,7 @@ export class Visca {
 	#inquiryTelemetry = {}
 	#lowPriorityCallbacks = {}
 	#lowPriorityKeys = []
-	#lowPriorityTimer = null
+	#nextLowPriority = 0
 
 	constructor(instance) {
 		this.#instance = instance
@@ -152,6 +152,7 @@ export class Visca {
 	initializeLowPriorityInquiries(callbacks) {
 		this.#lowPriorityCallbacks = {}
 		this.#lowPriorityKeys = []
+		this.#nextLowPriority = 0
 		for (const [key, callback] of Object.entries(callbacks)) {
 			this.#lowPriorityKeys.push(key)
 			this.#lowPriorityCallbacks[key] = callback
@@ -159,23 +160,10 @@ export class Visca {
 	}
 
 	startLowPriorityPolling() {
-		this.stopLowPriorityPolling()
-		// Fire all immediately at startup
+		// Low-priority inquiries are now interleaved into the main polling loop.
+		// Fire all once at startup for immediate state.
 		for (const key of this.#lowPriorityKeys) {
 			this.sendLowPriorityInquiry(key)
-		}
-		// Then repeat every 60 seconds
-		this.#lowPriorityTimer = setInterval(() => {
-			for (const key of this.#lowPriorityKeys) {
-				this.sendLowPriorityInquiry(key)
-			}
-		}, 60000)
-	}
-
-	stopLowPriorityPolling() {
-		if (this.#lowPriorityTimer) {
-			clearInterval(this.#lowPriorityTimer)
-			this.#lowPriorityTimer = null
 		}
 	}
 
@@ -196,7 +184,6 @@ export class Visca {
 			clearTimeout(this.#pollTimer)
 			this.#pollTimer = null
 		}
-		this.stopLowPriorityPolling()
 		for (const ap of Object.values(this.#activePackets)) {
 			clearTimeout(ap.timer)
 		}
@@ -333,7 +320,17 @@ export class Visca {
 		if (this.#inquiryKeys.length === 0 || !this.#cts) return
 		if (!this.#instance.udpSocket) return
 
-		if (this.#nextInquiry >= this.#inquiryKeys.length) this.#nextInquiry = 0
+		// At the end of each main cycle, interleave one low-priority inquiry
+		if (this.#nextInquiry >= this.#inquiryKeys.length) {
+			this.#nextInquiry = 0
+			if (this.#lowPriorityKeys.length > 0) {
+				if (this.#nextLowPriority >= this.#lowPriorityKeys.length) this.#nextLowPriority = 0
+				const lpKey = this.#lowPriorityKeys[this.#nextLowPriority++]
+				this.sendLowPriorityInquiry(lpKey)
+				return
+			}
+		}
+
 		const key = this.#inquiryKeys[this.#nextInquiry++]
 
 		const camId = parseInt(this.#instance.state.viscaId)
