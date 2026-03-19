@@ -1460,7 +1460,7 @@
 				<td>p: 4=On, 3=Off</td>
 			</tr>
 			<tr>
-				<td>CAM_TeleConvertModeInq</td>
+				<td>CAM_TeleConvertModeInq<sup>&Dagger;</sup></td>
 				<td class="packet">8x 09 7E 04 36 FF</td>
 				<td class="packet">y0 50 0p FF</td>
 				<td>p: 2=On, 3=Off</td>
@@ -1816,6 +1816,11 @@
 			Note: In Enlargement Block 2 (04), bytes 11&ndash;14 each pack two Detail fields using upper and lower nibbles of
 			the full byte. Matrix coefficients in Block 3 (05) each span 2 nibbles (H=high nibble, L=low nibble). Exact bit
 			masks for Blocks 03&ndash;04 fields that share a byte should be verified against the camera.
+		</p>
+
+		<p><sup>&dagger;</sup> Not available for BRC-H780.</p>
+		<p>
+			<sup>&Dagger;</sup> Cannot be used when the signal format is other than 1080/29.97p, 1080/25p, or 1080/23.98p.
 		</p>
 
 		<h3>Part 4: VISCA Command Setting Values</h3>

@@ -7,6 +7,13 @@ export const UpgradeScripts = [
 	function pre230(_context, _props) {
 		return { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
 	},
+	function migrateOtherModel(_context, props) {
+		const result = { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
+		if (props.config?.model === 'other') {
+			result.updatedConfig = { ...props.config, model: 'other_all' }
+		}
+		return result
+	},
 	function v23x(_context, props) {
 		const result = {
 			updatedActions: [],

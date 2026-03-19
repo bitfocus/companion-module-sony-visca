@@ -1,0 +1,2174 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Sony SRG-120DH VISCA Protocol</title>
+		<style>
+			body {
+				font-family: Arial, Helvetica, sans-serif;
+				margin: 2em;
+				line-height: 1.4;
+			}
+			h2 {
+				border-bottom: 2px solid #333;
+				padding-bottom: 4px;
+			}
+			h3 {
+				margin-top: 2em;
+				color: #003366;
+			}
+			h4 {
+				margin-top: 1.5em;
+				color: #336;
+			}
+			table {
+				border-collapse: collapse;
+				margin: 0.5em 0 1em 0;
+			}
+			th,
+			td {
+				border: 1px solid #999;
+				padding: 4px 8px;
+				text-align: left;
+				vertical-align: top;
+			}
+			th {
+				background: #eee;
+			}
+			.packet {
+				font-family: Consolas, 'Courier New', monospace;
+				white-space: nowrap;
+			}
+			sup {
+				font-size: 0.75em;
+			}
+			em {
+				font-size: 0.9em;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>Sony SRG-120DH &mdash; VISCA Protocol Reference</h2>
+		<p>
+			Source: Sony SRG-120DH Technical Manual (A-ES7-100-12(1)). HD Color Video Camera with 1/2.8&Prime; Exmor CMOS,
+			12&times; optical zoom, 71&deg; horizontal angle of view. HDMI/DVI output. RS-232 (9600/38400 bps) and VISCA over
+			IP (UDP port 52381).
+		</p>
+		<p>
+			Pan range: &plusmn;100&deg; (max 300&deg;/s). Tilt range: &plusmn;25&deg; (max 126&deg;/s). 16 presets
+			(0&ndash;F).
+		</p>
+
+		<h3>Part 1: Camera-Issued Messages</h3>
+
+		<h4>Acknowledge / Completion</h4>
+		<table>
+			<tr>
+				<th>Message</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>Acknowledge</td>
+				<td class="packet">z0 4y FF</td>
+				<td>y: Socket number (1 or 2)</td>
+			</tr>
+			<tr>
+				<td>Completion</td>
+				<td class="packet">z0 5y FF</td>
+				<td>y: Socket number</td>
+			</tr>
+		</table>
+		<p>z = camera address + 8 (locked to z=9 for VISCA over IP).</p>
+
+		<h4>Error Messages</h4>
+		<table>
+			<tr>
+				<th>Error</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>Syntax Error</td>
+				<td class="packet">z0 60 02 FF</td>
+				<td>Unsupported command or missing parameters</td>
+			</tr>
+			<tr>
+				<td>Command Buffer Full</td>
+				<td class="packet">z0 60 03 FF</td>
+				<td>Two commands already executing</td>
+			</tr>
+			<tr>
+				<td>Command Canceled</td>
+				<td class="packet">z0 6y 04 FF</td>
+				<td>y: Socket number of canceled command</td>
+			</tr>
+			<tr>
+				<td>No Socket</td>
+				<td class="packet">z0 6y 05 FF</td>
+				<td>No command in specified socket, or invalid socket</td>
+			</tr>
+			<tr>
+				<td>Command Not Executable</td>
+				<td class="packet">z0 6y 41 FF</td>
+				<td>Cannot execute in current mode</td>
+			</tr>
+		</table>
+
+		<h4>Network Change</h4>
+		<table>
+			<tr>
+				<th>Message</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>Network Change</td>
+				<td class="packet">z0 38 FF</td>
+				<td>Issued when power is supplied to the camera (RS-232 only)</td>
+			</tr>
+		</table>
+
+		<h3>Part 2: Camera Control Commands</h3>
+
+		<h4>EXPOSURE</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Function</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_AE</td>
+				<td>Mode</td>
+				<td class="packet">8x 01 04 39 0p FF</td>
+				<td>p: 0=Full Auto, 3=Manual, A=Shutter Priority, B=Iris Priority, D=Bright<sup>*1</sup></td>
+			</tr>
+			<tr>
+				<td>CAM_SlowShutter</td>
+				<td>Auto/Manual</td>
+				<td class="packet">8x 01 04 5A 0p FF</td>
+				<td>p: 2=Auto, 3=Manual</td>
+			</tr>
+			<tr>
+				<td>CAM_Shutter</td>
+				<td>Reset/Up/Down</td>
+				<td class="packet">8x 01 04 0A 0p FF</td>
+				<td>p: 0=Reset, 2=Up, 3=Down</td>
+			</tr>
+			<tr>
+				<td>CAM_Shutter</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 4A 00 00 0p 0q FF</td>
+				<td>pq: Shutter Position</td>
+			</tr>
+			<tr>
+				<td>CAM_Iris</td>
+				<td>Reset/Up/Down</td>
+				<td class="packet">8x 01 04 0B 0p FF</td>
+				<td>p: 0=Reset, 2=Up, 3=Down</td>
+			</tr>
+			<tr>
+				<td>CAM_Iris</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 4B 00 00 0p 0q FF</td>
+				<td>pq: Iris Position</td>
+			</tr>
+			<tr>
+				<td>CAM_Gain</td>
+				<td>Reset/Up/Down</td>
+				<td class="packet">8x 01 04 0C 0p FF</td>
+				<td>p: 0=Reset, 2=Up, 3=Down</td>
+			</tr>
+			<tr>
+				<td>CAM_Gain</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 4C 00 00 0p 0q FF</td>
+				<td>pq: Gain Position</td>
+			</tr>
+			<tr>
+				<td>Gain Limit</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 2C 0p FF</td>
+				<td>p: Gain Position (4&ndash;F)</td>
+			</tr>
+			<tr>
+				<td>CAM_Bright</td>
+				<td>Up/Down</td>
+				<td class="packet">8x 01 04 0D 0p FF</td>
+				<td>p: 2=Up, 3=Down</td>
+			</tr>
+			<tr>
+				<td>CAM_Bright</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 4D 00 00 0p 0q FF</td>
+				<td>pq: Bright Position</td>
+			</tr>
+			<tr>
+				<td>CAM_ExpComp</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 04 3E 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_ExpComp</td>
+				<td>Reset/Up/Down</td>
+				<td class="packet">8x 01 04 0E 0p FF</td>
+				<td>p: 0=Reset, 2=Up, 3=Down</td>
+			</tr>
+			<tr>
+				<td>CAM_ExpComp</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 4E 00 00 0p 0q FF</td>
+				<td>pq: Exp Comp Position</td>
+			</tr>
+			<tr>
+				<td>CAM_BackLight</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 04 33 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_HighSensitivity</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 04 5E 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+		</table>
+		<p><sup>*1</sup> Bright mode is available only when AE mode is Full Auto or Shutter Priority.</p>
+
+		<h4>COLOR</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Function</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_WB</td>
+				<td>Mode</td>
+				<td class="packet">8x 01 04 35 0p FF</td>
+				<td>p: 0=Auto, 1=Indoor, 2=Outdoor, 3=One Push WB, 4=ATW, 5=Manual</td>
+			</tr>
+			<tr>
+				<td>CAM_WB</td>
+				<td>One Push Trigger<sup>*1</sup></td>
+				<td class="packet">8x 01 04 10 05 FF</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>CAM_RGain</td>
+				<td>Reset/Up/Down</td>
+				<td class="packet">8x 01 04 03 0p FF</td>
+				<td>p: 0=Reset, 2=Up, 3=Down</td>
+			</tr>
+			<tr>
+				<td>CAM_RGain</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 43 00 00 0p 0q FF</td>
+				<td>pq: R Gain (00&ndash;FF)</td>
+			</tr>
+			<tr>
+				<td>CAM_BGain</td>
+				<td>Reset/Up/Down</td>
+				<td class="packet">8x 01 04 04 0p FF</td>
+				<td>p: 0=Reset, 2=Up, 3=Down</td>
+			</tr>
+			<tr>
+				<td>CAM_BGain</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 44 00 00 0p 0q FF</td>
+				<td>pq: B Gain (00&ndash;FF)</td>
+			</tr>
+			<tr>
+				<td>Chroma Suppress</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 5F pp FF</td>
+				<td>pp: 00=Off, 01&ndash;03 (stronger)</td>
+			</tr>
+			<tr>
+				<td>Color Gain</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 49 00 00 0p 0q FF</td>
+				<td>
+					p: Color (0=Master, 1=Magenta, 2=Red, 3=Yellow, 4=Green, 5=Cyan, 6=Blue)<br />q: Gain level 0&ndash;E (default
+					4; 5+=up, 3&minus;=down)
+				</td>
+			</tr>
+			<tr>
+				<td>Color Hue</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 4F 00 00 0p 0q FF</td>
+				<td>
+					p: Color (0=Master, 1=Magenta, 2=Red, 3=Yellow, 4=Green, 5=Cyan, 6=Blue)<br />q: Phase level 0&ndash;E
+					(default 7; 8+=positive, 6&minus;=negative)
+				</td>
+			</tr>
+		</table>
+		<p>
+			<sup>*1</sup> After ACK for One Push WB Trigger, &ldquo;Not Executable&rdquo; is returned to all commands until
+			the operation completes.
+		</p>
+
+		<h4>DETAIL</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Function</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>Aperture</td>
+				<td>Reset/Up/Down</td>
+				<td class="packet">8x 01 04 02 0p FF</td>
+				<td>p: 0=Reset, 2=Up, 3=Down</td>
+			</tr>
+			<tr>
+				<td>Aperture</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 42 00 00 0p 0q FF</td>
+				<td>pq: Aperture Gain (00&ndash;0F)</td>
+			</tr>
+		</table>
+
+		<h4>OTHER IMAGE</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Function</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_WD</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 7E 04 00 0p FF</td>
+				<td>p: 0=Off, 1=Low, 2=Mid, 3=High</td>
+			</tr>
+			<tr>
+				<td>CAM_Defog</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 04 37 0p 00 FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_HR</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 04 52 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_NR</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 53 0p FF</td>
+				<td>p: 0=Off, 1&ndash;5</td>
+			</tr>
+			<tr>
+				<td>CAM_Gamma</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 5B 0p FF</td>
+				<td>p: 0=Standard, 1=Off</td>
+			</tr>
+			<tr>
+				<td>Picture Effect</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 63 0p FF</td>
+				<td>p: 0=Off, 2=Neg.Art, 4=B&amp;W</td>
+			</tr>
+		</table>
+
+		<h4>ZOOM</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Function</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_Zoom</td>
+				<td>Stop/Tele/Wide</td>
+				<td class="packet">8x 01 04 07 0p FF</td>
+				<td>p: 0=Stop, 2=Tele, 3=Wide</td>
+			</tr>
+			<tr>
+				<td>CAM_Zoom</td>
+				<td>Tele (Variable)</td>
+				<td class="packet">8x 01 04 07 2p FF</td>
+				<td>p: 0 (Low)&ndash;7 (High)</td>
+			</tr>
+			<tr>
+				<td>CAM_Zoom</td>
+				<td>Wide (Variable)</td>
+				<td class="packet">8x 01 04 07 3p FF</td>
+				<td>p: 0 (Low)&ndash;7 (High)</td>
+			</tr>
+			<tr>
+				<td>CAM_Zoom</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 47 0p 0q 0r 0s FF</td>
+				<td>pqrs: Zoom Position</td>
+			</tr>
+			<tr>
+				<td>CAM_DZoom</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 04 06 0p FF</td>
+				<td>p: 2=On, 3=Off<sup>*1</sup></td>
+			</tr>
+			<tr>
+				<td>CAM_ZoomFocus</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 47 0p 0q 0r 0s 0t 0u 0v 0w FF</td>
+				<td>pqrs: Zoom Position<br />tuvw: Focus Position</td>
+			</tr>
+		</table>
+		<p><sup>*1</sup> When CAM_LowLatency is set to Low, &ldquo;Not Executable&rdquo; is returned.</p>
+
+		<h4>FOCUS</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Function</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_Focus</td>
+				<td>Mode</td>
+				<td class="packet">8x 01 04 38 pp FF</td>
+				<td>pp: 02=Auto, 03=Manual, 10=Toggle</td>
+			</tr>
+			<tr>
+				<td>CAM_Focus</td>
+				<td>Stop/Far/Near</td>
+				<td class="packet">8x 01 04 08 0p FF</td>
+				<td>p: 0=Stop, 2=Far, 3=Near</td>
+			</tr>
+			<tr>
+				<td>CAM_Focus</td>
+				<td>Far (Variable)</td>
+				<td class="packet">8x 01 04 08 2p FF</td>
+				<td>p: 0 (Low)&ndash;7 (High)</td>
+			</tr>
+			<tr>
+				<td>CAM_Focus</td>
+				<td>Near (Variable)</td>
+				<td class="packet">8x 01 04 08 3p FF</td>
+				<td>p: 0 (Low)&ndash;7 (High)</td>
+			</tr>
+			<tr>
+				<td>CAM_Focus</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 48 0p 0q 0r 0s FF</td>
+				<td>pqrs: Focus Position</td>
+			</tr>
+			<tr>
+				<td>CAM_Focus</td>
+				<td>One Push AF Trigger</td>
+				<td class="packet">8x 01 04 18 01 FF</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>CAM_Focus</td>
+				<td>Infinity</td>
+				<td class="packet">8x 01 04 18 02 FF</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Focus Near Limit</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 28 0p 0q 0r 0s FF</td>
+				<td>pqrs: Focus Near Limit Position</td>
+			</tr>
+			<tr>
+				<td>AF Sensitivity</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 58 0p FF</td>
+				<td>p: 2=Normal, 3=Low</td>
+			</tr>
+			<tr>
+				<td>AF Mode</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 57 0p FF</td>
+				<td>p: 0=Normal, 1=Interval, 2=Zoom Trigger</td>
+			</tr>
+			<tr>
+				<td>AF Mode Interval</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 27 0p 0q 0r 0s FF</td>
+				<td>pq: Movement Time<br />rs: Interval</td>
+			</tr>
+			<tr>
+				<td>IR Correction</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 11 0p FF</td>
+				<td>p: 0=Standard, 1=IR Light</td>
+			</tr>
+		</table>
+
+		<h4>PAN TILT</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Function</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive<sup>*1</sup></td>
+				<td>Up</td>
+				<td class="packet">8x 01 06 01 VV WW 03 01 FF</td>
+				<td>VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive<sup>*1</sup></td>
+				<td>Down</td>
+				<td class="packet">8x 01 06 01 VV WW 03 02 FF</td>
+				<td>VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive<sup>*1</sup></td>
+				<td>Left</td>
+				<td class="packet">8x 01 06 01 VV WW 01 03 FF</td>
+				<td>VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive<sup>*1</sup></td>
+				<td>Right</td>
+				<td class="packet">8x 01 06 01 VV WW 02 03 FF</td>
+				<td>VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive<sup>*1</sup></td>
+				<td>Up Left</td>
+				<td class="packet">8x 01 06 01 VV WW 01 01 FF</td>
+				<td>VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive<sup>*1</sup></td>
+				<td>Up Right</td>
+				<td class="packet">8x 01 06 01 VV WW 02 01 FF</td>
+				<td>VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive<sup>*1</sup></td>
+				<td>Down Left</td>
+				<td class="packet">8x 01 06 01 VV WW 01 02 FF</td>
+				<td>VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive<sup>*1</sup></td>
+				<td>Down Right</td>
+				<td class="packet">8x 01 06 01 VV WW 02 02 FF</td>
+				<td>VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive<sup>*1</sup></td>
+				<td>Stop</td>
+				<td class="packet">8x 01 06 01 VV WW 03 03 FF</td>
+				<td>VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive</td>
+				<td>Absolute Position</td>
+				<td class="packet">8x 01 06 02 VV WW 0Y 0Y 0Y 0Y 0Z 0Z 0Z 0Z FF</td>
+				<td>
+					VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14<br />YYYY: Pan Position<br />ZZZZ: Tilt Position
+				</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive</td>
+				<td>Relative Position</td>
+				<td class="packet">8x 01 06 03 VV WW 0Y 0Y 0Y 0Y 0Z 0Z 0Z 0Z FF</td>
+				<td>
+					VV: Pan Speed 01&ndash;18<br />WW: Tilt Speed 01&ndash;14<br />YYYY: Pan Shift Amount<br />ZZZZ: Tilt Shift
+					Amount
+				</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive</td>
+				<td>Home</td>
+				<td class="packet">8x 01 06 04 FF</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Drive</td>
+				<td>Reset</td>
+				<td class="packet">8x 01 06 05 FF</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Limit</td>
+				<td>Set</td>
+				<td class="packet">8x 01 06 07 00 0W 0Y 0Y 0Y 0Y 0Z 0Z 0Z 0Z FF</td>
+				<td>W: 1=UpRight, 0=DownLeft<br />YYYY: Pan Limit Position<br />ZZZZ: Tilt Limit Position</td>
+			</tr>
+			<tr>
+				<td>Pan Tilt Limit</td>
+				<td>Clear</td>
+				<td class="packet">8x 01 06 07 01 0W 07 0F 0F 0F 07 0F 0F 0F FF</td>
+				<td>W: 1=UpRight, 0=DownLeft</td>
+			</tr>
+		</table>
+		<p><sup>*1</sup> Does not operate when the menu is displayed.</p>
+
+		<h4>PRESET</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Function</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_Memory</td>
+				<td>Reset/Set/Recall</td>
+				<td class="packet">8x 01 04 3F 0n 0p FF</td>
+				<td>n: 0=Reset, 1=Set, 2=Recall<br />p: Memory number (0&ndash;F)</td>
+			</tr>
+		</table>
+
+		<h4>SYSTEM</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Function</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>Video Format Change<sup>*1</sup></td>
+				<td>Direct</td>
+				<td class="packet">8x 01 7E 01 1E 0p 0q FF</td>
+				<td>pq: Video Format</td>
+			</tr>
+			<tr>
+				<td>Color System Set<sup>*1</sup></td>
+				<td>Direct</td>
+				<td class="packet">8x 01 7E 01 03 00 0p FF</td>
+				<td>p: 0=HDMI YUV, 1=HDMI GBR, 2=DVI GBR, 3=DVI YUV</td>
+			</tr>
+			<tr>
+				<td>CAM_LowLatency<sup>*2</sup></td>
+				<td>Direct</td>
+				<td class="packet">8x 01 7E 01 5A 0p FF</td>
+				<td>p: 2=Low, 3=Normal</td>
+			</tr>
+			<tr>
+				<td>IR Receive</td>
+				<td>On/Off/Toggle</td>
+				<td class="packet">8x 01 06 08 pp FF</td>
+				<td>pp: 02=On, 03=Off, 10=Toggle</td>
+			</tr>
+			<tr>
+				<td>IR ReceiveReturn</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 7D 01 03 00 00 FF</td>
+				<td>On: returns VISCA reply when IR command received</td>
+			</tr>
+			<tr>
+				<td>IR ReceiveReturn</td>
+				<td>Off</td>
+				<td class="packet">8x 01 7D 01 13 00 00 FF</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Information Display</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 7E 01 18 0p FF</td>
+				<td>p: 2=On, 3=Off (OSD status display for One Push WB / Memory)</td>
+			</tr>
+			<tr>
+				<td>SYS_Menu</td>
+				<td>Off</td>
+				<td class="packet">8x 01 06 06 03 FF</td>
+				<td>Menu display off</td>
+			</tr>
+			<tr>
+				<td>Camera ID</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 22 0p 0q 0r 0s FF</td>
+				<td>pqrs: Camera ID (0000&ndash;FFFF)</td>
+			</tr>
+			<tr>
+				<td>Power</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 04 00 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+		</table>
+		<p>
+			<sup>*1</sup> Do not turn off power before the response is returned. If power is lost, the image or setting may
+			not apply correctly.
+		</p>
+		<p>
+			<sup>*2</sup> Do not turn off power before the response is returned. When set to Low, CAM_DZoom returns &ldquo;Not
+			Executable.&rdquo;
+		</p>
+
+		<h3>Part 3: Query Commands</h3>
+
+		<h4>Individual Inquiries</h4>
+
+		<h4>EXPOSURE</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Command Packet</th>
+				<th>Response Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_PowerInq</td>
+				<td class="packet">8x 09 04 00 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_AEModeInq</td>
+				<td class="packet">8x 09 04 39 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=Full Auto, 3=Manual, A=Shutter Priority, B=Iris Priority, D=Bright</td>
+			</tr>
+			<tr>
+				<td>CAM_SlowShutterModeInq</td>
+				<td class="packet">8x 09 04 5A FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=Auto, 3=Manual</td>
+			</tr>
+			<tr>
+				<td>CAM_ShutterPosInq</td>
+				<td class="packet">8x 09 04 4A FF</td>
+				<td class="packet">y0 50 00 00 0p 0q FF</td>
+				<td>pq: Shutter Position</td>
+			</tr>
+			<tr>
+				<td>CAM_IrisPosInq</td>
+				<td class="packet">8x 09 04 4B FF</td>
+				<td class="packet">y0 50 00 00 0p 0q FF</td>
+				<td>pq: Iris Position</td>
+			</tr>
+			<tr>
+				<td>CAM_GainPosInq</td>
+				<td class="packet">8x 09 04 4C FF</td>
+				<td class="packet">y0 50 00 00 0p 0q FF</td>
+				<td>pq: Gain Position</td>
+			</tr>
+			<tr>
+				<td>CAM_GainLimitInq</td>
+				<td class="packet">8x 09 04 2C FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: Gain Limit</td>
+			</tr>
+			<tr>
+				<td>CAM_BrightPosInq</td>
+				<td class="packet">8x 09 04 4D FF</td>
+				<td class="packet">y0 50 00 00 0p 0q FF</td>
+				<td>pq: Bright Position</td>
+			</tr>
+			<tr>
+				<td>CAM_ExpCompModeInq</td>
+				<td class="packet">8x 09 04 3E FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_ExpCompPosInq</td>
+				<td class="packet">8x 09 04 4E FF</td>
+				<td class="packet">y0 50 00 00 0p 0q FF</td>
+				<td>pq: Exp Comp Position</td>
+			</tr>
+			<tr>
+				<td>CAM_BackLightModeInq</td>
+				<td class="packet">8x 09 04 33 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_HighSensitivityInq</td>
+				<td class="packet">8x 09 04 5E FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+		</table>
+
+		<h4>COLOR</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Command Packet</th>
+				<th>Response Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_WBModeInq</td>
+				<td class="packet">8x 09 04 35 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=Auto, 1=Indoor, 2=Outdoor, 3=One Push WB, 4=ATW, 5=Manual</td>
+			</tr>
+			<tr>
+				<td>CAM_RGainInq</td>
+				<td class="packet">8x 09 04 43 FF</td>
+				<td class="packet">y0 50 00 00 0p 0q FF</td>
+				<td>pq: R Gain</td>
+			</tr>
+			<tr>
+				<td>CAM_BGainInq</td>
+				<td class="packet">8x 09 04 44 FF</td>
+				<td class="packet">y0 50 00 00 0p 0q FF</td>
+				<td>pq: B Gain</td>
+			</tr>
+			<tr>
+				<td>CAM_ChromaSuppressInq</td>
+				<td class="packet">8x 09 04 5F FF</td>
+				<td class="packet">y0 50 pp FF</td>
+				<td>pp: Chroma Suppress level</td>
+			</tr>
+			<tr>
+				<td>CAM_ColorGainInq</td>
+				<td class="packet">8x 09 04 49 FF</td>
+				<td class="packet">y0 50 00 00 00 0p FF</td>
+				<td>p: Color Gain Master (0=60%&ndash;E=200%)</td>
+			</tr>
+			<tr>
+				<td>CAM_ColorHueInq</td>
+				<td class="packet">8x 09 04 4F FF</td>
+				<td class="packet">y0 50 00 00 00 0p FF</td>
+				<td>p: Color Hue Master (0=&minus;14&deg;&ndash;E=+14&deg;)</td>
+			</tr>
+		</table>
+
+		<h4>DETAIL</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Command Packet</th>
+				<th>Response Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_ApertureInq</td>
+				<td class="packet">8x 09 04 42 FF</td>
+				<td class="packet">y0 50 00 00 0p 0q FF</td>
+				<td>pq: Aperture Gain</td>
+			</tr>
+		</table>
+
+		<h4>OTHER IMAGE</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Command Packet</th>
+				<th>Response Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_WDModeInq</td>
+				<td class="packet">8x 09 7E 04 00 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=Off, 1=Low, 2=Mid, 3=High</td>
+			</tr>
+			<tr>
+				<td>CAM_DefogInq</td>
+				<td class="packet">8x 09 04 37 FF</td>
+				<td class="packet">y0 50 0p 00 FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_HRModeInq</td>
+				<td class="packet">8x 09 04 52 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_NRInq</td>
+				<td class="packet">8x 09 04 53 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: NR Level (0=Off, 1&ndash;5)</td>
+			</tr>
+			<tr>
+				<td>CAM_GammaInq</td>
+				<td class="packet">8x 09 04 5B FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=Standard, 1=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_PictureEffectModeInq</td>
+				<td class="packet">8x 09 04 63 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=Off, 2=Neg.Art, 4=B&amp;W</td>
+			</tr>
+		</table>
+
+		<h4>ZOOM</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Command Packet</th>
+				<th>Response Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_DZoomModeInq</td>
+				<td class="packet">8x 09 04 06 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off<sup>*1</sup></td>
+			</tr>
+			<tr>
+				<td>CAM_ZoomPosInq</td>
+				<td class="packet">8x 09 04 47 FF</td>
+				<td class="packet">y0 50 0p 0q 0r 0s FF</td>
+				<td>pqrs: Zoom Position</td>
+			</tr>
+		</table>
+		<p><sup>*1</sup> When CAM_LowLatency is set to Low, always returns 03 (Off).</p>
+
+		<h4>FOCUS</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Command Packet</th>
+				<th>Response Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_FocusModeInq</td>
+				<td class="packet">8x 09 04 38 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=Auto, 3=Manual</td>
+			</tr>
+			<tr>
+				<td>CAM_FocusPosInq</td>
+				<td class="packet">8x 09 04 48 FF</td>
+				<td class="packet">y0 50 0p 0q 0r 0s FF</td>
+				<td>pqrs: Focus Position</td>
+			</tr>
+			<tr>
+				<td>CAM_FocusNearLimitInq</td>
+				<td class="packet">8x 09 04 28 FF</td>
+				<td class="packet">y0 50 0p 0q 0r 0s FF</td>
+				<td>pqrs: Focus Near Limit Position</td>
+			</tr>
+			<tr>
+				<td>CAM_AFSensitivityInq</td>
+				<td class="packet">8x 09 04 58 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=Normal, 3=Low</td>
+			</tr>
+			<tr>
+				<td>CAM_AFModeInq</td>
+				<td class="packet">8x 09 04 57 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=Normal, 1=Interval, 2=Zoom Trigger</td>
+			</tr>
+			<tr>
+				<td>CAM_AFTimeSettingInq</td>
+				<td class="packet">8x 09 04 27 FF</td>
+				<td class="packet">y0 50 0p 0q 0r 0s FF</td>
+				<td>pq: Movement Time<br />rs: Interval</td>
+			</tr>
+			<tr>
+				<td>CAM_IRCorrectionInq</td>
+				<td class="packet">8x 09 04 11 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=Standard, 1=IR Light</td>
+			</tr>
+		</table>
+
+		<h4>PAN TILT</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Command Packet</th>
+				<th>Response Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>Pan-tiltPosInq</td>
+				<td class="packet">8x 09 06 12 FF</td>
+				<td class="packet">y0 50 0w 0w 0w 0w 0z 0z 0z 0z FF</td>
+				<td>wwww: Pan Position<br />zzzz: Tilt Position</td>
+			</tr>
+			<tr>
+				<td>Pan-tiltModeInq</td>
+				<td class="packet">8x 09 06 10 FF</td>
+				<td class="packet">y0 50 pp qq FF</td>
+				<td>ppqq: Pan/Tilt Status</td>
+			</tr>
+			<tr>
+				<td>Pan-tiltMaxSpeedInq</td>
+				<td class="packet">8x 09 06 11 FF</td>
+				<td class="packet">y0 50 ww zz FF</td>
+				<td>ww: Pan Max Speed (18)<br />zz: Tilt Max Speed</td>
+			</tr>
+		</table>
+
+		<h4>SYSTEM</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Command Packet</th>
+				<th>Response Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_IDInq</td>
+				<td class="packet">8x 09 04 22 FF</td>
+				<td class="packet">y0 50 0p 0q 0r 0s FF</td>
+				<td>pqrs: Camera ID</td>
+			</tr>
+			<tr>
+				<td>CAM_VersionInq</td>
+				<td class="packet">8x 09 00 02 FF</td>
+				<td class="packet">y0 50 00 01 mn pq rs tu vw FF</td>
+				<td>
+					0001: Vendor ID (Sony)<br />mnpq: Model ID (0511=SRG-120DH)<br />rstu: ROM Revision<br />vw: Max Socket Number
+					(02)
+				</td>
+			</tr>
+			<tr>
+				<td>CAM_LowLatencyInq</td>
+				<td class="packet">8x 09 7E 01 5A FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=Low, 3=Normal</td>
+			</tr>
+			<tr>
+				<td>SYS_MenuModeInq</td>
+				<td class="packet">8x 09 06 06 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>InformationDisplayInq</td>
+				<td class="packet">8x 09 7E 01 18 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>VIDEO SystemInq</td>
+				<td class="packet">8x 09 06 23 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: Video Format code</td>
+			</tr>
+			<tr>
+				<td>Color SystemInq</td>
+				<td class="packet">8x 09 7E 01 03 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=HDMI YUV, 1=HDMI GBR, 2=DVI GBR, 3=DVI YUV</td>
+			</tr>
+			<tr>
+				<td>IR_ReceiveInq</td>
+				<td class="packet">8x 09 06 08 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>IR_ConditionInq</td>
+				<td class="packet">8x 09 06 34 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=Stable reception, 1=Unstable environment, 2=Power On by IR (cannot judge)</td>
+			</tr>
+		</table>
+
+		<h4>IR ReceiveReturn Notifications</h4>
+		<p>
+			When IR ReceiveReturn is enabled, the camera sends the following notifications via VISCA when IR commands are
+			received:
+		</p>
+		<table>
+			<tr>
+				<th>Notification Packet</th>
+				<th>IR Command</th>
+			</tr>
+			<tr>
+				<td class="packet">y0 07 7D 01 04 00 FF</td>
+				<td>Power On/Off</td>
+			</tr>
+			<tr>
+				<td class="packet">y0 07 7D 01 04 07 FF</td>
+				<td>Zoom Tele/Wide</td>
+			</tr>
+			<tr>
+				<td class="packet">y0 07 7D 01 04 38 FF</td>
+				<td>AF On/Off</td>
+			</tr>
+			<tr>
+				<td class="packet">y0 07 7D 01 04 33 FF</td>
+				<td>Backlight</td>
+			</tr>
+			<tr>
+				<td class="packet">y0 07 7D 01 04 3F FF</td>
+				<td>Memory</td>
+			</tr>
+			<tr>
+				<td class="packet">y0 07 7D 01 06 01 FF</td>
+				<td>Pan/Tilt Drive</td>
+			</tr>
+		</table>
+
+		<h4>Block Inquiries</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Command Packet</th>
+				<th>Response Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_LensBlockInq</td>
+				<td class="packet">8x 09 7E 7E 00 FF</td>
+				<td class="packet">y0 50 0z 0z 0z 0z 0n 0n 0f 0f 0f 0f 00 0a 0b FF</td>
+				<td>
+					zzzz: Zoom Position (bytes 2&ndash;5)<br />nn: Focus Near Limit (bytes 6&ndash;7)<br />ffff: Focus Position
+					(bytes 8&ndash;11)<br />a.bit4&ndash;3: AF Mode (byte 13; 0=Normal, 1=Interval, 2=Zoom Trigger)<br />a.bit2:
+					AF Sensitivity (byte 13; 1=Normal, 0=Low)<br />a.bit1: Digital Zoom (byte 13; 1=On, 0=Off)<br />a.bit0: Focus
+					Mode (byte 13; 1=Auto, 0=Manual)<br />b.bit3: Low Contrast Detection (byte 14; 1=Yes)<br />b.bit2: Camera
+					Memory Recall Executing (byte 14)<br />b.bit1: Focus Cmd Executing (byte 14)<br />b.bit0: Zoom Cmd Executing
+					(byte 14)
+				</td>
+			</tr>
+			<tr>
+				<td>CAM_CameraBlockInq</td>
+				<td class="packet">8x 09 7E 7E 01 FF</td>
+				<td class="packet">y0 50 0r 0r 0b 0b 0w 0a ee 0u vv ww 0g 0x 0c FF</td>
+				<td>
+					rr: R Gain (bytes 2&ndash;3)<br />bb: B Gain (bytes 4&ndash;5)<br />w: WB Mode (byte 6)<br />a: Aperture Gain
+					(byte 7)<br />ee: Exposure Mode (byte 8)<br />u.bit5: High Resolution (byte 9)<br />u.bit4: Wide D (byte 9;
+					1=not Off)<br />u.bit2: Backlight (byte 9)<br />u.bit1: Exp Comp On/Off (byte 9)<br />u.bit0: Slow Shutter
+					(byte 9; 1=Auto)<br />vv: Shutter Position (byte 10)<br />ww: Iris Position (byte 11)<br />0g: Gain Position
+					(byte 12)<br />0x: Bright Position (byte 13)<br />0c: Exp Comp Position (byte 14)
+				</td>
+			</tr>
+			<tr>
+				<td>CAM_OtherBlockInq</td>
+				<td class="packet">8x 09 7E 7E 02 FF</td>
+				<td class="packet">y0 50 0p 00 00 0q 00 00 0r 0r 0r 0r 0s 00 00 FF</td>
+				<td>
+					p.bit0: Power (byte 2; 1=On)<br />q.bit3&ndash;0: Picture Effect Mode (byte 5)<br />rrrr: Camera ID (bytes
+					8&ndash;11)<br />s.bit0: System (byte 12; 1=50/25 Hz, 0=59.94/29.97 Hz)
+				</td>
+			</tr>
+			<tr>
+				<td>CAM_EnlargementBlock1Inq</td>
+				<td class="packet">8x 09 7E 7E 03 FF</td>
+				<td class="packet">y0 50 0a 0a 0b 0b 0c 0c dd ee ff gg hh jj kk FF</td>
+				<td>
+					aa: Digital Zoom Position (bytes 2&ndash;3)<br />bb: AF Activation Time (bytes 4&ndash;5)<br />cc: AF Interval
+					Time (bytes 6&ndash;7)<br />dd: reserved (byte 8)<br />ee: reserved (byte 9)<br />ff: reserved (byte 10)<br />gg:
+					Color Gain Master (byte 11)<br />h.bit5&ndash;4: Gamma (byte 12)<br />h.bit3: High Sensitivity (byte 12)<br />h.bit1&ndash;0:
+					NR Level (byte 12)<br />j.bit5&ndash;3: Chroma Suppress (byte 13)<br />j.bit2&ndash;0: Gain Limit (byte 13)<br />kk:
+					reserved (byte 14)
+				</td>
+			</tr>
+			<tr>
+				<td>CAM_EnlargementBlock2Inq</td>
+				<td class="packet">8x 09 7E 7E 04 FF</td>
+				<td class="packet">y0 50 00 00 00 00 00 0a 00 00 00 00 00 00 00 FF</td>
+				<td>a.bit0: Defog Mode (byte 7; 1=On, 0=Off)<br />All other bytes reserved</td>
+			</tr>
+			<tr>
+				<td>CAM_EnlargementBlock3Inq</td>
+				<td class="packet">8x 09 7E 7E 05 FF</td>
+				<td class="packet">y0 50 0a 00 00 00 00 00 00 00 00 00 00 00 00 FF</td>
+				<td>a: Color Hue Master (byte 2)<br />All other bytes reserved</td>
+			</tr>
+		</table>
+
+		<h3>Part 4: VISCA Command Setting Values</h3>
+
+		<h4>Shutter</h4>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>59.94/29.97 Mode</th>
+				<th>50/25 Mode</th>
+			</tr>
+			<tr>
+				<td class="packet">15</td>
+				<td>1/10000</td>
+				<td>1/10000</td>
+			</tr>
+			<tr>
+				<td class="packet">14</td>
+				<td>1/6000</td>
+				<td>1/6000</td>
+			</tr>
+			<tr>
+				<td class="packet">13</td>
+				<td>1/4000</td>
+				<td>1/3500</td>
+			</tr>
+			<tr>
+				<td class="packet">12</td>
+				<td>1/3000</td>
+				<td>1/2500</td>
+			</tr>
+			<tr>
+				<td class="packet">11</td>
+				<td>1/2000</td>
+				<td>1/1750</td>
+			</tr>
+			<tr>
+				<td class="packet">10</td>
+				<td>1/1500</td>
+				<td>1/1250</td>
+			</tr>
+			<tr>
+				<td class="packet">0F</td>
+				<td>1/1000</td>
+				<td>1/1000</td>
+			</tr>
+			<tr>
+				<td class="packet">0E</td>
+				<td>1/725</td>
+				<td>1/600</td>
+			</tr>
+			<tr>
+				<td class="packet">0D</td>
+				<td>1/500</td>
+				<td>1/425</td>
+			</tr>
+			<tr>
+				<td class="packet">0C</td>
+				<td>1/350</td>
+				<td>1/300</td>
+			</tr>
+			<tr>
+				<td class="packet">0B</td>
+				<td>1/250</td>
+				<td>1/215</td>
+			</tr>
+			<tr>
+				<td class="packet">0A</td>
+				<td>1/180</td>
+				<td>1/150</td>
+			</tr>
+			<tr>
+				<td class="packet">09</td>
+				<td>1/125</td>
+				<td>1/120</td>
+			</tr>
+			<tr>
+				<td class="packet">08</td>
+				<td>1/100</td>
+				<td>1/100</td>
+			</tr>
+			<tr>
+				<td class="packet">07</td>
+				<td>1/90</td>
+				<td>1/75</td>
+			</tr>
+			<tr>
+				<td class="packet">06</td>
+				<td>1/60</td>
+				<td>1/50</td>
+			</tr>
+			<tr>
+				<td class="packet">05</td>
+				<td>1/30</td>
+				<td>1/25</td>
+			</tr>
+			<tr>
+				<td class="packet">04</td>
+				<td>1/15</td>
+				<td>1/12</td>
+			</tr>
+			<tr>
+				<td class="packet">03</td>
+				<td>1/8</td>
+				<td>1/6</td>
+			</tr>
+			<tr>
+				<td class="packet">02</td>
+				<td>1/4</td>
+				<td>1/3</td>
+			</tr>
+			<tr>
+				<td class="packet">01</td>
+				<td>1/2</td>
+				<td>1/2</td>
+			</tr>
+			<tr>
+				<td class="packet">00</td>
+				<td>1/1</td>
+				<td>1/1</td>
+			</tr>
+		</table>
+
+		<h4>Iris</h4>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>F-Value</th>
+			</tr>
+			<tr>
+				<td class="packet">11</td>
+				<td>F1.8</td>
+			</tr>
+			<tr>
+				<td class="packet">10</td>
+				<td>F2.0</td>
+			</tr>
+			<tr>
+				<td class="packet">0F</td>
+				<td>F2.4</td>
+			</tr>
+			<tr>
+				<td class="packet">0E</td>
+				<td>F2.8</td>
+			</tr>
+			<tr>
+				<td class="packet">0D</td>
+				<td>F3.4</td>
+			</tr>
+			<tr>
+				<td class="packet">0C</td>
+				<td>F4</td>
+			</tr>
+			<tr>
+				<td class="packet">0B</td>
+				<td>F4.8</td>
+			</tr>
+			<tr>
+				<td class="packet">0A</td>
+				<td>F5.6</td>
+			</tr>
+			<tr>
+				<td class="packet">09</td>
+				<td>F6.8</td>
+			</tr>
+			<tr>
+				<td class="packet">08</td>
+				<td>F8</td>
+			</tr>
+			<tr>
+				<td class="packet">07</td>
+				<td>F9.6</td>
+			</tr>
+			<tr>
+				<td class="packet">06</td>
+				<td>F11</td>
+			</tr>
+			<tr>
+				<td class="packet">05</td>
+				<td>F14</td>
+			</tr>
+			<tr>
+				<td class="packet">00</td>
+				<td>Close</td>
+			</tr>
+		</table>
+
+		<h4>Gain</h4>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>Gain Value</th>
+			</tr>
+			<tr>
+				<td class="packet">01</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">02</td>
+				<td>+3 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">03</td>
+				<td>+6 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">04</td>
+				<td>+9 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">05</td>
+				<td>+12 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">06</td>
+				<td>+15 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">07</td>
+				<td>+18 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">08</td>
+				<td>+21 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">09</td>
+				<td>+24 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0A</td>
+				<td>+27 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0B</td>
+				<td>+30 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0C</td>
+				<td>+33 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0D</td>
+				<td>+36 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0E</td>
+				<td>+39 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0F</td>
+				<td>+43 dB</td>
+			</tr>
+		</table>
+
+		<h4>Gain Limit</h4>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>Gain Value</th>
+			</tr>
+			<tr>
+				<td class="packet">04</td>
+				<td>+9 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">05</td>
+				<td>+12 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">06</td>
+				<td>+15 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">07</td>
+				<td>+18 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">08</td>
+				<td>+21 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">09</td>
+				<td>+24 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0A</td>
+				<td>+27 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0B</td>
+				<td>+30 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0C</td>
+				<td>+33 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0D</td>
+				<td>+36 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0E</td>
+				<td>+39 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0F</td>
+				<td>+43 dB</td>
+			</tr>
+		</table>
+
+		<h4>Bright</h4>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>Iris</th>
+				<th>Gain</th>
+			</tr>
+			<tr>
+				<td class="packet">1F</td>
+				<td>F1.8</td>
+				<td>+43 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">1E</td>
+				<td>F1.8</td>
+				<td>+39 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">1D</td>
+				<td>F1.8</td>
+				<td>+36 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">1C</td>
+				<td>F1.8</td>
+				<td>+33 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">1B</td>
+				<td>F1.8</td>
+				<td>+30 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">1A</td>
+				<td>F1.8</td>
+				<td>+27 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">19</td>
+				<td>F1.8</td>
+				<td>+24 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">18</td>
+				<td>F1.8</td>
+				<td>+21 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">17</td>
+				<td>F1.8</td>
+				<td>+18 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">16</td>
+				<td>F1.8</td>
+				<td>+15 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">15</td>
+				<td>F1.8</td>
+				<td>+12 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">14</td>
+				<td>F1.8</td>
+				<td>+9 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">13</td>
+				<td>F1.8</td>
+				<td>+6 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">12</td>
+				<td>F1.8</td>
+				<td>+3 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">11</td>
+				<td>F1.8</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">10</td>
+				<td>F2.0</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0F</td>
+				<td>F2.4</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0E</td>
+				<td>F2.8</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0D</td>
+				<td>F3.4</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0C</td>
+				<td>F4</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0B</td>
+				<td>F4.8</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0A</td>
+				<td>F5.6</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">09</td>
+				<td>F6.8</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">08</td>
+				<td>F8</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">07</td>
+				<td>F9.6</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">06</td>
+				<td>F11</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">05</td>
+				<td>F14</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">00</td>
+				<td>Close</td>
+				<td>0 dB</td>
+			</tr>
+		</table>
+
+		<h4>Exposure Compensation</h4>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>Display</th>
+				<th>Compensation</th>
+			</tr>
+			<tr>
+				<td class="packet">0E</td>
+				<td>+7</td>
+				<td>+10.5 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0D</td>
+				<td>+6</td>
+				<td>+9 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0C</td>
+				<td>+5</td>
+				<td>+7.5 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0B</td>
+				<td>+4</td>
+				<td>+6 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">0A</td>
+				<td>+3</td>
+				<td>+4.5 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">09</td>
+				<td>+2</td>
+				<td>+3 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">08</td>
+				<td>+1</td>
+				<td>+1.5 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">07</td>
+				<td>0</td>
+				<td>0 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">06</td>
+				<td>&minus;1</td>
+				<td>&minus;1.5 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">05</td>
+				<td>&minus;2</td>
+				<td>&minus;3 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">04</td>
+				<td>&minus;3</td>
+				<td>&minus;4.5 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">03</td>
+				<td>&minus;4</td>
+				<td>&minus;6 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">02</td>
+				<td>&minus;5</td>
+				<td>&minus;7.5 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">01</td>
+				<td>&minus;6</td>
+				<td>&minus;9 dB</td>
+			</tr>
+			<tr>
+				<td class="packet">00</td>
+				<td>&minus;7</td>
+				<td>&minus;10.5 dB</td>
+			</tr>
+		</table>
+
+		<h4>Pan/Tilt Position</h4>
+		<table>
+			<tr>
+				<th>Axis</th>
+				<th>Range</th>
+			</tr>
+			<tr>
+				<td>Pan</td>
+				<td class="packet">EC00</td>
+				<td>
+					(&minus;100&deg;) to <span class="packet">1400</span> (+100&deg;), center <span class="packet">0000</span>
+				</td>
+			</tr>
+			<tr>
+				<td>Tilt</td>
+				<td class="packet">FB00</td>
+				<td>
+					(&minus;25&deg;) to <span class="packet">0500</span> (+25&deg;), center <span class="packet">0000</span>
+				</td>
+			</tr>
+		</table>
+
+		<h4>Pan/Tilt Speed</h4>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>Pan (&deg;/s)</th>
+				<th>Tilt (&deg;/s)</th>
+			</tr>
+			<tr>
+				<td class="packet">01</td>
+				<td>1.1</td>
+				<td>1.1</td>
+			</tr>
+			<tr>
+				<td class="packet">02</td>
+				<td>1.3</td>
+				<td>1.3</td>
+			</tr>
+			<tr>
+				<td class="packet">03</td>
+				<td>1.7</td>
+				<td>1.7</td>
+			</tr>
+			<tr>
+				<td class="packet">04</td>
+				<td>2.2</td>
+				<td>2.2</td>
+			</tr>
+			<tr>
+				<td class="packet">05</td>
+				<td>2.8</td>
+				<td>2.8</td>
+			</tr>
+			<tr>
+				<td class="packet">06</td>
+				<td>3.6</td>
+				<td>3.6</td>
+			</tr>
+			<tr>
+				<td class="packet">07</td>
+				<td>4.6</td>
+				<td>5</td>
+			</tr>
+			<tr>
+				<td class="packet">08</td>
+				<td>5.9</td>
+				<td>6</td>
+			</tr>
+			<tr>
+				<td class="packet">09</td>
+				<td>7.6</td>
+				<td>8</td>
+			</tr>
+			<tr>
+				<td class="packet">0A</td>
+				<td>9.0</td>
+				<td>10</td>
+			</tr>
+			<tr>
+				<td class="packet">0B</td>
+				<td>10</td>
+				<td>12</td>
+			</tr>
+			<tr>
+				<td class="packet">0C</td>
+				<td>20</td>
+				<td>14</td>
+			</tr>
+			<tr>
+				<td class="packet">0D</td>
+				<td>23</td>
+				<td>16</td>
+			</tr>
+			<tr>
+				<td class="packet">0E</td>
+				<td>37</td>
+				<td>23</td>
+			</tr>
+			<tr>
+				<td class="packet">0F</td>
+				<td>42</td>
+				<td>33</td>
+			</tr>
+			<tr>
+				<td class="packet">10</td>
+				<td>47</td>
+				<td>54</td>
+			</tr>
+			<tr>
+				<td class="packet">11</td>
+				<td>61</td>
+				<td>61</td>
+			</tr>
+			<tr>
+				<td class="packet">12</td>
+				<td>73</td>
+				<td>73</td>
+			</tr>
+			<tr>
+				<td class="packet">13</td>
+				<td>88</td>
+				<td>88</td>
+			</tr>
+			<tr>
+				<td class="packet">14</td>
+				<td>126</td>
+				<td>126</td>
+			</tr>
+			<tr>
+				<td class="packet">15</td>
+				<td>145</td>
+				<td>&mdash;</td>
+			</tr>
+			<tr>
+				<td class="packet">16</td>
+				<td>185</td>
+				<td>&mdash;</td>
+			</tr>
+			<tr>
+				<td class="packet">17</td>
+				<td>251</td>
+				<td>&mdash;</td>
+			</tr>
+			<tr>
+				<td class="packet">18</td>
+				<td>302</td>
+				<td>&mdash;</td>
+			</tr>
+		</table>
+		<p>Max pan speed: 0x18. Max tilt speed: 0x14. Tilt does not support speeds 15&ndash;18.</p>
+
+		<h4>Focus Distance</h4>
+		<p>Focus position range: 1000 (far end) to E000 (near end). Lower byte is fixed at 00.</p>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>Distance</th>
+			</tr>
+			<tr>
+				<td class="packet">1000</td>
+				<td>&infin; (over infinity)</td>
+			</tr>
+			<tr>
+				<td class="packet">2000</td>
+				<td>10 m</td>
+			</tr>
+			<tr>
+				<td class="packet">3000</td>
+				<td>5 m</td>
+			</tr>
+			<tr>
+				<td class="packet">4000</td>
+				<td>3.3 m</td>
+			</tr>
+			<tr>
+				<td class="packet">5000</td>
+				<td>2.5 m</td>
+			</tr>
+			<tr>
+				<td class="packet">6000</td>
+				<td>2 m</td>
+			</tr>
+			<tr>
+				<td class="packet">7000</td>
+				<td>1.7 m</td>
+			</tr>
+			<tr>
+				<td class="packet">8000</td>
+				<td>1.5 m</td>
+			</tr>
+			<tr>
+				<td class="packet">9000</td>
+				<td>1 m</td>
+			</tr>
+			<tr>
+				<td class="packet">A000</td>
+				<td>50 cm</td>
+			</tr>
+			<tr>
+				<td class="packet">B000</td>
+				<td>30 cm</td>
+			</tr>
+			<tr>
+				<td class="packet">C000</td>
+				<td>15 cm</td>
+			</tr>
+			<tr>
+				<td class="packet">D000</td>
+				<td>6 cm</td>
+			</tr>
+			<tr>
+				<td class="packet">E000</td>
+				<td>1 cm</td>
+			</tr>
+		</table>
+		<p>Distances are approximate and vary with temperature.</p>
+
+		<h4>Zoom Position / Ratio (Optical)</h4>
+		<p>Zoom range: 0000 (wide) to 4000 (optical tele end).</p>
+		<table>
+			<tr>
+				<th>Zoom Ratio</th>
+				<th>Position</th>
+			</tr>
+			<tr>
+				<td>&times;1</td>
+				<td class="packet">0000</td>
+			</tr>
+			<tr>
+				<td>&times;2</td>
+				<td class="packet">1970</td>
+			</tr>
+			<tr>
+				<td>&times;3</td>
+				<td class="packet">249C</td>
+			</tr>
+			<tr>
+				<td>&times;4</td>
+				<td class="packet">2B5F</td>
+			</tr>
+			<tr>
+				<td>&times;5</td>
+				<td class="packet">3020</td>
+			</tr>
+			<tr>
+				<td>&times;6</td>
+				<td class="packet">33C4</td>
+			</tr>
+			<tr>
+				<td>&times;7</td>
+				<td class="packet">36B7</td>
+			</tr>
+			<tr>
+				<td>&times;8</td>
+				<td class="packet">392F</td>
+			</tr>
+			<tr>
+				<td>&times;9</td>
+				<td class="packet">3B4D</td>
+			</tr>
+			<tr>
+				<td>&times;10</td>
+				<td class="packet">3D1E</td>
+			</tr>
+			<tr>
+				<td>&times;11</td>
+				<td class="packet">3EAD</td>
+			</tr>
+			<tr>
+				<td>&times;12</td>
+				<td class="packet">4000</td>
+			</tr>
+		</table>
+
+		<h4>Zoom Position / Ratio (Digital)</h4>
+		<p>Digital zoom range: 4000 to 7AC0.</p>
+		<table>
+			<tr>
+				<th>Zoom Ratio</th>
+				<th>Position</th>
+			</tr>
+			<tr>
+				<td>&times;1 (optical tele)</td>
+				<td class="packet">4000</td>
+			</tr>
+			<tr>
+				<td>&times;2</td>
+				<td class="packet">6000</td>
+			</tr>
+			<tr>
+				<td>&times;3</td>
+				<td class="packet">6A80</td>
+			</tr>
+			<tr>
+				<td>&times;4</td>
+				<td class="packet">7000</td>
+			</tr>
+			<tr>
+				<td>&times;5</td>
+				<td class="packet">7300</td>
+			</tr>
+			<tr>
+				<td>&times;6</td>
+				<td class="packet">7540</td>
+			</tr>
+			<tr>
+				<td>&times;7</td>
+				<td class="packet">76C0</td>
+			</tr>
+			<tr>
+				<td>&times;8</td>
+				<td class="packet">7800</td>
+			</tr>
+			<tr>
+				<td>&times;9</td>
+				<td class="packet">78C0</td>
+			</tr>
+			<tr>
+				<td>&times;10</td>
+				<td class="packet">7980</td>
+			</tr>
+			<tr>
+				<td>&times;11</td>
+				<td class="packet">7A00</td>
+			</tr>
+			<tr>
+				<td>&times;12</td>
+				<td class="packet">7AC0</td>
+			</tr>
+		</table>
+
+		<h4>Video Format</h4>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>Video Format</th>
+			</tr>
+			<tr>
+				<td class="packet">00</td>
+				<td>1920&times;1080/59.94p</td>
+			</tr>
+			<tr>
+				<td class="packet">02</td>
+				<td>1920&times;1080/29.97p</td>
+			</tr>
+			<tr>
+				<td class="packet">03</td>
+				<td>1920&times;1080/59.94i</td>
+			</tr>
+			<tr>
+				<td class="packet">04</td>
+				<td>1280&times;720/59.94p</td>
+			</tr>
+			<tr>
+				<td class="packet">05</td>
+				<td>1280&times;720/29.97p</td>
+			</tr>
+			<tr>
+				<td class="packet">08</td>
+				<td>1920&times;1080/50p</td>
+			</tr>
+			<tr>
+				<td class="packet">0A</td>
+				<td>1920&times;1080/25p</td>
+			</tr>
+			<tr>
+				<td class="packet">0B</td>
+				<td>1920&times;1080/50i</td>
+			</tr>
+			<tr>
+				<td class="packet">0C</td>
+				<td>1280&times;720/50p</td>
+			</tr>
+			<tr>
+				<td class="packet">0D</td>
+				<td>1280&times;720/25p</td>
+			</tr>
+		</table>
+
+		<h4>Pan/Tilt Status Code</h4>
+		<table>
+			<tr>
+				<th>Bits</th>
+				<th>Status</th>
+			</tr>
+			<tr>
+				<td class="packet">pqrs &amp; 0x0001</td>
+				<td>Pan reaches left end</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs &amp; 0x0002</td>
+				<td>Pan reaches right end</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs &amp; 0x0004</td>
+				<td>Tilt reaches upper end</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs &amp; 0x0008</td>
+				<td>Tilt reaches lower end</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[7:6] = 00</td>
+				<td>Pan movement correct</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[7:6] = 01</td>
+				<td>Abnormal pan position detected</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[9:8] = 00</td>
+				<td>Tilt movement correct</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[9:8] = 01</td>
+				<td>Abnormal tilt position detected</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[11:10] = 00</td>
+				<td>No move request received</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[11:10] = 01</td>
+				<td>Pan/Tilt operating</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[11:10] = 10</td>
+				<td>Pan/Tilt completed</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[11:10] = 11</td>
+				<td>Pan/Tilt failed</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[13:12] = 00</td>
+				<td>Not initialized</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[13:12] = 01</td>
+				<td>Initializing</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[13:12] = 10</td>
+				<td>Initialization completed</td>
+			</tr>
+			<tr>
+				<td class="packet">pqrs[13:12] = 11</td>
+				<td>Initialization failed</td>
+			</tr>
+		</table>
+	</body>
+</html>

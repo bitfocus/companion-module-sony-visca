@@ -6,3 +6,5 @@ DEBUG*
 .vscode
 /logs
 /.yarn
+CLAUDE.md
+.claude/

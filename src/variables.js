@@ -1,3 +1,5 @@
+import { CAP_FR7, CAP_X400_CORE_X40UH, CAP_X400_X1000, CAP_X400_ONLY } from './model-caps.js'
+
 // Pan/tilt position ranges (signed 16-bit)
 const PAN_MIN = -0x2200 // 0xDE00 signed = left limit
 const PAN_MAX = 0x2200 // right limit
@@ -35,7 +37,7 @@ const variables = [
 	{ variableId: 'expCompOnOff', name: 'Exposure Compensation (on/off)' },
 	{ variableId: 'backlightComp', name: 'Backlight Compensation (on/off)' },
 	{ variableId: 'spotlightComp', name: 'Spotlight Compensation (on/off)' },
-	{ variableId: 'recordingStatus', name: 'Recording status (unknown/standby/recording)' },
+	{ variableId: 'recordingStatus', name: 'Recording status (unknown/standby/recording)', models: CAP_FR7 },
 	{ variableId: 'presetSelector', name: 'Preset Selection Variable' },
 	{ variableId: 'viscaId', name: 'Specific ViscaID to interact with (serial only)' },
 	{ variableId: 'lastCmdSent', name: 'Last Command Sent (hex values)' },
@@ -48,86 +50,90 @@ const variables = [
 	{ variableId: 'focusPositionBar', name: 'Focus Position Bar' },
 	{ variableId: 'irisPositionBar', name: 'Iris Position Bar' },
 	// Block 097e7e00 — Lens Control
-	{ variableId: 'zoomPosition', name: 'Zoom Position' },
-	{ variableId: 'focusPosition', name: 'Focus Position' },
-	{ variableId: 'focusNearLimit', name: 'Focus Near Limit' },
-	{ variableId: 'afMode', name: 'Auto Focus Mode' },
-	{ variableId: 'afSensitivity', name: 'Auto Focus Sensitivity' },
-	{ variableId: 'presetRecallExecuting', name: 'Preset Recall Executing' },
-	{ variableId: 'focusCmdExecuting', name: 'Focus Command Executing' },
-	{ variableId: 'zoomCmdExecuting', name: 'Zoom Command Executing' },
+	{ variableId: 'zoomPosition', name: 'Zoom Position', block: '097e7e00' },
+	{ variableId: 'focusPosition', name: 'Focus Position', block: '097e7e00' },
+	{ variableId: 'focusNearLimit', name: 'Focus Near Limit', block: '097e7e00' },
+	{ variableId: 'afMode', name: 'Auto Focus Mode', block: '097e7e00' },
+	{ variableId: 'afSensitivity', name: 'Auto Focus Sensitivity', block: '097e7e00' },
+	{ variableId: 'presetRecallExecuting', name: 'Preset Recall Executing', block: '097e7e00' },
+	{ variableId: 'focusCmdExecuting', name: 'Focus Command Executing', block: '097e7e00' },
+	{ variableId: 'zoomCmdExecuting', name: 'Zoom Command Executing', block: '097e7e00' },
 	// Block 097e7e01 — Camera Control
-	{ variableId: 'wbMode', name: 'White Balance Mode' },
-	{ variableId: 'wbSpeed', name: 'White Balance Speed' },
-	{ variableId: 'detailLevel', name: 'Detail Level' },
-	{ variableId: 'colorMatrix', name: 'Color Matrix' },
-	{ variableId: 'irisLevel', name: 'Iris Level' },
-	{ variableId: 'gainLevel', name: 'Gain Level' },
-	{ variableId: 'shutterSpeed', name: 'Shutter Speed' },
-	{ variableId: 'redGain', name: 'Red Gain' },
-	{ variableId: 'blueGain', name: 'Blue Gain' },
-	{ variableId: 'slowShutter', name: 'Slow Shutter (auto/manual)' },
-	{ variableId: 'highResolution', name: 'High Resolution (on/off)' },
-	{ variableId: 've', name: 'Visibility Enhancer (on/off)' },
-	{ variableId: 'expCompLevel', name: 'Exposure Compensation Level' },
+	{ variableId: 'wbMode', name: 'White Balance Mode', block: '097e7e01' },
+	{ variableId: 'wbSpeed', name: 'White Balance Speed', block: '097e7e01' },
+	{ variableId: 'detailLevel', name: 'Detail Level', block: '097e7e01' },
+	{ variableId: 'colorMatrix', name: 'Color Matrix', block: '097e7e01', models: CAP_X400_ONLY },
+	{ variableId: 'irisLevel', name: 'Iris Level', block: '097e7e01' },
+	{ variableId: 'gainLevel', name: 'Gain Level', block: '097e7e01' },
+	{ variableId: 'shutterSpeed', name: 'Shutter Speed', block: '097e7e01' },
+	{ variableId: 'redGain', name: 'Red Gain', block: '097e7e01' },
+	{ variableId: 'blueGain', name: 'Blue Gain', block: '097e7e01' },
+	{ variableId: 'slowShutter', name: 'Slow Shutter (auto/manual)', block: '097e7e01' },
+	{ variableId: 'highResolution', name: 'High Resolution (on/off)', block: '097e7e01' },
+	{ variableId: 've', name: 'Visibility Enhancer (on/off)', block: '097e7e01' },
+	{ variableId: 'expCompLevel', name: 'Exposure Compensation Level', block: '097e7e01' },
 	// Block 097e7e02 — Other
-	{ variableId: 'power', name: 'Power (on/off)' },
-	{ variableId: 'flickerCancel', name: 'Flicker Cancel (on/off)' },
-	{ variableId: 'IRCutFilterAuto', name: 'IR Cut Filter Auto (auto/manual)' },
-	{ variableId: 'imageStabilizer', name: 'Image Stabilization (on/off)' },
-	{ variableId: 'IRCutFilter', name: 'IR Cut Filter (on/off)' },
-	{ variableId: 'pictureEffectOn', name: 'Picture Effect' },
-	{ variableId: 'wbOffset', name: 'White Balance Offset' },
-	{ variableId: 'cameraIdReported', name: 'Camera ID (reported)' },
-	{ variableId: 'kneeMode', name: 'Knee Mode (Manual/Auto)' },
-	{ variableId: 'kneeSlope', name: 'Knee Slope' },
-	{ variableId: 'kneeSetting', name: 'Knee Setting (on/off)' },
-	{ variableId: 'kneePoint', name: 'Knee Point' },
+	{ variableId: 'power', name: 'Power (on/off)', block: '097e7e02' },
+	{ variableId: 'flickerCancel', name: 'Flicker Cancel (on/off)', block: '097e7e02' },
+	{ variableId: 'IRCutFilterAuto', name: 'IR Cut Filter Auto (auto/manual)', block: '097e7e02' },
+	{ variableId: 'imageStabilizer', name: 'Image Stabilization (on/off)', block: '097e7e02' },
+	{ variableId: 'IRCutFilter', name: 'IR Cut Filter (on/off)', block: '097e7e02' },
+	{ variableId: 'pictureEffectOn', name: 'Picture Effect', block: '097e7e02' },
+	{ variableId: 'wbOffset', name: 'White Balance Offset', block: '097e7e02' },
+	{ variableId: 'cameraIdReported', name: 'Camera ID (reported)', block: '097e7e02' },
+	{ variableId: 'kneeMode', name: 'Knee Mode (Manual/Auto)', block: '097e7e02', models: CAP_X400_X1000 },
+	{ variableId: 'kneeSlope', name: 'Knee Slope', block: '097e7e02', models: CAP_X400_X1000 },
+	{ variableId: 'kneeSetting', name: 'Knee Setting (on/off)', block: '097e7e02', models: CAP_X400_X1000 },
+	{ variableId: 'kneePoint', name: 'Knee Point', block: '097e7e02', models: CAP_X400_X1000 },
 	// Block 097e7e03 — Enlargement 1
-	{ variableId: 'afOpTime', name: 'AF Operating Time' },
-	{ variableId: 'afStayTime', name: 'AF Stay Time' },
-	{ variableId: 'nr2dLevel', name: '2D Noise Reduction Level' },
-	{ variableId: 'nr3dLevel', name: '3D Noise Reduction Level' },
-	{ variableId: 'nrLevel', name: 'Noise Reduction Level' },
-	{ variableId: 'gamma', name: 'Gamma' },
-	{ variableId: 'imageFlip', name: 'Image Flip (on/off)' },
-	{ variableId: 'colorGain', name: 'Color Gain' },
-	{ variableId: 'aeSpeed', name: 'AE Speed' },
-	{ variableId: 'highSensitivity', name: 'High Sensitivity (on/off)' },
-	{ variableId: 'chromaSuppress', name: 'Chroma Suppress Level' },
-	{ variableId: 'gainLimit', name: 'Max Gain Limit' },
+	{ variableId: 'afOpTime', name: 'AF Operating Time', block: '097e7e03' },
+	{ variableId: 'afStayTime', name: 'AF Stay Time', block: '097e7e03' },
+	{ variableId: 'nr2dLevel', name: '2D Noise Reduction Level', block: '097e7e03' },
+	{ variableId: 'nr3dLevel', name: '3D Noise Reduction Level', block: '097e7e03' },
+	{ variableId: 'nrLevel', name: 'Noise Reduction Level', block: '097e7e03' },
+	{ variableId: 'gamma', name: 'Gamma', block: '097e7e03' },
+	{ variableId: 'imageFlip', name: 'Image Flip (on/off)', block: '097e7e03', models: CAP_X400_CORE_X40UH },
+	{ variableId: 'colorGain', name: 'Color Gain', block: '097e7e03' },
+	{ variableId: 'aeSpeed', name: 'AE Speed', block: '097e7e03' },
+	{ variableId: 'highSensitivity', name: 'High Sensitivity (on/off)', block: '097e7e03' },
+	{ variableId: 'chromaSuppress', name: 'Chroma Suppress Level', block: '097e7e03', models: CAP_X400_X1000 },
+	{ variableId: 'gainLimit', name: 'Max Gain Limit', block: '097e7e03' },
 	// Block 097e7e04 — Enlargement 2
-	{ variableId: 'blackLevel', name: 'Black Level' },
-	{ variableId: 'veLevel', name: 'Visibility Enhancer Level' },
-	{ variableId: 'blackGammaLevel', name: 'Black Gamma Level' },
-	{ variableId: 'veBrightnessComp', name: 'VE Brightness Compensation' },
-	{ variableId: 'gammaLevel', name: 'Gamma Level' },
-	{ variableId: 'veCompLevel', name: 'VE Compensation Level' },
-	{ variableId: 'blackGammaRange', name: 'Black Gamma Range' },
-	{ variableId: 'gammaOffset', name: 'Gamma Offset' },
-	{ variableId: 'minShutterSpeed', name: 'Min Shutter Speed' },
-	{ variableId: 'maxShutterSpeed', name: 'Max Shutter Speed' },
-	{ variableId: 'detailHVBalance', name: 'Detail H/V Balance' },
-	{ variableId: 'detailCrispening', name: 'Detail Crispening' },
-	{ variableId: 'detailLimit', name: 'Detail Limit' },
-	{ variableId: 'detailBWBalance', name: 'Detail B/W Balance' },
-	{ variableId: 'detailHighlightDetail', name: 'Detail Highlight Detail' },
-	{ variableId: 'detailSuperLow', name: 'Detail Super Low' },
-	{ variableId: 'detailMode', name: 'Detail Mode (Manual/Auto)' },
-	{ variableId: 'detailBandwidth', name: 'Detail Bandwidth' },
+	{ variableId: 'blackLevel', name: 'Black Level', block: '097e7e04', models: CAP_X400_X1000 },
+	{ variableId: 'veLevel', name: 'Visibility Enhancer Level', block: '097e7e04' },
+	{ variableId: 'blackGammaLevel', name: 'Black Gamma Level', block: '097e7e04', models: CAP_X400_X1000 },
+	{ variableId: 'veBrightnessComp', name: 'VE Brightness Compensation', block: '097e7e04' },
+	{ variableId: 'gammaLevel', name: 'Gamma Level', block: '097e7e04', models: CAP_X400_X1000 },
+	{ variableId: 'veCompLevel', name: 'VE Compensation Level', block: '097e7e04' },
+	{ variableId: 'blackGammaRange', name: 'Black Gamma Range', block: '097e7e04', models: CAP_X400_X1000 },
+	{ variableId: 'gammaOffset', name: 'Gamma Offset', block: '097e7e04', models: CAP_X400_X1000 },
+	{ variableId: 'minShutterSpeed', name: 'Min Shutter Speed', block: '097e7e04' },
+	{ variableId: 'maxShutterSpeed', name: 'Max Shutter Speed', block: '097e7e04' },
+	{ variableId: 'detailHVBalance', name: 'Detail H/V Balance', block: '097e7e04' },
+	{ variableId: 'detailCrispening', name: 'Detail Crispening', block: '097e7e04' },
+	{ variableId: 'detailLimit', name: 'Detail Limit', block: '097e7e04' },
+	{ variableId: 'detailBWBalance', name: 'Detail B/W Balance', block: '097e7e04' },
+	{ variableId: 'detailHighlightDetail', name: 'Detail Highlight Detail', block: '097e7e04' },
+	{ variableId: 'detailSuperLow', name: 'Detail Super Low', block: '097e7e04' },
+	{ variableId: 'detailMode', name: 'Detail Mode (Manual/Auto)', block: '097e7e04' },
+	{ variableId: 'detailBandwidth', name: 'Detail Bandwidth', block: '097e7e04' },
 	// Block 097e7e05 — Enlargement 3
-	{ variableId: 'colorHue', name: 'Color Hue' },
-	{ variableId: 'colorRG', name: 'Color Matrix R-G' },
-	{ variableId: 'colorRB', name: 'Color Matrix R-B' },
-	{ variableId: 'colorGR', name: 'Color Matrix G-R' },
-	{ variableId: 'colorGB', name: 'Color Matrix G-B' },
-	{ variableId: 'colorBR', name: 'Color Matrix B-R' },
-	{ variableId: 'colorBG', name: 'Color Matrix B-G' },
+	{ variableId: 'colorHue', name: 'Color Hue', block: '097e7e05' },
+	{ variableId: 'colorRG', name: 'Color Matrix R-G', block: '097e7e05', models: CAP_X400_ONLY },
+	{ variableId: 'colorRB', name: 'Color Matrix R-B', block: '097e7e05', models: CAP_X400_ONLY },
+	{ variableId: 'colorGR', name: 'Color Matrix G-R', block: '097e7e05', models: CAP_X400_ONLY },
+	{ variableId: 'colorGB', name: 'Color Matrix G-B', block: '097e7e05', models: CAP_X400_ONLY },
+	{ variableId: 'colorBR', name: 'Color Matrix B-R', block: '097e7e05', models: CAP_X400_ONLY },
+	{ variableId: 'colorBG', name: 'Color Matrix B-G', block: '097e7e05', models: CAP_X400_ONLY },
 ]
 
-export function initVariables() {
-	// return variables
-	this.setVariableDefinitions(variables)
+export function initVariables(activeBlocks, modelId) {
+	let filtered = activeBlocks ? variables.filter((v) => !v.block || activeBlocks.has(v.block)) : variables
+	if (modelId && modelId !== 'other_all') {
+		filtered = filtered.filter((v) => !v.models || (modelId !== 'other_min' && v.models.has(modelId)))
+	}
+	this.setVariableDefinitions(filtered)
+	this.activeVariableIds = new Set(filtered.map((v) => v.variableId))
 }
 
 export async function updateVariables() {
@@ -148,7 +154,7 @@ export async function updateVariables() {
 		irisPct = normalizePct(this.state.irisRaw, irisMin, irisMax)
 	}
 
-	this.setVariableValues({
+	const allValues = {
 		// Position bars
 		panPosition: this.state.panPosition,
 		tiltPosition: this.state.tiltPosition,
@@ -248,7 +254,20 @@ export async function updateVariables() {
 		colorGB: this.state.colorGB,
 		colorBR: this.state.colorBR,
 		colorBG: this.state.colorBG,
-	})
+	}
+
+	// Only set values for variables that were registered via initVariables
+	if (this.activeVariableIds) {
+		const filtered = {}
+		for (const [key, value] of Object.entries(allValues)) {
+			if (this.activeVariableIds.has(key)) {
+				filtered[key] = value
+			}
+		}
+		this.setVariableValues(filtered)
+	} else {
+		this.setVariableValues(allValues)
+	}
 }
 
 function formatVariablesMarkdown(variables) {

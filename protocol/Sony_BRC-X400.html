@@ -353,7 +353,7 @@
 				<td>p: 0 (&minus;7)&ndash;7 (0)&ndash;E (+7)</td>
 			</tr>
 			<tr>
-				<td>Chroma Suppress</td>
+				<td>Chroma Suppress<sup>&dagger;</sup></td>
 				<td>Direct</td>
 				<td class="packet">8x 01 04 5F 0p FF</td>
 				<td>p: 0 (Off), 1 (Weak)&ndash;3 (Strong)</td>
@@ -489,7 +489,7 @@
 				<td>p: 0&ndash;4</td>
 			</tr>
 			<tr>
-				<td>Detail Super Low</td>
+				<td>Detail Super Low<sup>&dagger;</sup></td>
 				<td>Direct</td>
 				<td class="packet">8x 01 05 42 08 0p FF</td>
 				<td>p: 0&ndash;7</td>
@@ -615,7 +615,7 @@
 				<td>p: 2=On, 3=Off</td>
 			</tr>
 			<tr>
-				<td>Defog</td>
+				<td>Defog<sup>&dagger;</sup></td>
 				<td>On/Off</td>
 				<td class="packet">8x 01 04 37 0p 0q FF</td>
 				<td>p: 2=On, 3=Off<br />q: Level 0 (same as 2), 1 (Weak)&ndash;3 (Strong)</td>
@@ -685,18 +685,25 @@
 				<td>pqrs: Zoom Position</td>
 			</tr>
 			<tr>
-				<td>Zoom Mode</td>
+				<td>Zoom Mode<sup>*1</sup></td>
 				<td>Direct</td>
 				<td class="packet">8x 01 04 06 0p FF</td>
 				<td>p: 3=Optical only, 4=Clear Image Zoom, 2=Digital</td>
 			</tr>
 			<tr>
-				<td>Tele Convert</td>
+				<td>Tele Convert<sup>*2</sup><sup>*3</sup></td>
 				<td>On/Off</td>
 				<td class="packet">8x 01 7E 04 36 0p FF</td>
-				<td>p: 2=On, 3=Off (BRC-X400/X401 and SRG-X402)</td>
+				<td>p: 2=On, 3=Off</td>
 			</tr>
 		</table>
+		<p><sup>*1</sup> Clear Image Zoom and Digital are not available for SRG-X120/HD1M2.</p>
+		<p>
+			<sup>*2</sup> Tele Convert can be set to On only for the following signal formats: 1920&times;1080/59.94p,
+			1920&times;1080/59.94i, 1920&times;1080/29.97p, 1920&times;1080/50p, 1920&times;1080/50i, 1920&times;1080/25p,
+			1920&times;1080/23.98p.
+		</p>
+		<p><sup>*3</sup> Only available for BRC-X400/X401 and SRG-X402.</p>
 
 		<h4>FOCUS</h4>
 		<table>
@@ -919,7 +926,7 @@
 				<td>pp: Preset No. &minus; 1<br />qq: Speed 01&ndash;19</td>
 			</tr>
 			<tr>
-				<td>Preset Speed Common</td>
+				<td>Preset Speed Common<sup>&dagger;</sup></td>
 				<td>Direct</td>
 				<td class="packet">8x 01 7E 04 1C 0p 0p FF</td>
 				<td>pp: 01&ndash;19</td>
@@ -931,7 +938,7 @@
 				<td>pp: 00=MODE1, 01=MODE2, 10=TRACE</td>
 			</tr>
 			<tr>
-				<td>Call Mode</td>
+				<td>Call Mode<sup>&dagger;</sup></td>
 				<td>Direct</td>
 				<td class="packet">8x 01 7E 04 3B 0p FF</td>
 				<td>p: 2=Freeze, 3=Normal</td>
@@ -993,7 +1000,7 @@
 				<td>pp: Video Format</td>
 			</tr>
 			<tr>
-				<td>IR Receive</td>
+				<td>IR Receive<sup>&dagger;</sup></td>
 				<td>On/Off/Toggle</td>
 				<td class="packet">8x 01 06 08 pp FF</td>
 				<td>pp: 02=On, 03=Off, 10=Toggle</td>
@@ -1011,7 +1018,7 @@
 				<td>ppp: 000&ndash;3BF</td>
 			</tr>
 			<tr>
-				<td>IMG Flip</td>
+				<td>IMG Flip<sup>&dagger;</sup></td>
 				<td>On/Off</td>
 				<td class="packet">8x 01 04 66 0p FF</td>
 				<td>p: 2=On, 3=Off</td>
@@ -1068,7 +1075,7 @@
 				<td>Auto ICR Threshold</td>
 				<td>Direct</td>
 				<td class="packet">8x 01 04 21 00 00 0p 0p FF</td>
-				<td>pp: 00&ndash;FF</td>
+				<td>pp: 00&ndash;FF (higher values make it harder to switch back to Day mode)</td>
 			</tr>
 			<tr>
 				<td>Tally<sup>&dagger;</sup></td>
@@ -1277,7 +1284,7 @@
 				<td>p: 0 (&minus;7)&ndash;7 (0)&ndash;E (+7)</td>
 			</tr>
 			<tr>
-				<td>CAM_ChromaSuppressInq</td>
+				<td>CAM_ChromaSuppressInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 04 5F FF</td>
 				<td class="packet">y0 50 0p FF</td>
 				<td>p: 0 (Off), 1&ndash;3</td>
@@ -1395,14 +1402,14 @@
 				<td>p: 0&ndash;4</td>
 			</tr>
 			<tr>
-				<td>CAM_DetailSuperLowInq</td>
+				<td>CAM_DetailSuperLowInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 05 42 08 FF</td>
 				<td class="packet">y0 50 0p FF</td>
 				<td>p: 0&ndash;7</td>
 			</tr>
 		</table>
 
-		<h4>KNEE</h4>
+		<h4>KNEE<sup>&dagger;</sup></h4>
 		<table>
 			<tr>
 				<th>Command</th>
@@ -1436,7 +1443,7 @@
 			</tr>
 		</table>
 
-		<h4>GAMMA</h4>
+		<h4>GAMMA<sup>&dagger;</sup></h4>
 		<table>
 			<tr>
 				<th>Command</th>
@@ -1509,7 +1516,7 @@
 				<td>p: 2=On, 3=Off</td>
 			</tr>
 			<tr>
-				<td>CAM_DefogInq</td>
+				<td>CAM_DefogInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 04 37 FF</td>
 				<td class="packet">y0 50 0p 0q FF</td>
 				<td>p: 2=On, 3=Off<br />q: Level 0&ndash;3</td>
@@ -1549,13 +1556,13 @@
 				<th>Comments</th>
 			</tr>
 			<tr>
-				<td>CAM_ZoomModeInq</td>
+				<td>CAM_ZoomModeInq<sup>*1</sup></td>
 				<td class="packet">8x 09 04 06 FF</td>
 				<td class="packet">y0 50 0p FF</td>
 				<td>p: 2=Digital, 3=Optical only, 4=Clear Image Zoom</td>
 			</tr>
 			<tr>
-				<td>CAM_TeleConvertInq</td>
+				<td>CAM_TeleConvertInq<sup>*2</sup></td>
 				<td class="packet">8x 09 7E 04 36 FF</td>
 				<td class="packet">y0 50 0p FF</td>
 				<td>p: 2=On, 3=Off</td>
@@ -1567,6 +1574,8 @@
 				<td>zzzz: Zoom Position</td>
 			</tr>
 		</table>
+		<p><sup>*1</sup> Clear Image Zoom and Digital are not available for SRG-X120/HD1M2.</p>
+		<p><sup>*2</sup> Only available for BRC-X400/X401 and SRG-X402.</p>
 
 		<h4>FOCUS</h4>
 		<table>
@@ -1687,7 +1696,7 @@
 				<td>pp: Preset No. &minus; 1<br />qq: Speed</td>
 			</tr>
 			<tr>
-				<td>CAM_PresetSpeedCommonInq</td>
+				<td>CAM_PresetSpeedCommonInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 7E 04 1C FF</td>
 				<td class="packet">y0 50 0p 0p FF</td>
 				<td>pp: Speed 01&ndash;19</td>
@@ -1699,7 +1708,7 @@
 				<td>pp: 00=MODE1, 01=MODE2, 10=TRACE</td>
 			</tr>
 			<tr>
-				<td>CAM_PresetCallModeInq</td>
+				<td>CAM_PresetCallModeInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 7E 04 3B FF</td>
 				<td class="packet">y0 50 0p FF</td>
 				<td>p: 2=Freeze, 3=Normal</td>
@@ -1712,7 +1721,7 @@
 			</tr>
 		</table>
 
-		<h4>PTZ TRACE</h4>
+		<h4>PTZ TRACE<sup>&dagger;</sup></h4>
 		<table>
 			<tr>
 				<th>Command</th>
@@ -1801,7 +1810,7 @@
 				<td>pp: Video Format</td>
 			</tr>
 			<tr>
-				<td>CAM_VideoFormatStatusInq</td>
+				<td>CAM_VideoFormatStatusInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 7E 04 33 FF</td>
 				<td class="packet">y0 50 0p 0p FF</td>
 				<td>pp: Video Format Status</td>
@@ -1813,13 +1822,13 @@
 				<td>ppp: 000&ndash;3BF</td>
 			</tr>
 			<tr>
-				<td>CAM_IRReceiveInq</td>
+				<td>CAM_IRReceiveInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 06 08 FF</td>
 				<td class="packet">y0 50 0p FF</td>
 				<td>p: 2=On, 3=Off</td>
 			</tr>
 			<tr>
-				<td>CAM_IMGFlipInq</td>
+				<td>CAM_IMGFlipInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 04 66 FF</td>
 				<td class="packet">y0 50 0p FF</td>
 				<td>p: 2=On, 3=Off</td>
@@ -1915,7 +1924,7 @@
 					(byte 5)<br />tt: AE mode (byte 6; 00=Full Auto, 03=Manual, 0A=Shutter Priority, 0B=Iris Priority)<br />u.bit2:
 					Backlight (byte 7)<br />u.bit1: Exposure Comp On/Off (byte 7)<br />vv: Shutter Position (byte 8)<br />ww: Iris
 					Position (byte 9)<br />yy: Gain Position (byte 10)<br />xx: Bright Position (byte 11)<br />z: Exposure Comp
-					Position (byte 12)
+					Position (byte 12)<br /><em>Note: Color Matrix bits (s) undefined for SRG models.</em>
 				</td>
 			</tr>
 			<tr>
@@ -1924,7 +1933,7 @@
 				<td class="packet">y0 50 0p 0q 00 0r 00 00 00 00 00 00 00 00 00 FF</td>
 				<td>
 					p.bit0: Power (byte 0; 1=On, 0=Off)<br />q.bit2: LR Reverse (byte 1; 1=On, 0=Off)<br />r.bit3&ndash;0: Picture
-					Effect Mode (byte 3)
+					Effect Mode (byte 3)<br /><em>Note: Knee fields (Mode, Slope, Setting, Point) undefined for SRG models.</em>
 				</td>
 			</tr>
 			<tr>
@@ -1934,7 +1943,7 @@
 				<td>
 					p: AF Sensitivity (byte 7)<br />q.bit0: Picture Flip (byte 8; 1=On, 0=Off)<br />rr.bit6&ndash;3: Color Gain
 					(bytes 9&ndash;10)<br />s: Flip (byte 11)<br />t.bit2&ndash;0: NR2D Level (byte 12)<br />u: Gain Limit (byte
-					13)
+					13)<br /><em>Note: Gamma, Chroma Suppress, Color Gain fields undefined for SRG models.</em>
 				</td>
 			</tr>
 			<tr>
@@ -1944,11 +1953,13 @@
 				<td>
 					p: WB Mode (byte 0)<br />q: Color Temp (byte 1)<br />rr: R Gain (bytes 2&ndash;3)<br />ss: B Gain (bytes
 					4&ndash;5)<br />t: Matrix (byte 6)<br />u: Chroma Level (byte 7)<br />v: Color Level (byte 8)<br />w: Color
-					Phase (byte 9)<br />x: Chroma Suppress (byte 10)<br />y: WB Speed (byte 11)<br />z: WB Offset (byte 12)
+					Phase (byte 9)<br />x: Chroma Suppress (byte 10)<br />y: WB Speed (byte 11)<br />z: WB Offset (byte 12)<br /><em
+						>Note: Gamma Level, Black Gamma, Gamma Offset, Black Level fields undefined for SRG models.</em
+					>
 				</td>
 			</tr>
 			<tr>
-				<td>CAM_DetailBlockInq</td>
+				<td>CAM_DetailBlockInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 7E 7E 05 FF</td>
 				<td class="packet">y0 50 0p 0q 0r 0s 0t 0u 0v 0w 0x 0y 0z 00 00 FF</td>
 				<td>
@@ -1958,6 +1969,8 @@
 				</td>
 			</tr>
 		</table>
+
+		<p><sup>&dagger;</sup> BRC-X400/X401 only.</p>
 
 		<h3>Part 4: VISCA Command Setting Values</h3>
 
@@ -2437,6 +2450,7 @@
 				<td>48 dB</td>
 			</tr>
 		</table>
+		<p>Parameters 0E&ndash;11 are available only when High Sensitivity mode is On.</p>
 
 		<h4>Gain Limit</h4>
 		<table>

@@ -27,7 +27,7 @@ class SonyVISCAInstance extends InstanceBase {
 	async init(config) {
 		this.updateStatus(InstanceStatus.Disconnected)
 		if (!config.model) {
-			config.model = 'other'
+			config.model = 'other_all'
 		}
 		if (!config.frameRate) {
 			config.frameRate = '60'
@@ -49,10 +49,7 @@ class SonyVISCAInstance extends InstanceBase {
 		}
 		this.speed = { pan: 0x0c, tilt: 0x0c, zoom: 1, focus: 1 }
 
-		this.setFeedbackDefinitions(getFeedbackDefinitions(this))
-		this.setActionDefinitions(getActionDefinitions(this))
-		this.setPresetDefinitions(getPresetDefinitions(this))
-		this.initVariables()
+		this.registerDefinitions()
 		this.startRecordingPulseTimer()
 		this.setupInquiries()
 		this.init_udp()
@@ -77,13 +74,33 @@ class SonyVISCAInstance extends InstanceBase {
 	async configUpdated(config) {
 		this.config = config
 		this.choices = getChoices(config, this)
-		this.setActionDefinitions(getActionDefinitions(this))
+		this.registerDefinitions()
 		if (!this.isFr7Model()) {
 			this.updateRecordingStatus('unknown')
 		}
 		this.VISCA.stopPolling()
 		this.setupInquiries()
 		this.init_udp()
+	}
+
+	registerDefinitions() {
+		const actions = getActionDefinitions(this)
+		this.setActionDefinitions(actions)
+
+		const actionIds = new Set(Object.keys(actions))
+		this.setPresetDefinitions(getPresetDefinitions(this, actionIds))
+		this.setFeedbackDefinitions(getFeedbackDefinitions(this))
+
+		const modelId = this.config.model
+		const model = MODELS.find((m) => m.id === modelId)
+		if (modelId === 'other_min') {
+			this.initVariables(new Set(), modelId)
+		} else if (modelId === 'other_all') {
+			this.initVariables(undefined, modelId)
+		} else {
+			const profileKeys = INQUIRY_PROFILES[model?.group] ?? INQUIRY_PROFILES['1a']
+			this.initVariables(new Set(profileKeys), modelId)
+		}
 	}
 
 	// Return config fields for web config
@@ -250,7 +267,9 @@ class SonyVISCAInstance extends InstanceBase {
 		if (status !== 'recording') {
 			this.state.recordingPulsePhase = false
 		}
-		this.setVariableValues({ recordingStatus: status })
+		if (this.activeVariableIds?.has('recordingStatus')) {
+			this.setVariableValues({ recordingStatus: status })
+		}
 		this.checkFeedbacks()
 	}
 }

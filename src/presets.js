@@ -11,8 +11,8 @@ import {
 	image_rotary_bg,
 } from './images.js'
 
-export function getPresetDefinitions() {
-	return {
+export function getPresetDefinitions(self, availableActionIds) {
+	const all = {
 		...panTiltPresets,
 		...lensPresets,
 		...exposurePresets,
@@ -21,6 +21,38 @@ export function getPresetDefinitions() {
 		...cameraPresets,
 		...rotationEnabledPresets,
 	}
+	if (!availableActionIds) return all
+	const filtered = {}
+	for (const [key, preset] of Object.entries(all)) {
+		if (presetActionsAvailable(preset, availableActionIds)) {
+			filtered[key] = preset
+		}
+	}
+	return filtered
+}
+
+function presetActionsAvailable(preset, availableActionIds) {
+	if (!preset.steps) return true
+	for (const step of preset.steps) {
+		for (const [key, value] of Object.entries(step)) {
+			if (key === 'down' || key === 'up') {
+				if (Array.isArray(value)) {
+					for (const action of value) {
+						if (action.actionId && !availableActionIds.has(action.actionId)) return false
+					}
+				}
+			} else if (typeof key === 'string' && /^\d+$/.test(key)) {
+				// Duration group — can be array or { options, actions }
+				const actions = Array.isArray(value) ? value : value?.actions
+				if (Array.isArray(actions)) {
+					for (const action of actions) {
+						if (action.actionId && !availableActionIds.has(action.actionId)) return false
+					}
+				}
+			}
+		}
+	}
+	return true
 }
 
 const panTiltPresets = {

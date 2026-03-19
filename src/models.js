@@ -1,5 +1,6 @@
 export const MODELS = [
-	{ id: 'other', group: '1a', label: 'Other Camera' },
+	{ id: 'other_min', group: '1a', label: 'Other - Minimal' },
+	{ id: 'other_all', group: '1a', label: 'Other - All Features' },
 	{ id: '051B', group: '2', label: 'BRC-H780' },
 	{ id: '051A', group: '2', label: 'BRC-H800' },
 	{ id: '051C', group: '1a', label: 'BRC-X400' },

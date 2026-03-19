@@ -1,10 +1,27 @@
 // import { CHOICES } from './choices.js'
 // import { Regex } from '@companion-module/base'
+import {
+	CAP_ADVANCED,
+	CAP_ADVANCED_LEGACY,
+	CAP_ALL_CAMERAS,
+	CAP_FR7,
+	CAP_ICR,
+	CAP_TELECONVERT,
+	CAP_X1000,
+	CAP_X1000_FR7,
+	CAP_X400_CORE_X40UH,
+	CAP_X400_ONLY,
+	CAP_X400_X1000,
+	CAP_X400_X1000_NO_H780,
+	CAP_X400_X40UH,
+	CAP_X400_X40UH_SE,
+	filterByModel,
+} from './model-caps.js'
 
 export function getActionDefinitions(self) {
 	const camId = String.fromCharCode(parseInt(self.state.viscaId))
 	let speed = getSpeedCodes(self)
-	return {
+	const all = {
 		...getPanTiltActionDefinitions(self, camId, speed),
 		...getLensActionDefinitions(self, camId, speed),
 		...getExposureActionDefinitions(self, camId),
@@ -12,6 +29,7 @@ export function getActionDefinitions(self) {
 		...getPresetActionDefinitions(self, camId),
 		...getMiscActionDefinitions(self, camId),
 	}
+	return filterByModel(all, self.config.model)
 }
 function getPanTiltActionDefinitions(self, camId, speed) {
 	const CHOICES = self.choices
@@ -320,6 +338,7 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 			},
 		},
 		ptSpeedType: {
+			models: CAP_X1000_FR7,
 			name: 'Pan/Tilt Speed Type',
 			options: [
 				{
@@ -339,6 +358,7 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 			},
 		},
 		panReverse: {
+			models: CAP_X1000,
 			name: 'Pan Reverse (on/off)',
 			options: [
 				{
@@ -359,6 +379,7 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 			},
 		},
 		tiltReverse: {
+			models: CAP_X1000,
 			name: 'Tilt Reverse (on/off)',
 			options: [
 				{
@@ -735,6 +756,7 @@ function getLensActionDefinitions(self, camId) {
 			},
 		},
 		teleConvert: {
+			models: CAP_TELECONVERT,
 			name: 'Tele Convert (on/off)',
 			options: [
 				{
@@ -760,6 +782,7 @@ function getLensActionDefinitions(self, camId) {
 			},
 		},
 		afMode: {
+			models: CAP_ADVANCED,
 			name: 'AF Mode (Normal/Interval/Zoom Trigger)',
 			options: [
 				{
@@ -782,6 +805,7 @@ function getLensActionDefinitions(self, camId) {
 			},
 		},
 		afSensitivity: {
+			models: CAP_ADVANCED,
 			name: 'AF Sensitivity (Normal/Low)',
 			options: [
 				{
@@ -802,6 +826,7 @@ function getLensActionDefinitions(self, camId) {
 			},
 		},
 		afIntervalTime: {
+			models: CAP_ADVANCED,
 			name: 'AF Interval Time',
 			options: [
 				{
@@ -833,6 +858,7 @@ function getLensActionDefinitions(self, camId) {
 			},
 		},
 		focusNearLimitDirect: {
+			models: CAP_ADVANCED,
 			name: 'Focus Near Limit Direct',
 			options: [
 				{
@@ -855,6 +881,7 @@ function getLensActionDefinitions(self, camId) {
 			},
 		},
 		zoomSpeedType: {
+			models: CAP_X1000,
 			name: 'Zoom Speed Type',
 			options: [
 				{
@@ -875,6 +902,7 @@ function getLensActionDefinitions(self, camId) {
 			},
 		},
 		lensInit: {
+			models: CAP_FR7,
 			name: 'Lens Init',
 			options: [],
 			callback: async () => {
@@ -1119,6 +1147,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		brightnessAdjust: {
+			models: CAP_ADVANCED_LEGACY,
 			name: 'Brightness Adjust (up/down)',
 			options: [
 				{
@@ -1144,6 +1173,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		brightnessSet: {
+			models: CAP_ADVANCED_LEGACY,
 			name: 'Set Brightness',
 			options: [
 				{
@@ -1239,6 +1269,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		aperture: {
+			models: CAP_ADVANCED_LEGACY,
 			name: 'Aperture Compensation (up/down/reset)',
 			options: [
 				{
@@ -1269,6 +1300,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		WDR: {
+			models: CAP_ADVANCED_LEGACY,
 			name: 'Wide Dynamic Range (off/low/mid/high)',
 			options: [
 				{
@@ -1413,6 +1445,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		highSensitivity: {
+			models: CAP_ADVANCED_LEGACY,
 			name: 'High Sensitivity (on/off)',
 			options: [
 				{
@@ -1442,6 +1475,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		gainLimitSet: {
+			models: CAP_ADVANCED_LEGACY,
 			name: 'Set Gain Limit',
 			options: [
 				{
@@ -1457,6 +1491,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		maxShutterSet: {
+			models: CAP_ADVANCED,
 			name: 'Set Max Shutter',
 			options: [
 				{
@@ -1475,6 +1510,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		minShutterSet: {
+			models: CAP_ADVANCED,
 			name: 'Set Min Shutter',
 			options: [
 				{
@@ -1493,6 +1529,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		visibilityEnhancer: {
+			models: CAP_ADVANCED,
 			name: 'Visibility Enhancer (on/off)',
 			options: [
 				{
@@ -1522,6 +1559,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		veSettings: {
+			models: CAP_ADVANCED,
 			name: 'Visibility Enhancer Settings',
 			options: [
 				{
@@ -1571,6 +1609,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		aeSpeedDirect: {
+			models: CAP_ADVANCED,
 			name: 'AE Speed Direct',
 			options: [
 				{
@@ -1588,6 +1627,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		gainPointOnOff: {
+			models: CAP_ADVANCED,
 			name: 'Gain Point (on/off)',
 			options: [
 				{
@@ -1610,6 +1650,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		gainPointPosition: {
+			models: CAP_ADVANCED,
 			name: 'Gain Point Position',
 			options: [
 				{
@@ -1628,6 +1669,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		defog: {
+			models: CAP_X400_ONLY,
 			name: 'Defog (on/off with level)',
 			options: [
 				{
@@ -1659,6 +1701,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		irCorrection: {
+			models: CAP_ADVANCED_LEGACY,
 			name: 'IR Correction (Standard/IR Light)',
 			options: [
 				{
@@ -1677,6 +1720,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		noiseReduction2d3d: {
+			models: CAP_ADVANCED,
 			name: '2D/3D Noise Reduction (separate)',
 			options: [
 				{
@@ -1716,6 +1760,7 @@ function getExposureActionDefinitions(self, camId) {
 		},
 		// FR7 ND controls
 		ndFilterMode: {
+			models: CAP_FR7,
 			name: 'ND Filter Mode (FR7)',
 			options: [
 				{
@@ -1734,6 +1779,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		ndVariableAdjust: {
+			models: CAP_FR7,
 			name: 'ND Variable Adjust (FR7)',
 			options: [
 				{
@@ -1752,6 +1798,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		ndVariableDirect: {
+			models: CAP_FR7,
 			name: 'ND Variable Direct (FR7)',
 			options: [
 				{
@@ -1796,6 +1843,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		autoNdFilter: {
+			models: CAP_FR7,
 			name: 'Auto ND Filter (FR7)',
 			options: [
 				{
@@ -1814,6 +1862,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		ndClear: {
+			models: CAP_FR7,
 			name: 'ND Clear/Filtered (FR7)',
 			options: [
 				{
@@ -1832,6 +1881,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		autoIris: {
+			models: CAP_FR7,
 			name: 'Auto Iris (FR7)',
 			options: [
 				{
@@ -1850,6 +1900,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		autoShutter: {
+			models: CAP_FR7,
 			name: 'Auto Shutter (FR7)',
 			options: [
 				{
@@ -1868,6 +1919,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		agc: {
+			models: CAP_FR7,
 			name: 'AGC (FR7)',
 			options: [
 				{
@@ -2047,6 +2099,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		wbOffsetAdjust: {
+			models: CAP_ADVANCED,
 			name: 'White Balance - Offset Adjust (up/down/reset)',
 			options: [
 				{
@@ -2076,6 +2129,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		wbSpeedDirect: {
+			models: CAP_ADVANCED,
 			name: 'White Balance Speed Direct',
 			options: [
 				{
@@ -2097,6 +2151,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		chromaSuppress: {
+			models: CAP_X400_X1000,
 			name: 'Chroma Suppress',
 			options: [
 				{
@@ -2117,6 +2172,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		colorMatrixSelect: {
+			models: CAP_X400_ONLY,
 			name: 'Color Matrix Select',
 			options: [
 				{
@@ -2145,6 +2201,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		colorLevelAdjust: {
+			models: CAP_X400_X1000,
 			name: 'Color Level Adjust (up/down/reset)',
 			options: [
 				{
@@ -2164,6 +2221,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		colorLevelDirect: {
+			models: CAP_X400_X1000,
 			name: 'Color Level Direct',
 			options: [
 				{
@@ -2181,6 +2239,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		colorPhaseAdjust: {
+			models: CAP_X400_X1000,
 			name: 'Color Phase Adjust (up/down/reset)',
 			options: [
 				{
@@ -2200,6 +2259,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		colorPhaseDirect: {
+			models: CAP_X400_X1000,
 			name: 'Color Phase Direct',
 			options: [
 				{
@@ -2232,6 +2292,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		gammaSelect: {
+			models: CAP_X400_X1000,
 			name: 'Gamma Select',
 			options: [
 				{
@@ -2258,6 +2319,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		gammaLevelDirect: {
+			models: CAP_X400_X1000,
 			name: 'Gamma Level Direct',
 			options: [
 				{
@@ -2278,6 +2340,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		kneeSetting: {
+			models: CAP_X400_X1000,
 			name: 'Knee Setting (on/off)',
 			options: [
 				{
@@ -2306,6 +2369,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		kneeMode: {
+			models: CAP_X400_X1000,
 			name: 'Knee Mode (Auto/Manual)',
 			options: [
 				{
@@ -2326,6 +2390,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		detailLevelDirect: {
+			models: CAP_ADVANCED,
 			name: 'Detail Level Direct',
 			options: [
 				{
@@ -2346,6 +2411,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		detailSettings: {
+			models: CAP_ADVANCED,
 			name: 'Detail Sub-settings',
 			options: [
 				{
@@ -2382,6 +2448,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		blackLevelAdjust: {
+			models: CAP_X400_X1000,
 			name: 'Black Level Adjust (up/down/reset)',
 			options: [
 				{
@@ -2401,6 +2468,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		blackLevelDirect: {
+			models: CAP_X400_X1000,
 			name: 'Black Level Direct',
 			options: [
 				{
@@ -2421,6 +2489,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		pictureProfile: {
+			models: CAP_X400_X1000,
 			name: 'Picture Profile Select',
 			options: [
 				{
@@ -2443,6 +2512,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		colorMatrixCorrection: {
+			models: CAP_X400_ONLY,
 			name: 'Color Matrix Correction',
 			options: [
 				{
@@ -2479,6 +2549,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		gammaPatternDirect: {
+			models: CAP_X400_X1000,
 			name: 'Gamma Pattern Direct',
 			options: [
 				{
@@ -2503,6 +2574,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		gammaOffsetDirect: {
+			models: CAP_X400_X1000,
 			name: 'Gamma Offset Direct',
 			options: [
 				{
@@ -2538,6 +2610,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		kneeSlopeDirect: {
+			models: CAP_X400_X1000,
 			name: 'Knee Slope Direct',
 			options: [
 				{
@@ -2558,6 +2631,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		kneePointDirect: {
+			models: CAP_X400_X1000,
 			name: 'Knee Point Direct',
 			options: [
 				{
@@ -2578,6 +2652,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		blackGammaLevel: {
+			models: CAP_X400_X1000,
 			name: 'Black Gamma Level Direct',
 			options: [
 				{
@@ -2598,6 +2673,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		blackGammaRange: {
+			models: CAP_X400_X1000,
 			name: 'Black Gamma Range',
 			options: [
 				{
@@ -2618,6 +2694,7 @@ function getColorActionDefinitions(self, camId) {
 		},
 		// FR7 White Balance extended
 		presetWhiteDirect: {
+			models: CAP_FR7,
 			name: 'Preset White Direct (FR7)',
 			options: [
 				{
@@ -2640,6 +2717,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		tintDirect: {
+			models: CAP_FR7,
 			name: 'Tint Direct (FR7)',
 			options: [
 				{
@@ -2663,6 +2741,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		offsetColorTempDirect: {
+			models: CAP_FR7,
 			name: 'Offset Color Temp Direct (FR7)',
 			options: [
 				{
@@ -2686,6 +2765,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		offsetTintDirect: {
+			models: CAP_FR7,
 			name: 'Offset Tint Direct (FR7)',
 			options: [
 				{
@@ -2710,6 +2790,7 @@ function getColorActionDefinitions(self, camId) {
 		},
 		// FR7 Master/R/B Black and Gain
 		masterBlackDirect: {
+			models: CAP_FR7,
 			name: 'Master Black Direct (FR7)',
 			options: [
 				{
@@ -2734,6 +2815,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		rGainDirect: {
+			models: CAP_FR7,
 			name: 'R Gain Direct (FR7)',
 			options: [
 				{
@@ -2757,6 +2839,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		bGainDirect: {
+			models: CAP_FR7,
 			name: 'B Gain Direct (FR7)',
 			options: [
 				{
@@ -2780,6 +2863,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		rBlackDirect: {
+			models: CAP_FR7,
 			name: 'R Black Direct (FR7)',
 			options: [
 				{
@@ -2803,6 +2887,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		bBlackDirect: {
+			models: CAP_FR7,
 			name: 'B Black Direct (FR7)',
 			options: [
 				{
@@ -2948,6 +3033,7 @@ function getPresetActionDefinitions(self, camId) {
 			},
 		},
 		presetSpeedSelect: {
+			models: CAP_X400_X40UH,
 			name: 'Preset Speed Select (Compatible/Separate/Common)',
 			options: [
 				{
@@ -2967,6 +3053,7 @@ function getPresetActionDefinitions(self, camId) {
 			},
 		},
 		presetSpeedCommon: {
+			models: CAP_X400_CORE_X40UH,
 			name: 'Preset Drive Speed (common)',
 			options: [
 				{
@@ -2986,6 +3073,7 @@ function getPresetActionDefinitions(self, camId) {
 			},
 		},
 		presetMode: {
+			models: CAP_X400_X1000_NO_H780,
 			name: 'Preset Mode (Mode1/Mode2/Trace)',
 			options: [
 				{
@@ -3033,6 +3121,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		tally: {
+			models: CAP_X400_X1000,
 			name: 'Tally (on/off)',
 			options: [
 				{
@@ -3084,6 +3173,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		latency: {
+			models: CAP_ALL_CAMERAS,
 			name: 'Video Latency (normal/low)',
 			options: [
 				{
@@ -3121,6 +3211,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		internalRecording: {
+			models: CAP_ALL_CAMERAS,
 			name: 'Recording Button (press/release)',
 			options: [
 				{
@@ -3146,6 +3237,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		overrideViscaId: {
+			models: CAP_ALL_CAMERAS,
 			name: 'Override VISCA ID (serial only)',
 			description: 'Override the VISCA ID for this instance',
 			options: [
@@ -3179,6 +3271,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		flickerCancel: {
+			models: CAP_X400_X40UH,
 			name: 'Flicker Cancel (on/off)',
 			options: [
 				{
@@ -3208,6 +3301,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		imageStabilizer: {
+			models: CAP_X400_X40UH_SE,
 			name: 'Image Stabilizer (on/off)',
 			options: [
 				{
@@ -3237,6 +3331,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		highResolution: {
+			models: CAP_X400_X40UH,
 			name: 'High Resolution (on/off)',
 			options: [
 				{
@@ -3266,6 +3361,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		ICR: {
+			models: CAP_ICR,
 			name: 'ICR / Night Mode (on/off)',
 			options: [
 				{
@@ -3295,6 +3391,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		autoICR: {
+			models: CAP_X400_X40UH_SE,
 			name: 'Auto ICR (on/off)',
 			options: [
 				{
@@ -3324,6 +3421,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		imgFlip: {
+			models: CAP_X400_CORE_X40UH,
 			name: 'Image Flip (on/off)',
 			options: [
 				{
@@ -3351,6 +3449,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		colorBar: {
+			models: CAP_X400_X1000,
 			name: 'Color Bar (on/off)',
 			options: [
 				{
@@ -3375,6 +3474,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		ptzTrace: {
+			models: CAP_X400_X1000_NO_H780,
 			name: 'PTZ Trace',
 			options: [
 				{
@@ -3421,6 +3521,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		ptLimit: {
+			models: CAP_ADVANCED,
 			name: 'Pan/Tilt Limit (set/clear)',
 			options: [
 				{
@@ -3484,6 +3585,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		hPhaseAdjust: {
+			models: CAP_X400_X1000,
 			name: 'H Phase (up/down)',
 			options: [
 				{
@@ -3504,6 +3606,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		hPhaseDirect: {
+			models: CAP_X400_X1000,
 			name: 'H Phase Direct',
 			options: [
 				{
@@ -3528,6 +3631,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		osdDirect: {
+			models: CAP_X400_X40UH,
 			name: 'OSD On/Off',
 			options: [
 				{
@@ -3562,6 +3666,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		cameraIdDirect: {
+			models: CAP_ADVANCED,
 			name: 'Camera ID Direct',
 			options: [
 				{
@@ -3584,6 +3689,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		hdmiColorSpace: {
+			models: CAP_ADVANCED,
 			name: 'HDMI Color Space',
 			options: [
 				{
@@ -3623,6 +3729,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		callMode: {
+			models: CAP_X400_ONLY,
 			name: 'Preset Call Mode (Freeze/Normal)',
 			options: [
 				{
@@ -3641,6 +3748,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		colorBarOverlayName: {
+			models: CAP_X400_ONLY,
 			name: 'Color Bar Overlay Name (on/off)',
 			options: [
 				{
@@ -3659,6 +3767,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		autoIcrThreshold: {
+			models: CAP_X400_X40UH,
 			name: 'Auto ICR Threshold Direct',
 			options: [
 				{
@@ -3679,6 +3788,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		tallyLevel: {
+			models: CAP_X400_X1000,
 			name: 'Tally Level Direct',
 			options: [
 				{
@@ -3700,6 +3810,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		ndFilter: {
+			models: CAP_X1000,
 			name: 'ND Filter',
 			options: [
 				{
@@ -3720,6 +3831,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		hdmiVideoFormat: {
+			models: CAP_X1000,
 			name: 'HDMI Video Format',
 			options: [
 				{
@@ -3754,6 +3866,7 @@ function getMiscActionDefinitions(self, camId) {
 		},
 		// FR7 specific misc actions
 		pushAfMf: {
+			models: CAP_FR7,
 			name: 'Push AF / Push MF (FR7)',
 			options: [
 				{
@@ -3772,6 +3885,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		ptzAutoFraming: {
+			models: CAP_FR7,
 			name: 'PTZ Auto Framing (FR7)',
 			options: [
 				{
@@ -3790,6 +3904,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		audioLevelControl: {
+			models: CAP_FR7,
 			name: 'Audio Level Control (FR7)',
 			options: [
 				{
@@ -3824,6 +3939,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		audioInputLevel: {
+			models: CAP_FR7,
 			name: 'Audio Input Level Direct (FR7)',
 			options: [
 				{
@@ -3861,6 +3977,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		audioInputLevelAdjust: {
+			models: CAP_FR7,
 			name: 'Audio Input Level Adjust (FR7)',
 			options: [
 				{
@@ -3909,6 +4026,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		displayButton: {
+			models: CAP_FR7,
 			name: 'Display Button (FR7)',
 			options: [
 				{
@@ -3927,6 +4045,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		assignableButton: {
+			models: CAP_FR7,
 			name: 'Assignable Button (FR7)',
 			options: [
 				{
@@ -3969,6 +4088,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		directMenu: {
+			models: CAP_FR7,
 			name: 'Direct Menu (FR7)',
 			options: [
 				{
@@ -4007,6 +4127,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		presetSeparateDuration: {
+			models: CAP_FR7,
 			name: 'Preset Separate Duration (FR7)',
 			options: [
 				{

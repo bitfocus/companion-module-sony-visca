@@ -1,4 +1,5 @@
 import { COLORS } from './colors.js'
+import { CAP_FR7, filterByModel } from './model-caps.js'
 
 export function getFeedbackDefinitions(self) {
 	const feedbacks = {
@@ -106,6 +107,7 @@ export function getFeedbackDefinitions(self) {
 			},
 		},
 		recordingActive: {
+			models: CAP_FR7,
 			type: 'boolean',
 			name: 'Recording Active',
 			description: 'Highlights when camera recording status is active',
@@ -119,6 +121,7 @@ export function getFeedbackDefinitions(self) {
 			},
 		},
 		recordingPulse: {
+			models: CAP_FR7,
 			type: 'boolean',
 			name: 'Recording Active Pulse',
 			description: 'Pulse overlay for active recording state',
@@ -185,5 +188,5 @@ export function getFeedbackDefinitions(self) {
 		},
 	}
 
-	return feedbacks
+	return filterByModel(feedbacks, self.config.model)
 }
