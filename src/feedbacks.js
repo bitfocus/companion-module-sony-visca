@@ -51,20 +51,35 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.focusMode === 'manual'
+				return self.state.focusMode === 'Manual'
 			},
 		},
-		exposureManual: {
+		exposureMode: {
 			type: 'boolean',
-			name: 'Manual Exposure Mode',
-			description: 'Background Black if Exposure Mode is set to Manual',
+			name: 'Exposure Mode',
+			description: 'Highlights when exposure mode matches the selected mode',
 			defaultStyle: {
 				color: COLORS.WHITE,
-				bgcolor: COLORS.BLACK,
+				bgcolor: COLORS.DARK_ORANGE,
 			},
-			options: [],
-			callback: function () {
-				return self.state.exposureMode === 'manual'
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					choices: [
+						{ id: 'Auto', label: 'Full Auto' },
+						{ id: 'Manual', label: 'Manual' },
+						{ id: 'Shutter Pri', label: 'Shutter Priority' },
+						{ id: 'Iris Pri', label: 'Iris Priority' },
+						{ id: 'Gain Pri', label: 'Gain Priority' },
+						{ id: 'Bright', label: 'Bright' },
+					],
+					default: 'Auto',
+				},
+			],
+			callback: function (feedback) {
+				return self.state.exposureMode === feedback.options.mode
 			},
 		},
 		exposureCompOn: {
@@ -77,7 +92,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.expCompOnOff === 'on'
+				return self.state.expCompOnOff === 'On'
 			},
 		},
 		backlightCompOn: {
@@ -90,7 +105,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.backlightComp === 'on'
+				return self.state.backlightComp === 'On'
 			},
 		},
 		spotlightCompOn: {
@@ -103,7 +118,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.spotlightComp === 'on'
+				return self.state.spotlightComp === 'On'
 			},
 		},
 		recordingActive: {
@@ -117,7 +132,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.recordingStatus === 'recording'
+				return self.state.recordingStatus === 'Recording'
 			},
 		},
 		recordingPulse: {
@@ -131,7 +146,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.recordingStatus === 'recording' && self.state.recordingPulsePhase
+				return self.state.recordingStatus === 'Recording' && self.state.recordingPulsePhase
 			},
 		},
 		ptSlowModeOn: {
@@ -144,7 +159,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.ptSlowMode === 'slow'
+				return self.state.ptSlowMode === 'Slow'
 			},
 		},
 		autoFocusOn: {
@@ -157,20 +172,35 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.focusMode === 'auto'
+				return self.state.focusMode === 'Auto'
 			},
 		},
-		autoExposureOn: {
+		whiteBalanceMode: {
 			type: 'boolean',
-			name: 'Auto Exposure Active',
-			description: 'Highlights when Exposure Mode is Auto',
+			name: 'White Balance Mode',
+			description: 'Highlights when white balance matches the selected mode',
 			defaultStyle: {
 				color: COLORS.WHITE,
 				bgcolor: COLORS.DARK_ORANGE,
 			},
-			options: [],
-			callback: function () {
-				return self.state.exposureMode === 'auto'
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					choices: [
+						{ id: 'Auto 1', label: 'Auto 1 - Auto' },
+						{ id: 'Indoor', label: 'Indoor' },
+						{ id: 'Outdoor', label: 'Outdoor' },
+						{ id: 'One Push', label: 'One Push WB' },
+						{ id: 'Auto 2', label: 'Auto 2 - ATW' },
+						{ id: 'Manual', label: 'Manual' },
+					],
+					default: 'Auto 1',
+				},
+			],
+			callback: function (feedback) {
+				return self.state.wbMode === feedback.options.mode
 			},
 		},
 		powerOn: {
@@ -183,7 +213,7 @@ export function getFeedbackDefinitions(self) {
 			},
 			options: [],
 			callback: function () {
-				return self.state.power === 'on'
+				return self.state.power === 'On'
 			},
 		},
 	}

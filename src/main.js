@@ -35,14 +35,14 @@ class SonyVISCAInstance extends InstanceBase {
 		this.config = config
 		this.choices = getChoices(config, this)
 		this.state = {
-			ptSlowMode: 'normal',
-			zoomMode: 'optical',
-			focusMode: 'auto',
-			exposureMode: 'auto',
-			expCompOnOff: 'off',
-			backlightComp: 'off',
-			spotlightComp: 'off',
-			recordingStatus: 'unknown',
+			ptSlowMode: 'Normal',
+			zoomMode: 'Optical',
+			focusMode: 'Auto',
+			exposureMode: 'Auto',
+			expCompOnOff: 'Off',
+			backlightComp: 'Off',
+			spotlightComp: 'Off',
+			recordingStatus: 'Unknown',
 			recordingPulsePhase: false,
 			viscaId: this.config.id,
 			presetSelector: 1,
@@ -76,7 +76,7 @@ class SonyVISCAInstance extends InstanceBase {
 		this.choices = getChoices(config, this)
 		this.registerDefinitions()
 		if (!this.isFr7Model()) {
-			this.updateRecordingStatus('unknown')
+			this.updateRecordingStatus('Unknown')
 		}
 		this.VISCA.stopPolling()
 		this.setupInquiries()
@@ -185,7 +185,7 @@ class SonyVISCAInstance extends InstanceBase {
 	startRecordingPulseTimer() {
 		this.clearRecordingPulseTimer()
 		this.recordingPulseInterval = setInterval(() => {
-			if (this.state.recordingStatus !== 'recording') {
+			if (this.state.recordingStatus !== 'Recording') {
 				if (this.state.recordingPulsePhase) {
 					this.state.recordingPulsePhase = false
 					this.checkFeedbacks()
@@ -205,8 +205,8 @@ class SonyVISCAInstance extends InstanceBase {
 		this.VISCA.send(camId + '\x09\x7E\x04\x1E\xFF', this.VISCA.inquiry, (payload) => {
 			if (payload.length >= 4 && payload[1] === 0x50) {
 				const status = payload[2] & 0x0f
-				if (status === 0) this.updateRecordingStatus('standby')
-				else if (status === 1) this.updateRecordingStatus('recording')
+				if (status === 0) this.updateRecordingStatus('Standby')
+				else if (status === 1) this.updateRecordingStatus('Recording')
 			}
 		})
 	}
@@ -248,7 +248,7 @@ class SonyVISCAInstance extends InstanceBase {
 			'090644': (payload) => {
 				if (payload.length >= 3 && payload[1] === 0x50) {
 					const prev = this.state.ptSlowMode
-					this.state.ptSlowMode = payload[2] === 0x02 ? 'slow' : 'normal'
+					this.state.ptSlowMode = payload[2] === 0x02 ? 'Slow' : 'Normal'
 					if (this.state.ptSlowMode !== prev) {
 						this.updateVariables()
 						this.checkFeedbacks()
@@ -264,7 +264,7 @@ class SonyVISCAInstance extends InstanceBase {
 			return
 		}
 		this.state.recordingStatus = status
-		if (status !== 'recording') {
+		if (status !== 'Recording') {
 			this.state.recordingPulsePhase = false
 		}
 		if (this.activeVariableIds?.has('recordingStatus')) {

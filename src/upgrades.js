@@ -242,4 +242,22 @@ export const UpgradeScripts = [
 		}
 		return result
 	},
+	function migrateExposureFeedbacks(_context, props) {
+		const result = { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
+		for (const feedback of props.feedbacks) {
+			switch (feedback.feedbackId) {
+				case 'exposureManual':
+					feedback.feedbackId = 'exposureMode'
+					feedback.options = { mode: 'Manual' }
+					result.updatedFeedbacks.push(feedback)
+					break
+				case 'autoExposureOn':
+					feedback.feedbackId = 'exposureMode'
+					feedback.options = { mode: 'Auto' }
+					result.updatedFeedbacks.push(feedback)
+					break
+			}
+		}
+		return result
+	},
 ]

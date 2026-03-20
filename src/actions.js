@@ -121,13 +121,13 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.ptSlowMode === 'slow' ? '0' : '1'
+				if (val == '2') val = self.state.ptSlowMode === 'Slow' ? '0' : '1'
 				if (val == '0') {
 					self.VISCA.send(camId + '\x01\x06\x44\x03\xFF')
-					self.state.ptSlowMode = 'normal'
+					self.state.ptSlowMode = 'Normal'
 				} else {
 					self.VISCA.send(camId + '\x01\x06\x44\x02\xFF')
-					self.state.ptSlowMode = 'slow'
+					self.state.ptSlowMode = 'Slow'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -500,10 +500,10 @@ function getLensActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x04\x06' + String.fromCharCode(parseInt(event.options.mode, 16) & 0xff) + '\xFF')
 				switch (event.options.mode) {
 					case '2':
-						self.state.zoomMode = 'digital'
+						self.state.zoomMode = 'Digital'
 						break
 					case '3':
-						self.state.zoomMode = 'optical'
+						self.state.zoomMode = 'Optical'
 						break
 					case '4':
 						self.state.zoomMode = 'clr img'
@@ -610,13 +610,13 @@ function getLensActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.focusMode === 'manual' ? '0' : '1'
+				if (val == '2') val = self.state.focusMode === 'Manual' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x38\x03\xFF')
-					self.state.focusMode = 'manual'
+					self.state.focusMode = 'Manual'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x38\x02\xFF')
-					self.state.focusMode = 'auto'
+					self.state.focusMode = 'Auto'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -773,7 +773,7 @@ function getLensActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.teleConvert === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.teleConvert === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x7E\x04\x36\x02\xFF')
 				} else {
@@ -799,7 +799,7 @@ function getLensActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				self.VISCA.send(camId + '\x01\x04\x57' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
-				const modes = { 0: 'normal', 1: 'interval', 2: 'zoom trigger' }
+				const modes = { 0: 'Normal', 1: 'Interval', 2: 'Zoom Trigger' }
 				self.state.afMode = modes[parseInt(event.options.val)] ?? self.state.afMode
 				self.updateVariables()
 			},
@@ -821,7 +821,7 @@ function getLensActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				self.VISCA.send(camId + '\x01\x04\x58' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
-				self.state.afSensitivity = event.options.val === '3' ? 'low' : 'normal'
+				self.state.afSensitivity = event.options.val === '3' ? 'Low' : 'Normal'
 				self.updateVariables()
 			},
 		},
@@ -937,25 +937,67 @@ function getExposureActionDefinitions(self, camId) {
 				switch (parseInt(event.options.val)) {
 					case 0:
 						self.VISCA.send(camId + '\x01\x04\x39\x00\xFF')
-						self.state.exposureMode = 'auto'
+						self.state.exposureMode = 'Auto'
 						break
 					case 1:
 						self.VISCA.send(camId + '\x01\x04\x39\x03\xFF')
-						self.state.exposureMode = 'manual'
+						self.state.exposureMode = 'Manual'
 						break
 					case 2:
 						self.VISCA.send(camId + '\x01\x04\x39\x0A\xFF')
-						self.state.exposureMode = 'shutter pri'
+						self.state.exposureMode = 'Shutter Pri'
 						break
 					case 3:
 						self.VISCA.send(camId + '\x01\x04\x39\x0B\xFF')
-						self.state.exposureMode = 'iris pri'
+						self.state.exposureMode = 'Iris Pri'
 						break
 					case 4:
 						self.VISCA.send(camId + '\x01\x04\x39\x0E\xFF')
-						self.state.exposureMode = 'gain pri'
+						self.state.exposureMode = 'Gain Pri'
 						break
 				}
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
+		expMToggle: {
+			name: 'Exposure Mode Toggle (between two modes)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode A',
+					id: 'modeA',
+					choices: [
+						{ id: '0', label: 'Full Auto' },
+						{ id: '1', label: 'Manual' },
+						{ id: '2', label: 'Shutter Pri' },
+						{ id: '3', label: 'Iris Pri' },
+						{ id: '4', label: 'Gain Pri' },
+					],
+					default: '0',
+				},
+				{
+					type: 'dropdown',
+					label: 'Mode B',
+					id: 'modeB',
+					choices: [
+						{ id: '0', label: 'Full Auto' },
+						{ id: '1', label: 'Manual' },
+						{ id: '2', label: 'Shutter Pri' },
+						{ id: '3', label: 'Iris Pri' },
+						{ id: '4', label: 'Gain Pri' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				const viscaCmds = { 0: '\x00', 1: '\x03', 2: '\x0A', 3: '\x0B', 4: '\x0E' }
+				const stateNames = { 0: 'Auto', 1: 'Manual', 2: 'Shutter Pri', 3: 'Iris Pri', 4: 'Gain Pri' }
+				const a = parseInt(event.options.modeA)
+				const b = parseInt(event.options.modeB)
+				const target = self.state.exposureMode === stateNames[a] ? b : a
+				self.VISCA.send(camId + '\x01\x04\x39' + viscaCmds[target] + '\xFF')
+				self.state.exposureMode = stateNames[target]
 				self.updateVariables()
 				self.checkFeedbacks()
 			},
@@ -1208,13 +1250,13 @@ function getExposureActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.expCompOnOff === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.expCompOnOff === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x3E\x02\xFF')
-					self.state.expCompOnOff = 'on'
+					self.state.expCompOnOff = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x3E\x03\xFF')
-					self.state.expCompOnOff = 'off'
+					self.state.expCompOnOff = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -1374,13 +1416,13 @@ function getExposureActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.backlightComp === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.backlightComp === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x33\x02\xFF')
-					self.state.backlightComp = 'on'
+					self.state.backlightComp = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x33\x03\xFF')
-					self.state.backlightComp = 'off'
+					self.state.backlightComp = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -1403,13 +1445,13 @@ function getExposureActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.spotlightComp === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.spotlightComp === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x3A\x02\xFF')
-					self.state.spotlightComp = 'on'
+					self.state.spotlightComp = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x3A\x03\xFF')
-					self.state.spotlightComp = 'off'
+					self.state.spotlightComp = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -1432,13 +1474,13 @@ function getExposureActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.slowShutter === 'auto' ? '0' : '1'
+				if (val == '2') val = self.state.slowShutter === 'Auto' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x5A\x02\xFF')
-					self.state.slowShutter = 'auto'
+					self.state.slowShutter = 'Auto'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x5A\x03\xFF')
-					self.state.slowShutter = 'manual'
+					self.state.slowShutter = 'Manual'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -1462,13 +1504,13 @@ function getExposureActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.highSensitivity === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.highSensitivity === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x5E\x02\xFF')
-					self.state.highSensitivity = 'on'
+					self.state.highSensitivity = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x5E\x03\xFF')
-					self.state.highSensitivity = 'off'
+					self.state.highSensitivity = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -1546,13 +1588,13 @@ function getExposureActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.ve === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.ve === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x3D\x06\xFF')
-					self.state.ve = 'on'
+					self.state.ve = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x3D\x03\xFF')
-					self.state.ve = 'off'
+					self.state.ve = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -1996,7 +2038,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		wbAdjust: {
-			name: 'White Balance Adjust (red/blue - up/down)',
+			name: 'White Balance Adjust (red/blue - up/down/reset)',
 			options: [
 				{
 					type: 'dropdown',
@@ -2010,29 +2052,20 @@ function getColorActionDefinitions(self, camId) {
 				},
 				{
 					type: 'dropdown',
-					label: 'Up/Down',
+					label: 'Up/Down/Reset',
 					id: 'val',
 					choices: [
 						{ id: '1', label: 'Up' },
 						{ id: '2', label: 'Down' },
+						{ id: '3', label: 'Reset' },
 					],
 					default: '1',
 				},
 			],
 			callback: async (event) => {
-				if (event.options.rb == 'r') {
-					if (event.options.val == '1') {
-						self.VISCA.send(camId + '\x01\x04\x03\x02\xFF')
-					} else {
-						self.VISCA.send(camId + '\x01\x04\x03\x03\xFF')
-					}
-				} else {
-					if (event.options.val == '1') {
-						self.VISCA.send(camId + '\x01\x04\x04\x02\xFF')
-					} else {
-						self.VISCA.send(camId + '\x01\x04\x04\x03\xFF')
-					}
-				}
+				const cmd = event.options.rb == 'r' ? '\x01\x04\x03' : '\x01\x04\x04'
+				const ops = { 1: '\x02', 2: '\x03', 3: '\x00' }
+				self.VISCA.send(camId + cmd + (ops[event.options.val] ?? '\x00') + '\xFF')
 			},
 		},
 		wbCustom: {
@@ -2357,13 +2390,13 @@ function getColorActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.kneeSetting === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.kneeSetting === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x7E\x01\x6D\x02\xFF')
-					self.state.kneeSetting = 'on'
+					self.state.kneeSetting = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x7E\x01\x6D\x03\xFF')
-					self.state.kneeSetting = 'off'
+					self.state.kneeSetting = 'Off'
 				}
 				self.updateVariables()
 			},
@@ -3116,7 +3149,7 @@ function getMiscActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.val
-				if (val == 'toggle') val = self.state.power === 'on' ? '03' : '02'
+				if (val == 'toggle') val = self.state.power === 'On' ? '03' : '02'
 				self.VISCA.send(camId + '\x01\x04\x00' + String.fromCharCode(parseInt(val, 16) & 0xff) + '\xFF')
 			},
 		},
@@ -3288,13 +3321,13 @@ function getMiscActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.flickerCancel === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.flickerCancel === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x32\x02\xFF')
-					self.state.flickerCancel = 'on'
+					self.state.flickerCancel = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x32\x03\xFF')
-					self.state.flickerCancel = 'off'
+					self.state.flickerCancel = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -3318,13 +3351,13 @@ function getMiscActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.imageStabilizer === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.imageStabilizer === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x34\x02\xFF')
-					self.state.imageStabilizer = 'on'
+					self.state.imageStabilizer = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x34\x03\xFF')
-					self.state.imageStabilizer = 'off'
+					self.state.imageStabilizer = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -3348,13 +3381,13 @@ function getMiscActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.highResolution === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.highResolution === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x52\x02\xFF')
-					self.state.highResolution = 'on'
+					self.state.highResolution = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x52\x03\xFF')
-					self.state.highResolution = 'off'
+					self.state.highResolution = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -3378,13 +3411,13 @@ function getMiscActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.IRCutFilter === 'on' ? '0' : '1'
+				if (val == '2') val = self.state.IRCutFilter === 'On' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x01\x02\xFF')
-					self.state.IRCutFilter = 'on'
+					self.state.IRCutFilter = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x01\x03\xFF')
-					self.state.IRCutFilter = 'off'
+					self.state.IRCutFilter = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -3408,13 +3441,13 @@ function getMiscActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				let val = event.options.bol
-				if (val == '2') val = self.state.IRCutFilterAuto === 'auto' ? '0' : '1'
+				if (val == '2') val = self.state.IRCutFilterAuto === 'Auto' ? '0' : '1'
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x51\x02\xFF')
-					self.state.IRCutFilterAuto = 'auto'
+					self.state.IRCutFilterAuto = 'Auto'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x51\x03\xFF')
-					self.state.IRCutFilterAuto = 'manual'
+					self.state.IRCutFilterAuto = 'Manual'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
@@ -3439,10 +3472,10 @@ function getMiscActionDefinitions(self, camId) {
 				const val = event.options.bol
 				if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x66\x02\xFF')
-					self.state.imageFlip = 'on'
+					self.state.imageFlip = 'On'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x66\x03\xFF')
-					self.state.imageFlip = 'off'
+					self.state.imageFlip = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()

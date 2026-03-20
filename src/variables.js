@@ -139,8 +139,8 @@ export function initVariables(activeBlocks, modelId) {
 export async function updateVariables() {
 	// Calculate position percentages
 	const panPct = normalizePct(this.state.panPosition, PAN_MIN, PAN_MAX)
-	const tiltMin = this.state.imageFlip === 'on' ? TILT_MIN_FLIP_ON : TILT_MIN_FLIP_OFF
-	const tiltMax = this.state.imageFlip === 'on' ? TILT_MAX_FLIP_ON : TILT_MAX_FLIP_OFF
+	const tiltMin = this.state.imageFlip === 'On' ? TILT_MIN_FLIP_ON : TILT_MIN_FLIP_OFF
+	const tiltMax = this.state.imageFlip === 'On' ? TILT_MAX_FLIP_ON : TILT_MAX_FLIP_OFF
 	const tiltPct = normalizePct(this.state.tiltPosition, tiltMin, tiltMax)
 	const zoomPct = normalizePct(this.state.zoomPosition, 0, 0xffff)
 	const focusPct = normalizePct(this.state.focusPosition, 0, 0xffff)

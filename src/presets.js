@@ -783,31 +783,22 @@ const exposurePresets = {
 	'exposure-autoManual': {
 		type: 'button',
 		category: 'Exposure',
-		name: 'Auto/Manual Exposure Toggle',
+		name: 'Exposure Mode Toggle',
 		style: {
 			text: '$(sony-visca:expMode)\\nExpose',
 			size: '18',
 			color: COLORS.WHITE,
-			bgcolor: COLORS.DARK_YELLOW,
+			bgcolor: COLORS.BLACK,
 			show_topbar: false,
 		},
 		steps: [
 			{
 				down: [
 					{
-						actionId: 'expM',
+						actionId: 'expMToggle',
 						options: {
-							val: '0',
-						},
-					},
-				],
-			},
-			{
-				down: [
-					{
-						actionId: 'expM',
-						options: {
-							val: '1',
+							modeA: '0',
+							modeB: '1',
 						},
 					},
 				],
@@ -815,11 +806,11 @@ const exposurePresets = {
 		],
 		feedbacks: [
 			{
-				feedbackId: 'exposureManual',
-				options: {},
+				feedbackId: 'exposureMode',
+				options: { mode: 'Auto' },
 				style: {
 					color: COLORS.WHITE,
-					bgcolor: COLORS.BLACK,
+					bgcolor: COLORS.DARK_ORANGE,
 				},
 			},
 		],
@@ -830,7 +821,7 @@ const exposurePresets = {
 		name: 'Iris Up',
 		style: {
 			text: 'IRIS\\nUp',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -852,7 +843,7 @@ const exposurePresets = {
 		name: 'Iris Down',
 		style: {
 			text: 'IRIS\\nDown',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -874,7 +865,7 @@ const exposurePresets = {
 		name: 'Gain Up',
 		style: {
 			text: 'Gain\\nUp',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -896,7 +887,7 @@ const exposurePresets = {
 		name: 'Gain Down',
 		style: {
 			text: 'Gain\\nDown',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -918,7 +909,7 @@ const exposurePresets = {
 		name: 'Shutter Up',
 		style: {
 			text: 'Shut\\nUp',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -940,7 +931,7 @@ const exposurePresets = {
 		name: 'Shutter Down',
 		style: {
 			text: 'Shut\\nDown',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -962,7 +953,7 @@ const exposurePresets = {
 		name: 'Brightness Up',
 		style: {
 			text: 'Bright\\nUp',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -984,7 +975,7 @@ const exposurePresets = {
 		name: 'Brightness Down',
 		style: {
 			text: 'Bright\\nDown',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -1006,7 +997,7 @@ const exposurePresets = {
 		name: 'Exposure Compensation On/Off',
 		style: {
 			text: 'Expose\\nComp\\n$(sony-visca:expCompOnOff)',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -1038,7 +1029,7 @@ const exposurePresets = {
 		name: 'Exposure Compensation Up',
 		style: {
 			text: 'Expose\\nComp\\nUp',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -1061,7 +1052,7 @@ const exposurePresets = {
 		name: 'Exposure Compensation Down',
 		style: {
 			text: 'Expose\\nComp\\nDown',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -1084,7 +1075,7 @@ const exposurePresets = {
 		name: 'Exposure Compensation Reset',
 		style: {
 			text: 'Expose\\nComp\\nReset',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -1107,7 +1098,7 @@ const exposurePresets = {
 		name: 'Backlight Compensation On/Off',
 		style: {
 			text: 'BckLite\\nComp\\n$(sony-visca:backlightComp)',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -1139,7 +1130,7 @@ const exposurePresets = {
 		name: 'Spotlight Compensation On/Off',
 		style: {
 			text: 'SptLite\\nComp\\n$(sony-visca:spotlightComp)',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -1190,7 +1181,13 @@ const colorPresets = {
 				],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: { mode: 'Auto 1' },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
 	},
 	'color-wbModeAuto2': {
 		type: 'button',
@@ -1214,7 +1211,13 @@ const colorPresets = {
 				],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: { mode: 'Auto 2' },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
 	},
 	'color-wbModeIndoor': {
 		type: 'button',
@@ -1238,7 +1241,13 @@ const colorPresets = {
 				],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: { mode: 'Indoor' },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
 	},
 	'color-wbModeOutdoor': {
 		type: 'button',
@@ -1262,7 +1271,13 @@ const colorPresets = {
 				],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: { mode: 'Outdoor' },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
 	},
 	'color-wbModeManual': {
 		type: 'button',
@@ -1286,7 +1301,13 @@ const colorPresets = {
 				],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: { mode: 'Manual' },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
 	},
 	'color-wbModeCustom': {
 		type: 'button',
@@ -1335,41 +1356,37 @@ const colorPresets = {
 						},
 					},
 				],
-			},
-		],
-		feedbacks: [],
-	},
-	'color-wbOPWBTrigger': {
-		type: 'button',
-		category: 'Color',
-		name: 'One push WB trigger (must be in One push WB mode)',
-		style: {
-			text: '1 Push\\nTrigger',
-			size: '18',
-			color: COLORS.WHITE,
-			bgcolor: COLORS.BLACK,
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: 'wbTrigger',
-						options: {},
+				up: [],
+				1000: {
+					options: {
+						runWhileHeld: true,
 					},
-				],
+					actions: [
+						{
+							actionId: 'wbTrigger',
+							options: {},
+						},
+					],
+				},
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: { mode: 'One Push' },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
 	},
 	'color-wbRedGainUp': {
 		type: 'button',
 		category: 'Color',
 		name: 'White Balance - Red Gain Up (must be in WB Manual)',
 		style: {
-			text: 'Red\\nGain\\nUp',
-			size: '18',
-			color: COLORS.PALE_RED,
-			bgcolor: COLORS.BLACK,
+			text: 'R Gain\\n$(sony-visca:redGain)\\nUp',
+			size: '14',
+			color: COLORS.WHITE,
+			bgcolor: '#660000',
 		},
 		steps: [
 			{
@@ -1391,10 +1408,10 @@ const colorPresets = {
 		category: 'Color',
 		name: 'White Balance - Red Gain Down (must be in WB Manual)',
 		style: {
-			text: 'Red\\nGain\\nDown',
-			size: '18',
-			color: COLORS.PALE_RED,
-			bgcolor: COLORS.BLACK,
+			text: 'R Gain\\n$(sony-visca:redGain)\\nDown',
+			size: '14',
+			color: COLORS.WHITE,
+			bgcolor: '#660000',
 		},
 		steps: [
 			{
@@ -1416,10 +1433,10 @@ const colorPresets = {
 		category: 'Color',
 		name: 'White Balance - Blue Gain Up (must be in WB Manual)',
 		style: {
-			text: 'Blue\\nGain\\nUp',
-			size: '18',
-			color: COLORS.PALE_BLUE,
-			bgcolor: COLORS.BLACK,
+			text: 'B Gain\\n$(sony-visca:blueGain)\\nUp',
+			size: '14',
+			color: COLORS.WHITE,
+			bgcolor: '#000066',
 		},
 		steps: [
 			{
@@ -1441,10 +1458,10 @@ const colorPresets = {
 		category: 'Color',
 		name: 'White Balance - Blue Gain Down (must be in WB Manual)',
 		style: {
-			text: 'Blue\\nGain\\nDown',
-			size: '18',
-			color: COLORS.PALE_BLUE,
-			bgcolor: COLORS.BLACK,
+			text: 'B Gain\\n$(sony-visca:blueGain)\\nDown',
+			size: '14',
+			color: COLORS.WHITE,
+			bgcolor: '#000066',
 		},
 		steps: [
 			{
@@ -1461,35 +1478,13 @@ const colorPresets = {
 		],
 		feedbacks: [],
 	},
-	'color-wbOffsetReset': {
-		type: 'button',
-		category: 'Color',
-		name: 'White Balance - Offset Reset',
-		style: {
-			text: 'WB\\nOffset\\nReset',
-			size: '18',
-			color: COLORS.WHITE,
-			bgcolor: COLORS.BLACK,
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: 'wbOffsetAdjust',
-						options: { val: '3' },
-					},
-				],
-			},
-		],
-		feedbacks: [],
-	},
 	'color-wbOffsetUp': {
 		type: 'button',
 		category: 'Color',
 		name: 'White Balance - Offset Up (more red)',
 		style: {
-			text: 'WB\\nOffset\\nUp',
-			size: '18',
+			text: 'WB\\nOffset\\n$(sony-visca:wbOffset)\\nUp',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -1510,8 +1505,8 @@ const colorPresets = {
 		category: 'Color',
 		name: 'White Balance - Offset Down (more blue)',
 		style: {
-			text: 'WB\\nOffset\\nDown',
-			size: '18',
+			text: 'WB\\nOffset\\n$(sony-visca:wbOffset)\\nDown',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -1521,6 +1516,28 @@ const colorPresets = {
 					{
 						actionId: 'wbOffsetAdjust',
 						options: { val: '2' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'color-wbOffsetReset': {
+		type: 'button',
+		category: 'Color',
+		name: 'White Balance - Offset Reset',
+		style: {
+			text: 'WB\\nOffset\\nReset',
+			size: '14',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'wbOffsetAdjust',
+						options: { val: '3' },
 					},
 				],
 			},
@@ -2102,11 +2119,11 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Red Gain - tap for default (192)',
 		style: {
-			text: 'Red\\nGain\\n$(sony-visca:redGain)',
+			text: 'R Gain\\n$(sony-visca:redGain)',
 			size: '14',
 			png64: image_rotary_bg,
-			color: COLORS.PALE_RED,
-			bgcolor: COLORS.BLACK,
+			color: COLORS.WHITE,
+			bgcolor: '#660000',
 		},
 		options: {
 			rotaryActions: true,
@@ -2151,11 +2168,11 @@ const rotationEnabledPresets = {
 		category: 'Rotation Enabled',
 		name: 'Blue Gain - tap for default (192)',
 		style: {
-			text: 'Blue\\nGain\\n$(sony-visca:blueGain)',
+			text: 'B Gain\\n$(sony-visca:blueGain)',
 			size: '14',
 			png64: image_rotary_bg,
-			color: COLORS.PALE_BLUE,
-			bgcolor: COLORS.BLACK,
+			color: COLORS.WHITE,
+			bgcolor: '#000066',
 		},
 		options: {
 			rotaryActions: true,
