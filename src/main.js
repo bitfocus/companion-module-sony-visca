@@ -7,8 +7,7 @@ import { getActionDefinitions } from './actions.js'
 import { getPresetDefinitions } from './presets.js'
 import { initVariables, updateVariables } from './variables.js'
 import { MODELS } from './models.js'
-import { INQUIRY_BLOCKS, parseInquiryResponse } from './inquiries.js'
-import { INQUIRY_PROFILES } from './inquiry-profiles.js'
+import { getInquiryBlocks, parseInquiryResponse } from './inquiries.js'
 import { Visca } from './visca.js'
 
 class SonyVISCAInstance extends InstanceBase {
@@ -98,8 +97,8 @@ class SonyVISCAInstance extends InstanceBase {
 		} else if (modelId === 'other_all') {
 			this.initVariables(undefined, modelId)
 		} else {
-			const profileKeys = INQUIRY_PROFILES[model?.group] ?? INQUIRY_PROFILES['1a']
-			this.initVariables(new Set(profileKeys), modelId)
+			const blocks = getInquiryBlocks(model?.group)
+			this.initVariables(new Set(Object.keys(blocks)), modelId)
 		}
 	}
 
@@ -213,11 +212,9 @@ class SonyVISCAInstance extends InstanceBase {
 
 	setupInquiries() {
 		const model = MODELS.find((m) => m.id === this.config.model)
-		const profileKeys = INQUIRY_PROFILES[model?.group] ?? INQUIRY_PROFILES['1a']
+		const blocks = getInquiryBlocks(model?.group)
 		const callbacks = {}
-		for (const key of profileKeys) {
-			const blockDef = INQUIRY_BLOCKS[key]
-			if (!blockDef) continue
+		for (const [key, blockDef] of Object.entries(blocks)) {
 			callbacks[key] = (payload) => {
 				if (parseInquiryResponse(blockDef, payload, this.state, this.choices)) {
 					this.updateVariables()

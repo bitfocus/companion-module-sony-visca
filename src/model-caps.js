@@ -67,6 +67,9 @@ export const CAP_X1000_FR7 = new Set([...FAMILY_X1000, ...FAMILY_FR7])
 // FR7 only
 export const CAP_FR7 = new Set([...FAMILY_FR7])
 
+// Wide Dynamic Range: X1000 + legacy cameras (120DH, SE)
+export const CAP_WIDE_DYNAMIC = new Set([...FAMILY_X1000, ...FAMILY_120DH, ...FAMILY_SE])
+
 /**
  * Filter definitions by model ID.
  * - Definitions without a `models` property are universal (always included).

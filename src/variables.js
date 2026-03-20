@@ -1,4 +1,4 @@
-import { CAP_FR7, CAP_X400_CORE_X40UH, CAP_X400_X1000, CAP_X400_ONLY } from './model-caps.js'
+import { CAP_FR7, CAP_WIDE_DYNAMIC, CAP_X400_CORE_X40UH, CAP_X400_X1000, CAP_X400_ONLY } from './model-caps.js'
 
 // Pan/tilt position ranges (signed 16-bit)
 const PAN_MIN = -0x2200 // 0xDE00 signed = left limit
@@ -72,6 +72,8 @@ const variables = [
 	{ variableId: 'highResolution', name: 'High Resolution (on/off)', block: '097e7e01' },
 	{ variableId: 've', name: 'Visibility Enhancer (on/off)', block: '097e7e01' },
 	{ variableId: 'expCompLevel', name: 'Exposure Compensation Level', block: '097e7e01' },
+	{ variableId: 'brightPosition', name: 'Bright Position', block: '097e7e01' },
+	{ variableId: 'wideDynamic', name: 'Wide Dynamic Range (on/off)', block: '097e7e01', models: CAP_WIDE_DYNAMIC },
 	// Block 097e7e02 — Other
 	{ variableId: 'power', name: 'Power (on/off)', block: '097e7e02' },
 	{ variableId: 'flickerCancel', name: 'Flicker Cancel (on/off)', block: '097e7e02' },
@@ -201,6 +203,8 @@ export async function updateVariables() {
 		highResolution: this.state.highResolution,
 		ve: this.state.ve,
 		expCompLevel: this.state.expCompLevel,
+		brightPosition: this.state.brightPosition,
+		wideDynamic: this.state.wideDynamic,
 		// Block 097e7e02 — Other
 		power: this.state.power,
 		flickerCancel: this.state.flickerCancel,
