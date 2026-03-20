@@ -820,7 +820,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Iris Up',
 		style: {
-			text: 'IRIS\\nUp',
+			text: 'IRIS\\n$(sony-visca:irisLevel)\\nUp',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -842,7 +842,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Iris Down',
 		style: {
-			text: 'IRIS\\nDown',
+			text: 'IRIS\\n$(sony-visca:irisLevel)\\nDown',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -864,7 +864,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Gain Up',
 		style: {
-			text: 'Gain\\nUp',
+			text: 'Gain\\n$(sony-visca:gainLevel)\\nUp',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -886,7 +886,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Gain Down',
 		style: {
-			text: 'Gain\\nDown',
+			text: 'Gain\\n$(sony-visca:gainLevel)\\nDown',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -908,7 +908,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Shutter Up',
 		style: {
-			text: 'Shut\\nUp',
+			text: 'Shutter\\n$(sony-visca:shutterSpeed)\\nUp',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -930,7 +930,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Shutter Down',
 		style: {
-			text: 'Shut\\nDown',
+			text: 'Shutter\\n$(sony-visca:shutterSpeed)\\nDown',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -952,7 +952,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Brightness Up',
 		style: {
-			text: 'Bright\\nUp',
+			text: 'Bright\\n$(sony-visca:brightPosition)\\nUp',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -974,7 +974,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Brightness Down',
 		style: {
-			text: 'Bright\\nDown',
+			text: 'Bright\\n$(sony-visca:brightPosition)\\nDown',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,

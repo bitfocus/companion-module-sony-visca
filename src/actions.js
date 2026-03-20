@@ -4,6 +4,7 @@ import {
 	CAP_ADVANCED,
 	CAP_ADVANCED_LEGACY,
 	CAP_ALL_CAMERAS,
+	CAP_BRIGHTNESS,
 	CAP_FR7,
 	CAP_ICR,
 	CAP_TELECONVERT,
@@ -1189,7 +1190,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		brightnessAdjust: {
-			models: CAP_ADVANCED_LEGACY,
+			models: CAP_BRIGHTNESS,
 			name: 'Brightness Adjust (up/down)',
 			options: [
 				{
@@ -1215,7 +1216,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		brightnessSet: {
-			models: CAP_ADVANCED_LEGACY,
+			models: CAP_BRIGHTNESS,
 			name: 'Set Brightness',
 			options: [
 				{

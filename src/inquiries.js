@@ -179,7 +179,6 @@ const BLOCK_01_X400 = {
 		{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0xff, choiceKey: 'IRIS' },
 		{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0xff },
 		{ variable: 'gainLevel', type: 'choiceLookup', byte: 12, mask: 0xff, choiceKey: 'GAIN' },
-		{ variable: 'brightPosition', type: 'choiceLookup', byte: 13, mask: 0xff, choiceKey: 'BRIGHTNESS' },
 		{ variable: 'expCompLevel', type: 'offset', byte: 14, mask: 0x0f, center: 7 },
 	],
 }
