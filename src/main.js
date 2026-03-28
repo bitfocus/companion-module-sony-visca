@@ -327,6 +327,8 @@ class SonyVISCAInstance extends InstanceBase {
 			callbacks['097e0453'] = onOffCallback('autoNDFilter')
 			// NDClearInq: 8x 09 7E 04 54 FF → y0 50 0p FF (02=Filtered, 03=Clear)
 			callbacks['097e0454'] = onOffCallback('ndClear', 'Filtered', 'Clear')
+			// CAM_IMGFlipInq: 8x 09 04 66 FF → y0 50 0p FF (02=On/Ceiling, 03=Off/Desktop)
+			callbacks['090466'] = onOffCallback('imageFlip')
 		}
 
 		this.VISCA.initializeLowPriorityInquiries(callbacks)

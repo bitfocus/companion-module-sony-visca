@@ -7,14 +7,20 @@ import {
 	CAP_X400_ONLY,
 } from './model-caps.js'
 
-// Pan/tilt position ranges (signed 16-bit)
-const PAN_MIN = -0x2200 // 0xDE00 signed = left limit
-const PAN_MAX = 0x2200 // right limit
-// Tilt range depends on image flip setting
-const TILT_MIN_FLIP_OFF = -0x0400 // 0xFC00 = -1024 (bottom, flip off: -20°)
-const TILT_MAX_FLIP_OFF = 0x1200 // +4608 (top, flip off: +90°)
-const TILT_MIN_FLIP_ON = -0x1200 // 0xEE00 = -4608 (bottom, flip on: -90°)
-const TILT_MAX_FLIP_ON = 0x0400 // +1024 (top, flip on: +20°)
+// Per-model pan/tilt position ranges (from protocol docs)
+// Format: { pan: [min, max], tiltOff: [min, max], tiltOn: [min, max] }
+// tiltOff = image flip off / desktop, tiltOn = image flip on / ceiling
+const PT_RANGES = {
+	'0511': { pan: [-0x1400, 0x1400], tiltOff: [-0x0500, 0x0500], tiltOn: [-0x0500, 0x0500] }, // SRG-120DH (±100°, ±25°)
+	'051E': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0xb3b0], tiltOn: [-0xc183, 0x0dd2] }, // ILME-FR7 (20-bit)
+	'051Ek': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0xb3b0], tiltOn: [-0xc183, 0x0dd2] }, // ILME-FR7K (20-bit)
+}
+// Default: X400/X40UH/A40/300SE (±170° pan, -20°/+90° flip off, -90°/+20° flip on)
+const PT_DEFAULT = { pan: [-0x2200, 0x2200], tiltOff: [-0x0400, 0x1200], tiltOn: [-0x1200, 0x0400] }
+
+function getPanTiltRange(modelId) {
+	return PT_RANGES[modelId] ?? PT_DEFAULT
+}
 
 // Zoom position → ratio lookup tables (from protocol docs)
 // Each table is an array of [position, ratio] pairs sorted by position
@@ -265,9 +271,9 @@ export function initVariables(activeBlocks, modelId) {
 
 export async function updateVariables() {
 	// Calculate position percentages
-	const panPct = normalizePct(this.state.panPosition, PAN_MIN, PAN_MAX)
-	const tiltMin = this.state.imageFlip === 'On' ? TILT_MIN_FLIP_ON : TILT_MIN_FLIP_OFF
-	const tiltMax = this.state.imageFlip === 'On' ? TILT_MAX_FLIP_ON : TILT_MAX_FLIP_OFF
+	const ptRange = getPanTiltRange(this.config.model)
+	const panPct = normalizePct(this.state.panPosition, ptRange.pan[0], ptRange.pan[1])
+	const [tiltMin, tiltMax] = this.state.imageFlip === 'On' ? ptRange.tiltOn : ptRange.tiltOff
 	const tiltPct = normalizePct(this.state.tiltPosition, tiltMin, tiltMax)
 	const zoomMax = getZoomMax(this.config.model, this.state.zoomMode)
 	const zoomClamped = this.state.zoomPosition != null ? Math.min(this.state.zoomPosition, zoomMax) : null
