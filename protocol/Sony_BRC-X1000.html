@@ -87,6 +87,12 @@
 				<td>Returned when the command has been executed.</td>
 			</tr>
 			<tr>
+				<td>Error &ndash; Message Length Error</td>
+				<td class="packet">y0 6z 01 FF</td>
+				<td>z: Socket Number</td>
+				<td>Returned when the message length is invalid.</td>
+			</tr>
+			<tr>
 				<td>Error &ndash; Syntax Error</td>
 				<td class="packet">y0 60 02 FF</td>
 				<td></td>
@@ -256,8 +262,8 @@
 				<td>Settings</td>
 				<td class="packet">8x 01 04 2D 00 0p 0q 0r 00 00 00 00 FF</td>
 				<td>
-					p: Effect Level 0 (Dark)&ndash;6 (Bright)<br />q: Brightness comp 0=Very dark, 1=Dark, 2=Standard, 3=Bright<br />r:
-					Comp Level 0=Low, 1=Mid, 2=High
+					p: Effect Level 0&ndash;6<br />q: Brightness comp 0=Very dark, 1=Dark, 2=Standard, 3=Bright<br />r: Comp Level
+					0=Low, 1=Mid, 2=High
 				</td>
 			</tr>
 			<tr>
@@ -809,9 +815,9 @@
 				<td>Absolute Position</td>
 				<td class="packet">8x 01 06 02 vv ww 0p 0p 0p 0p 0p 0t 0t 0t 0t FF</td>
 				<td>
-					vv: Pan Speed 01&ndash;32<sup>&sect;</sup><br />ww: Tilt Speed 00, 01&ndash;32<sup>&sect;</sup><br />ppppp:
-					Pan Position<br />tttt: Tilt Position<br />ww=00: Pan and Tilt complete simultaneously<br />ww&ge;01: Pan and
-					Tilt move at specified speeds
+					vv: Pan Speed 01&ndash;32<sup>*1</sup><br />ww: Tilt Speed 00, 01&ndash;32<sup>*1</sup><br />ppppp: Pan
+					Position<br />tttt: Tilt Position<br />ww=00: Pan and Tilt complete simultaneously<br />ww&ge;01: Pan and Tilt
+					move at specified speeds
 				</td>
 			</tr>
 			<tr>
@@ -819,9 +825,9 @@
 				<td>Relative Position</td>
 				<td class="packet">8x 01 06 03 vv ww 0p 0p 0p 0p 0p 0t 0t 0t 0t FF</td>
 				<td>
-					vv: Pan Speed 01&ndash;32<sup>&sect;</sup><br />ww: Tilt Speed 00, 01&ndash;32<sup>&sect;</sup><br />ppppp:
-					Pan Shift Amount<br />tttt: Tilt Shift Amount<br />ww=00: Pan and Tilt complete simultaneously<br />ww&ge;01:
-					Pan and Tilt move at specified speeds
+					vv: Pan Speed 01&ndash;32<sup>*1</sup><br />ww: Tilt Speed 00, 01&ndash;32<sup>*1</sup><br />ppppp: Pan Shift
+					Amount<br />tttt: Tilt Shift Amount<br />ww=00: Pan and Tilt complete simultaneously<br />ww&ge;01: Pan and
+					Tilt move at specified speeds
 				</td>
 			</tr>
 			<tr>
@@ -868,8 +874,8 @@
 			</tr>
 		</table>
 		<p>
-			<sup>&sect;</sup> Speeds 19&ndash;32 are available when PAN-TILT SPEED TYPE is Extd. Step. When Extd. Range or
-			Normal, Pan and Tilt operate at speed 18 even if 19&ndash;32 is specified.
+			<sup>*1</sup> Speeds 19&ndash;32 are available when PAN-TILT SPEED TYPE is Extd. Step. When Extd. Range or Normal,
+			Pan and Tilt operate at speed 18 even if 19&ndash;32 is specified.
 		</p>
 
 		<h4>PRESET</h4>
@@ -1148,6 +1154,12 @@
 				<td>p: Effect Level 0&ndash;6<br />q: Brightness comp 0&ndash;3<br />r: Comp Level 0&ndash;2</td>
 			</tr>
 			<tr>
+				<td>CAM_ICRStatusInq<sup>&dagger;</sup></td>
+				<td class="packet">8x 09 04 01 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On (Night), 3=Off (Day)</td>
+			</tr>
+			<tr>
 				<td>CAM_LowLightOnOffInq</td>
 				<td class="packet">8x 09 05 39 FF</td>
 				<td class="packet">y0 50 0p FF</td>
@@ -1221,7 +1233,7 @@
 				<td>CAM_ColorLevelInq</td>
 				<td class="packet">8x 09 04 49 FF</td>
 				<td class="packet">y0 50 00 00 00 0p FF</td>
-				<td>p: 0&ndash;E (15)</td>
+				<td>p: 0&ndash;E</td>
 			</tr>
 			<tr>
 				<td>CAM_ColorPhaseInq</td>
@@ -1426,6 +1438,12 @@
 				<th>Comments</th>
 			</tr>
 			<tr>
+				<td>CAM_PictureProfileInq</td>
+				<td class="packet">8x 09 7E 04 5F FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=PP1, 1=PP2, 2=PP3, 3=PP4, 4=PP5, 5=PP6</td>
+			</tr>
+			<tr>
 				<td>CAM_FlickerReductionInq</td>
 				<td class="packet">8x 09 04 32 FF</td>
 				<td class="packet">y0 50 0p FF</td>
@@ -1454,28 +1472,28 @@
 				<th>Comments</th>
 			</tr>
 			<tr>
-				<td>CAM_ClearImageZoomInq</td>
-				<td class="packet">8x 09 04 06 FF</td>
-				<td class="packet">y0 50 0p FF</td>
-				<td>p: 4=On, 3=Off</td>
-			</tr>
-			<tr>
-				<td>CAM_TeleConvertModeInq<sup>&Dagger;</sup></td>
-				<td class="packet">8x 09 7E 04 36 FF</td>
-				<td class="packet">y0 50 0p FF</td>
-				<td>p: 2=On, 3=Off</td>
-			</tr>
-			<tr>
 				<td>CAM_ZoomPosInq</td>
 				<td class="packet">8x 09 04 47 FF</td>
 				<td class="packet">y0 50 0z 0z 0z 0z FF</td>
 				<td>zzzz: Zoom Position</td>
 			</tr>
 			<tr>
+				<td>CAM_ClearImageZoomInq</td>
+				<td class="packet">8x 09 04 06 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 4=On, 3=Off</td>
+			</tr>
+			<tr>
 				<td>CAM_ZoomSpeedTypeInq</td>
 				<td class="packet">8x 09 7E 04 57 FF</td>
 				<td class="packet">y0 50 pp FF</td>
 				<td>pp: 04=Extd. Range, 08=Normal</td>
+			</tr>
+			<tr>
+				<td>CAM_TeleConvertModeInq<sup>&Dagger;</sup></td>
+				<td class="packet">8x 09 7E 04 36 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
 			</tr>
 		</table>
 
@@ -1500,16 +1518,16 @@
 				<td>pppp: F000 (Near)&ndash;0000 (Far)</td>
 			</tr>
 			<tr>
-				<td>CAM_AFSensitivityInq</td>
-				<td class="packet">8x 09 04 58 FF</td>
-				<td class="packet">y0 50 0p FF</td>
-				<td>p: 2=Normal, 3=Low</td>
-			</tr>
-			<tr>
 				<td>CAM_FocusNearLimitInq</td>
 				<td class="packet">8x 09 04 28 FF</td>
 				<td class="packet">y0 50 0p 0p 0p 0p FF</td>
 				<td>pppp: Focus Near Limit Position</td>
+			</tr>
+			<tr>
+				<td>CAM_AFSensitivityInq</td>
+				<td class="packet">8x 09 04 58 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=Normal, 3=Low</td>
 			</tr>
 			<tr>
 				<td>CAM_IRCorrectionInq</td>
@@ -1619,7 +1637,7 @@
 				<td>CAM_PTZTraceRecordStatusEachInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 7E 04 20 10 01 0p FF</td>
 				<td class="packet">y0 50 0q FF</td>
-				<td>p: PTZ Trace number<br />q: 0=Not recorded, 1=Recorded</td>
+				<td>p: PTZ Trace number (0&ndash;F)<br />q: 0=Not recorded, 1=Recorded</td>
 			</tr>
 			<tr>
 				<td>CAM_PTZTracePlaybackPrepInq<sup>&dagger;</sup></td>
@@ -1636,12 +1654,6 @@
 				<th>Command Packet</th>
 				<th>Response Packet</th>
 				<th>Comments</th>
-			</tr>
-			<tr>
-				<td>CAM_ICRStatusInq<sup>&dagger;</sup></td>
-				<td class="packet">8x 09 04 01 FF</td>
-				<td class="packet">y0 50 0p FF</td>
-				<td>p: 2=On (Night), 3=Off (Day)</td>
 			</tr>
 			<tr>
 				<td>CAM_TallyInq</td>
@@ -1721,83 +1733,73 @@
 		</table>
 
 		<h4>Block Inquiries</h4>
+		<!-- verified to match manual 2026-03-27 -->
 		<p>
-			All block inquiry responses are 16 bytes:
-			<span style="font-family: Consolas, 'Courier New', monospace">y0 50</span> + 13 data bytes +
-			<span style="font-family: Consolas, 'Courier New', monospace">FF</span>. Bytes prefixed
-			<span style="font-family: Consolas, 'Courier New', monospace">0</span> use nibble encoding (upper 4 bits = 0).
-			Unprefixed bytes may use all 8 bits. Byte indices are 0-based from the start of the response.
-		</p>
-		<p>
-			Note: The X1000 uses different block assignments for blocks 03&ndash;05 than the BRC-X400 family. The X400 has
-			ColorBlockInq (04) and DetailBlockInq (05), while the X1000 has three Enlargement blocks that pack those fields
-			differently.
+			Byte numbering is absolute: byte 0 is the address byte (<code>y0</code>), byte 1 is <code>50</code>, data begins
+			at byte 2, and the final byte is the <code>FF</code> terminator. Bit 0 is the least significant bit. The
+			<code>::</code> operator denotes concatenation, with the left operand as the most significant bits.
 		</p>
 		<table>
 			<tr>
 				<th>Command</th>
 				<th>Command Packet</th>
 				<th>Response Packet</th>
-				<th>Comments</th>
+				<th>Field Definitions</th>
 			</tr>
 			<tr>
 				<td>CAM_LensBlockInq</td>
 				<td class="packet">8x 09 7E 7E 00 FF</td>
-				<td class="packet">y0 50 0z 0z 0z 0z 0n 0n 0f 0f 0f 0f 0a bb 0c FF</td>
+				<td class="packet">y0 50 0z 0z 0z 0z 0n 0n 0f 0f 0f 0f 0a 0b 0c FF</td>
 				<td>
-					zzzz: Zoom Position (bytes 2&ndash;5)<br />nn: Focus Near Limit (bytes 6&ndash;7)<br />ffff: Focus Position
-					(bytes 8&ndash;11)<br />a.bit0: Base Block Fan (byte 12)<br />bb.bit0: Focus Mode (1=Auto, 0=Manual)<br />bb.bit2:
-					AF Sensitivity (0=Normal, 1=Low)<br />bb.bit6: Digital Zoom (byte 13)<br />c.bit0: Zoom Cmd Executing<br />c.bit1:
-					Focus Cmd Executing<br />c.bit2: Camera Memory Recall (byte 14)
+					zoomPos = byte2[3:0] :: byte3[3:0] :: byte4[3:0] :: byte5[3:0]<br />focusNearLimit = byte6[3:0] ::
+					byte7[3:0]<br />focusPos = byte8[3:0] :: byte9[3:0] :: byte10[3:0] :: byte11[3:0]<br />baseBlockFan =
+					byte12[0]<br />digitalZoom = byte13[6]<br />afSensitivity = byte13[2]<br />focusMode = byte13[0]<br />cameraMemoryRecall
+					= byte14[2]<br />focusCmdExec = byte14[1]<br />zoomCmdExec = byte14[0]
 				</td>
 			</tr>
 			<tr>
 				<td>CAM_CameraBlockInq</td>
 				<td class="packet">8x 09 7E 7E 01 FF</td>
-				<td class="packet">y0 50 0r 0r 0b 0b 0w 0a ee 0u vv ww 0g 00 0c FF</td>
+				<td class="packet">y0 50 0r 0r 0b 0b 0w 0a ee 0u vv ww 0g 00 hz FF</td>
 				<td>
-					rr: R Gain (bytes 2&ndash;3)<br />bb: B Gain (bytes 4&ndash;5)<br />w: WB Mode (byte 6)<br />a: Aperture Gain
-					(byte 7)<br />ee: bits 3&ndash;0=Exposure Mode (0=Full Auto, 3=Manual, A=Shutter Pri, B=Iris Pri, E=Gain Pri),
-					bit4=Wide Dynamic (byte 8)<br />u: bit2=Backlight, bit1=Exposure Comp On/Off (byte 9)<br />vv: Shutter
-					Position (byte 10, full byte)<br />ww: Iris Position (byte 11, full byte)<br />0g: Gain Position (byte 12)<br />0c:
-					Exposure Comp Level (byte 14)
+					rGain = byte2[3:0] :: byte3[3:0]<br />bGain = byte4[3:0] :: byte5[3:0]<br />wbMode = byte6[3:0]<br />wbSpeed =
+					byte7[6:4]<br />apertureGain = byte7[3:0]<br />colorMatrix = byte14[6:4] :: byte8[6:5]<br />exposureMode =
+					byte8[3:0]<br />wideDynamic = byte9[4]<br />backlight = byte9[2]<br />expCompOn = byte9[1]<br />shutterPos =
+					byte10[4:0]<br />irisPos = byte11[4:0]<br />gainPos = byte12[4:0]<br />expCompLevel = byte14[3:0]
 				</td>
 			</tr>
 			<tr>
 				<td>CAM_OtherBlockInq</td>
 				<td class="packet">8x 09 7E 7E 02 FF</td>
-				<td class="packet">y0 50 pp 0q 00 00 0r 00 00 00 00 0s tt uu vv FF</td>
+				<td class="packet">y0 50 pp 0q 00 rr 00 ss 00 00 00 00 tt uu vv FF</td>
 				<td>
-					pp: bit5=Spotlight, bit4=Flicker Cancel, bit0=Power (byte 2)<br />q: bit4=ICR<sup>&dagger;</sup> (byte 3)<br />r:
-					bits 3&ndash;0=WB Offset (byte 6)<br />s: bits 3&ndash;0=Picture Effect (byte 11)<br />tt: bit3=Memory,
-					bit2=ICR<sup>&dagger;</sup>, bit1=Stabilizer, bit0=System (byte 12)<br />uu: bit4=Knee Mode, bits
-					3&ndash;0=Knee Slope (byte 13)<br />vv: bit4=Knee Setting, bits 3&ndash;0=Knee Point (byte 14)
+					spotlight = byte2[5]<br />flickerCancel = byte2[4]<br />power = byte2[0]<br />icr<sup>&dagger;</sup> =
+					byte3[4] :: byte12[2]<br />pictureEffect = byte5[3:0]<br />wbOffset = byte7[3:0]<br />memory = byte12[4]<br />stabilizer
+					= byte12[1]<br />system = byte12[0]<br />kneeMode = byte13[4]<br />kneeSlope = byte13[3:0]<br />kneeSetting =
+					byte14[4]<br />kneePoint = byte14[3:0]<br /><em>Note: ICR fields are 0 for BRC-H780.</em>
 				</td>
 			</tr>
 			<tr>
-				<td>CAM_EnlargementBlock1Inq</td>
+				<td>CAM_EnlargementBlockInq</td>
 				<td class="packet">8x 09 7E 7E 03 FF</td>
-				<td class="packet">y0 50 0a 00 00 0b 00 00 cc dd ee ff gg hh jj FF</td>
+				<td class="packet">y0 50 0a 00 00 00 00 00 cc dd ee ff 0g hh jj kk FF</td>
 				<td>
-					a: Gain Limit (byte 2)<br />b: Color Gain (byte 5)<br />cc: bits 6&ndash;4=2D NR Level (byte 8)<br />dd: bits
-					6&ndash;4=3D NR Level (byte 9)<br />ee: bits 3&ndash;0=Gamma (H) (byte 10), bit0=Picture Flip Status<br />ff:
-					bit0=Picture Flip (byte 11)<br />gg: bits 3&ndash;0=AE Response (byte 12)<br />hh: bits 6&ndash;4=Gamma (L),
-					bits 1&ndash;0=NR Level (byte 13)<br />jj: Chroma Suppress (byte 14)
+					nr2dLevel = byte8[6:4]<br />nr3dLevel = byte9[6:4]<br />gamma = byte10[6:3] :: byte13[6:4]<br />pictureFlipStatus
+					= byte10[0]<br />colorGain = byte11[6:3]<br />pictureFlip = byte11[0]<br />aeResponse = byte12[5:0]<br />nrLevel
+					= byte13[2:0]<br />chromaSuppress = byte14[6:4]<br />gainLimit = byte14[3:0]
 				</td>
 			</tr>
 			<tr>
 				<td>CAM_EnlargementBlock2Inq</td>
 				<td class="packet">8x 09 7E 7E 04 FF</td>
-				<td class="packet">y0 50 0a bb cc dd ee ff gg hh jj kk mm nn pp FF</td>
+				<td class="packet">y0 50 0a bb cc dd ee ff 0g 0h 0j kk mm nn pp FF</td>
 				<td>
-					a: bits 1&ndash;0=WD correction strength (byte 2)<br />bb: bits 6&ndash;4=Black Gamma Range, bits
-					3&ndash;0=Gamma Offset (H) (byte 3)<br />cc: bits 3&ndash;0=Gamma Offset (L), bit1=WD (byte 4)<br />dd: bits
-					3&ndash;0=Black Level (H) (byte 5)<br />ee: bits 6&ndash;4=Black Level (L), bit1=WD display brightness (byte
-					6)<br />ff: bits 3&ndash;0=Black Gamma Level (byte 7)<br />gg: bits 3&ndash;0=Gamma Level (byte 8)<br />hh:
-					bits 3&ndash;0=Slow Shutter Limit (byte 9)<br />jj: bits 3&ndash;0=Fast Shutter Limit (byte 10)<br />kk:
-					upper=Detail HV Balance, lower=Detail Crispening (byte 11)<br />mm: upper=Detail Limit, lower=Detail BW
-					Balance (byte 12)<br />nn: upper=Detail Highlight Detail, lower=Detail Super Low (byte 13)<br />pp:
-					upper=Detail Mode, lower=Detail Bandwidth (byte 14)
+					wd = byte2[1:0]<br />blackLevel = byte3[3:0] :: byte4[6:3]<br />wdDisplayBrightness = byte4[2:0]<br />blackGammaLevel
+					= byte5[5:2]<br />wdCorrectionBrightnessSel = byte5[1:0]<br />gammaLevel = byte6[5:2]<br />wdCorrectionStrength
+					= byte6[1:0]<br />blackGammaRange = byte7[6:5]<br />gammaOffset = byte7[4:1] :: byte8[5:2]<br />slowShutterLimit
+					= byte9[4:0]<br />fastShutterLimit = byte10[4:0]<br />detailHVBalance = byte11[5:3]<br />detailCrispening =
+					byte11[2:0]<br />detailLimit = byte12[5:3]<br />detailBWBalance = byte12[2:0]<br />detailHighlightDetail =
+					byte13[5:3]<br />detailSuperLow = byte13[2:0]<br />detailMode = byte14[3]<br />detailBandwidth = byte14[2:0]
 				</td>
 			</tr>
 			<tr>
@@ -1805,18 +1807,13 @@
 				<td class="packet">8x 09 7E 7E 05 FF</td>
 				<td class="packet">y0 50 0a 0b 0c 0d 0e 0f 0g 0h 0j 0k 0m 0n 0p FF</td>
 				<td>
-					a: Color Hue (byte 2)<br />bc: R-G (H, L) (bytes 3&ndash;4)<br />de: R-B (H, L) (bytes 5&ndash;6)<br />fg: G-R
-					(H, L) (bytes 7&ndash;8)<br />hj: G-B (H, L) (bytes 9&ndash;10)<br />km: B-R (H, L) (bytes 11&ndash;12)<br />np:
-					B-G (H, L) (bytes 13&ndash;14)<br />All matrix coefficients are 2-nibble values: 00 (&minus;99)&ndash;63
-					(0)&ndash;C6 (+99)
+					colorHue = byte2[3:0]<br />matrixRG = byte3[3:0] :: byte4[3:0]<br />matrixRB = byte5[3:0] :: byte6[3:0]<br />matrixGR
+					= byte7[3:0] :: byte8[3:0]<br />matrixGB = byte9[3:0] :: byte10[3:0]<br />matrixBR = byte11[3:0] ::
+					byte12[3:0]<br />matrixBG = byte13[3:0] :: byte14[3:0]<br />Matrix coefficients are 8-bit values: 00
+					(&minus;99)&ndash;63 (0)&ndash;C6 (+99)
 				</td>
 			</tr>
 		</table>
-		<p>
-			Note: In Enlargement Block 2 (04), bytes 11&ndash;14 each pack two Detail fields using upper and lower nibbles of
-			the full byte. Matrix coefficients in Block 3 (05) each span 2 nibbles (H=high nibble, L=low nibble). Exact bit
-			masks for Blocks 03&ndash;04 fields that share a byte should be verified against the camera.
-		</p>
 
 		<p><sup>&dagger;</sup> Not available for BRC-H780.</p>
 		<p>
@@ -2108,6 +2105,18 @@
 				<th>2160/29.97p (X1000 only),<br />1080/59.94p, 1080/59.94i,<br />720/59.94p</th>
 				<th>2160/25p (X1000 only),<br />1080/50p, 1080/50i,<br />720/50p</th>
 				<th>2160/23.98p (X1000 only),<br />1080/23.98p</th>
+			</tr>
+			<tr>
+				<td class="packet">01</td>
+				<td>&ndash;</td>
+				<td>&ndash;</td>
+				<td>&ndash;</td>
+			</tr>
+			<tr>
+				<td class="packet">02</td>
+				<td>&ndash;</td>
+				<td>&ndash;</td>
+				<td>&ndash;</td>
 			</tr>
 			<tr>
 				<td class="packet">03</td>
@@ -2772,5 +2781,400 @@
 				<td>Initialization failed</td>
 			</tr>
 		</table>
+		<p>( &ndash; : optional )</p>
+
+		<h4>Memory Function (Inquiry Commands)</h4>
+		<p>
+			CAM_PresetLastRecallInq (<span style="font-family: Consolas, 'Courier New', monospace">8x 09 04 3F FF</span>)
+			returns <span style="font-family: Consolas, 'Courier New', monospace">y0 50 pp FF</span> where pp maps to the last
+			recalled preset number. The value of pp becomes 7F if PRESET Recall has never been executed.
+		</p>
+		<table>
+			<tr>
+				<th>Preset No.</th>
+				<th>pp</th>
+				<th>Preset No.</th>
+				<th>pp</th>
+				<th>Preset No.</th>
+				<th>pp</th>
+				<th>Preset No.</th>
+				<th>pp</th>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td class="packet">7F*</td>
+				<td>17</td>
+				<td class="packet">10</td>
+				<td>33</td>
+				<td class="packet">20</td>
+				<td>49</td>
+				<td class="packet">30</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td class="packet">01</td>
+				<td>18</td>
+				<td class="packet">11</td>
+				<td>34</td>
+				<td class="packet">21</td>
+				<td>50</td>
+				<td class="packet">31</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td class="packet">02</td>
+				<td>19</td>
+				<td class="packet">12</td>
+				<td>35</td>
+				<td class="packet">22</td>
+				<td>51</td>
+				<td class="packet">32</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td class="packet">03</td>
+				<td>20</td>
+				<td class="packet">13</td>
+				<td>36</td>
+				<td class="packet">23</td>
+				<td>52</td>
+				<td class="packet">33</td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td class="packet">04</td>
+				<td>21</td>
+				<td class="packet">14</td>
+				<td>37</td>
+				<td class="packet">24</td>
+				<td>53</td>
+				<td class="packet">34</td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td class="packet">05</td>
+				<td>22</td>
+				<td class="packet">15</td>
+				<td>38</td>
+				<td class="packet">25</td>
+				<td>54</td>
+				<td class="packet">35</td>
+			</tr>
+			<tr>
+				<td>7</td>
+				<td class="packet">06</td>
+				<td>23</td>
+				<td class="packet">16</td>
+				<td>39</td>
+				<td class="packet">26</td>
+				<td>55</td>
+				<td class="packet">36</td>
+			</tr>
+			<tr>
+				<td>8</td>
+				<td class="packet">07</td>
+				<td>24</td>
+				<td class="packet">17</td>
+				<td>40</td>
+				<td class="packet">27</td>
+				<td>56</td>
+				<td class="packet">37</td>
+			</tr>
+			<tr>
+				<td>9</td>
+				<td class="packet">08</td>
+				<td>25</td>
+				<td class="packet">18</td>
+				<td>41</td>
+				<td class="packet">28</td>
+				<td>57</td>
+				<td class="packet">38</td>
+			</tr>
+			<tr>
+				<td>10</td>
+				<td class="packet">09</td>
+				<td>26</td>
+				<td class="packet">19</td>
+				<td>42</td>
+				<td class="packet">29</td>
+				<td>58</td>
+				<td class="packet">39</td>
+			</tr>
+			<tr>
+				<td>11</td>
+				<td class="packet">0A</td>
+				<td>27</td>
+				<td class="packet">1A</td>
+				<td>43</td>
+				<td class="packet">2A</td>
+				<td>59</td>
+				<td class="packet">3A</td>
+			</tr>
+			<tr>
+				<td>12</td>
+				<td class="packet">0B</td>
+				<td>28</td>
+				<td class="packet">1B</td>
+				<td>44</td>
+				<td class="packet">2B</td>
+				<td>60</td>
+				<td class="packet">3B</td>
+			</tr>
+			<tr>
+				<td>13</td>
+				<td class="packet">0C</td>
+				<td>29</td>
+				<td class="packet">1C</td>
+				<td>45</td>
+				<td class="packet">2C</td>
+				<td>61</td>
+				<td class="packet">3C</td>
+			</tr>
+			<tr>
+				<td>14</td>
+				<td class="packet">0D</td>
+				<td>30</td>
+				<td class="packet">1D</td>
+				<td>46</td>
+				<td class="packet">2D</td>
+				<td>62</td>
+				<td class="packet">3D</td>
+			</tr>
+			<tr>
+				<td>15</td>
+				<td class="packet">0E</td>
+				<td>31</td>
+				<td class="packet">1E</td>
+				<td>47</td>
+				<td class="packet">2E</td>
+				<td>63</td>
+				<td class="packet">3E</td>
+			</tr>
+			<tr>
+				<td>16</td>
+				<td class="packet">0F</td>
+				<td>32</td>
+				<td class="packet">1F</td>
+				<td>48</td>
+				<td class="packet">2F</td>
+				<td>64</td>
+				<td class="packet">3F</td>
+			</tr>
+		</table>
+		<table>
+			<tr>
+				<th>Preset No.</th>
+				<th>pp</th>
+				<th>Preset No.</th>
+				<th>pp</th>
+				<th>Preset No.</th>
+				<th>pp</th>
+			</tr>
+			<tr>
+				<td>65</td>
+				<td class="packet">40</td>
+				<td>81</td>
+				<td class="packet">50</td>
+				<td>97</td>
+				<td class="packet">60</td>
+			</tr>
+			<tr>
+				<td>66</td>
+				<td class="packet">41</td>
+				<td>82</td>
+				<td class="packet">51</td>
+				<td>98</td>
+				<td class="packet">61</td>
+			</tr>
+			<tr>
+				<td>67</td>
+				<td class="packet">42</td>
+				<td>83</td>
+				<td class="packet">52</td>
+				<td>99</td>
+				<td class="packet">62</td>
+			</tr>
+			<tr>
+				<td>68</td>
+				<td class="packet">43</td>
+				<td>84</td>
+				<td class="packet">53</td>
+				<td>100</td>
+				<td class="packet">63</td>
+			</tr>
+			<tr>
+				<td>69</td>
+				<td class="packet">44</td>
+				<td>85</td>
+				<td class="packet">54</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>70</td>
+				<td class="packet">45</td>
+				<td>86</td>
+				<td class="packet">55</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>71</td>
+				<td class="packet">46</td>
+				<td>87</td>
+				<td class="packet">56</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>72</td>
+				<td class="packet">47</td>
+				<td>88</td>
+				<td class="packet">57</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>73</td>
+				<td class="packet">48</td>
+				<td>89</td>
+				<td class="packet">58</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>74</td>
+				<td class="packet">49</td>
+				<td>90</td>
+				<td class="packet">59</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>75</td>
+				<td class="packet">4A</td>
+				<td>91</td>
+				<td class="packet">5A</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>76</td>
+				<td class="packet">4B</td>
+				<td>92</td>
+				<td class="packet">5B</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>77</td>
+				<td class="packet">4C</td>
+				<td>93</td>
+				<td class="packet">5C</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>78</td>
+				<td class="packet">4D</td>
+				<td>94</td>
+				<td class="packet">5D</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>79</td>
+				<td class="packet">4E</td>
+				<td>95</td>
+				<td class="packet">5E</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>80</td>
+				<td class="packet">4F</td>
+				<td>96</td>
+				<td class="packet">5F</td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
+		<p>* The value of pp becomes 7F if PRESET Recall has never been executed.</p>
+
+		<h4>PTZ TRACE Record Status Bulk Inquiry<sup>&dagger;</sup></h4>
+		<p>
+			CAM_PTZTraceRecordStatusAllInq (<span style="font-family: Consolas, 'Courier New', monospace"
+				>8x 09 7E 04 20 10 00 00 FF</span
+			>) returns <span style="font-family: Consolas, 'Courier New', monospace">y0 50 0p 0q 0r 0s FF</span> where pqrs is
+			a 16-bit field mapping each bit to a PTZ Trace number:
+		</p>
+		<table>
+			<tr>
+				<th>Nibble</th>
+				<th>Bit 3</th>
+				<th>Bit 2</th>
+				<th>Bit 1</th>
+				<th>Bit 0</th>
+			</tr>
+			<tr>
+				<td>p</td>
+				<td>Trace 16</td>
+				<td>Trace 15</td>
+				<td>Trace 14</td>
+				<td>Trace 13</td>
+			</tr>
+			<tr>
+				<td>q</td>
+				<td>Trace 12</td>
+				<td>Trace 11</td>
+				<td>Trace 10</td>
+				<td>Trace 9</td>
+			</tr>
+			<tr>
+				<td>r</td>
+				<td>Trace 8</td>
+				<td>Trace 7</td>
+				<td>Trace 6</td>
+				<td>Trace 5</td>
+			</tr>
+			<tr>
+				<td>s</td>
+				<td>Trace 4</td>
+				<td>Trace 3</td>
+				<td>Trace 2</td>
+				<td>Trace 1</td>
+			</tr>
+		</table>
+		<p>Each bit: 1 = recorded, 0 = not recorded.</p>
+
+		<h4>PRESET MODE Settings and PRESET Command Behaviors</h4>
+		<table>
+			<tr>
+				<th>PRESET MODE</th>
+				<th>PRESET SET</th>
+				<th>PRESET Reset</th>
+				<th>PRESET Recall</th>
+			</tr>
+			<tr>
+				<td>MODE1</td>
+				<td>Saves PAN, TILT, ZOOM, and FOCUS positions and the camera settings in PRESET.</td>
+				<td>Returns the settings saved in PRESET to the initial value.</td>
+				<td>Calls PAN, TILT, ZOOM, and FOCUS positions and the camera settings in PRESET.</td>
+			</tr>
+			<tr>
+				<td>MODE2</td>
+				<td>Saves PAN, TILT, ZOOM, and FOCUS positions and the camera settings in PRESET.</td>
+				<td>Returns the settings saved in PRESET to the initial value.</td>
+				<td>Calls PAN, TILT, ZOOM, and FOCUS positions in PRESET.</td>
+			</tr>
+			<tr>
+				<td>TRACE<sup>&dagger;</sup></td>
+				<td>Starts recording of PTZ TRACE. During PTZ TRACE recording, stops the recording.</td>
+				<td>Deletes the settings saved in PTZ TRACE.</td>
+				<td>Prepares for the playback of PTZ TRACE recording. While preparing for playback, starts playback.</td>
+			</tr>
+		</table>
+
+		<p><sup>&dagger;</sup> Not available for BRC-H780.</p>
 	</body>
 </html>

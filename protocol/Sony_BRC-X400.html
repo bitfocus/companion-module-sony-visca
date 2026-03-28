@@ -91,6 +91,12 @@
 				<td>Returned when the command has been executed.</td>
 			</tr>
 			<tr>
+				<td>Error &ndash; Message Length Error</td>
+				<td class="packet">y0 60 01 FF</td>
+				<td></td>
+				<td>Returned when the message length is incorrect.</td>
+			</tr>
+			<tr>
 				<td>Error &ndash; Syntax Error</td>
 				<td class="packet">y0 60 02 FF</td>
 				<td></td>
@@ -151,7 +157,7 @@
 				<td>CAM_Iris</td>
 				<td>Reset/Up/Down</td>
 				<td class="packet">8x 01 04 0B 0p FF</td>
-				<td>p: 0=Reset, 2=Up, 3=Down</td>
+				<td>p: 0=Reset, 2=Up (Open), 3=Down (Close)<br />Reset returns to 19 (F2.0)</td>
 			</tr>
 			<tr>
 				<td>CAM_Iris</td>
@@ -187,7 +193,10 @@
 				<td>Gain Point</td>
 				<td>Position</td>
 				<td class="packet">8x 01 05 4C 0p 0p FF</td>
-				<td>pp: Gain Point Position</td>
+				<td>
+					pp: Gain Point Position<br />p: 4 (9 dB)&ndash;D (36 dB) [high-sens Off]<br />p: 4 (21 dB)&ndash;D (48 dB)
+					[high-sens On]
+				</td>
 			</tr>
 			<tr>
 				<td>High Sensitivity</td>
@@ -199,7 +208,7 @@
 				<td>CAM_Shutter</td>
 				<td>Reset/Up/Down</td>
 				<td class="packet">8x 01 04 0A 0p FF</td>
-				<td>p: 0=Reset, 2=Up, 3=Down</td>
+				<td>p: 0=Reset, 2=Up (Fast), 3=Down (Slow)<br />Reset returns to default for frame rate</td>
 			</tr>
 			<tr>
 				<td>CAM_Shutter</td>
@@ -241,7 +250,7 @@
 				<td>Exposure Compensation</td>
 				<td>Reset/Up/Down</td>
 				<td class="packet">8x 01 04 0E 0p FF</td>
-				<td>p: 0=Reset, 2=Up, 3=Down</td>
+				<td>p: 0=Reset, 2=Up, 3=Down<br />Reset returns to 07 (0)</td>
 			</tr>
 			<tr>
 				<td>Exposure Compensation</td>
@@ -314,7 +323,7 @@
 				<td>CAM_RGain</td>
 				<td>Reset/Up/Down</td>
 				<td class="packet">8x 01 04 03 0p FF</td>
-				<td>p: 0=Reset, 2=Up, 3=Down</td>
+				<td>p: 0=Reset, 2=Up, 3=Down<br />Reset returns to 80 (0)</td>
 			</tr>
 			<tr>
 				<td>CAM_RGain</td>
@@ -326,7 +335,7 @@
 				<td>CAM_BGain</td>
 				<td>Reset/Up/Down</td>
 				<td class="packet">8x 01 04 04 0p FF</td>
-				<td>p: 0=Reset, 2=Up, 3=Down</td>
+				<td>p: 0=Reset, 2=Up, 3=Down<br />Reset returns to 80 (0)</td>
 			</tr>
 			<tr>
 				<td>CAM_BGain</td>
@@ -344,7 +353,7 @@
 				<td>WB Offset</td>
 				<td>Reset/Up/Down</td>
 				<td class="packet">8x 01 7E 01 2E 00 0p FF</td>
-				<td>p: 0=Reset, 2=Up, 3=Down</td>
+				<td>p: 0=Reset, 2=Up, 3=Down<br />Reset returns to 7 (0)</td>
 			</tr>
 			<tr>
 				<td>WB Offset</td>
@@ -368,7 +377,7 @@
 				<td>Color Level<sup>&dagger;</sup></td>
 				<td>Reset/Up/Down</td>
 				<td class="packet">8x 01 04 09 0p FF</td>
-				<td>p: 0=Reset, 2=Up, 3=Down</td>
+				<td>p: 0=Reset, 2=Up, 3=Down<br />Reset returns to 4</td>
 			</tr>
 			<tr>
 				<td>Color Level<sup>&dagger;</sup></td>
@@ -380,7 +389,7 @@
 				<td>Color Phase<sup>&dagger;</sup></td>
 				<td>Reset/Up/Down</td>
 				<td class="packet">8x 01 04 0F 0p FF</td>
-				<td>p: 0=Reset, 2=Up, 3=Down</td>
+				<td>p: 0=Reset, 2=Up, 3=Down<br />Reset returns to 7 (0)</td>
 			</tr>
 			<tr>
 				<td>Color Phase<sup>&dagger;</sup></td>
@@ -438,7 +447,7 @@
 				<td>Detail Level</td>
 				<td>Reset/Up/Down</td>
 				<td class="packet">8x 01 04 02 0p FF</td>
-				<td>p: 0=Reset, 2=Up, 3=Down; Reset returns to 7</td>
+				<td>p: 0=Reset, 2=Up, 3=Down<br />Reset returns to 07</td>
 			</tr>
 			<tr>
 				<td>Detail Level</td>
@@ -578,7 +587,7 @@
 				<td>Black Level<sup>&dagger;</sup></td>
 				<td>Reset/Up/Down</td>
 				<td class="packet">8x 01 7E 04 15 0p FF</td>
-				<td>p: 0=Reset, 2=Up, 3=Down</td>
+				<td>p: 0=Reset, 2=Up, 3=Down<br />Reset returns to 30 (48)</td>
 			</tr>
 			<tr>
 				<td>Black Level<sup>&dagger;</sup></td>
@@ -640,15 +649,9 @@
 			</tr>
 			<tr>
 				<td>Picture Effect</td>
-				<td>Off</td>
-				<td class="packet">8x 01 04 63 00 FF</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Picture Effect</td>
-				<td>B&amp;W</td>
-				<td class="packet">8x 01 04 63 04 FF</td>
-				<td></td>
+				<td>Mode</td>
+				<td class="packet">8x 01 04 63 0p FF</td>
+				<td>p: 0=Off, 4=B&amp;W</td>
 			</tr>
 		</table>
 
@@ -1008,7 +1011,7 @@
 			<tr>
 				<td>H Phase<sup>&dagger;</sup></td>
 				<td>Up/Down</td>
-				<td class="packet">8x 01 7E 01 5B 00 0p FF</td>
+				<td class="packet">8x 01 7E 01 3E 00 0p FF</td>
 				<td>p: 2=Up, 3=Down</td>
 			</tr>
 			<tr>
@@ -1105,11 +1108,15 @@
 				<td>Standby Mode</td>
 				<td>Direct</td>
 				<td class="packet">8x 01 7E 04 50 0p FF</td>
-				<td>p: 2=Side, 3=Neutral</td>
+				<td>p: 2=Side<sup>*4</sup>, 3=Neutral</td>
 			</tr>
 		</table>
 
 		<p><sup>&dagger;</sup> BRC-X400/X401 only.</p>
+		<p>
+			<sup>*4</sup> Side: When transferring to Standby, move the Pan to the end point and the Tilt to 0&deg;. Aligned to
+			the right end when IMAGE FLIP is Off, and aligned to the left end when IMAGE FLIP is On.
+		</p>
 
 		<h3>Part 3: Query Commands</h3>
 
@@ -1717,7 +1724,7 @@
 				<td>CAM_PresetLastRecallInq</td>
 				<td class="packet">8x 09 04 3F FF</td>
 				<td class="packet">y0 50 pp FF</td>
-				<td>pp: Last recalled preset number</td>
+				<td>pp: Last recalled preset number &minus; 1 (00&ndash;63, 7F)</td>
 			</tr>
 		</table>
 
@@ -1733,13 +1740,13 @@
 				<td>CAM_PTZTraceStatusInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 7E 04 20 03 FF</td>
 				<td class="packet">y0 50 0p FF</td>
-				<td>p: PTZ Trace Status</td>
+				<td>p: 0=None, 1=Recording, 2=Preparing, 3=Ready for play, 4=Playing, 5=Deleting</td>
 			</tr>
 			<tr>
 				<td>CAM_PTZTraceRecordStatusAllInq<sup>&dagger;</sup></td>
 				<td class="packet">8x 09 7E 04 20 10 00 00 FF</td>
 				<td class="packet">y0 50 0q 0q 0q 0q FF</td>
-				<td>qqqq: Record status of all traces</td>
+				<td>qqqq: Each bit indicates whether a record exists (0=No record, 1=Record exists)</td>
 			</tr>
 			<tr>
 				<td>CAM_PTZTraceRecordStatusEachInq<sup>&dagger;</sup></td>
@@ -1801,7 +1808,7 @@
 				<td>CAM_VideoFormatSelectableInq</td>
 				<td class="packet">8x 09 7E 04 31 FF</td>
 				<td class="packet">y0 50 0p FF</td>
-				<td>p: Video format selectable</td>
+				<td>p: 2=Available, 3=Not available</td>
 			</tr>
 			<tr>
 				<td>CAM_VideoFormatSelectInq</td>
@@ -1855,7 +1862,10 @@
 				<td>CAM_CameraGenerationInq</td>
 				<td class="packet">8x 09 7E 04 30 FF</td>
 				<td class="packet">y0 50 0h 0k 0m 0n 0p 0q 0r 0s 0t 0u uu 0v vv FF</td>
-				<td>Camera generation and model information</td>
+				<td>
+					h: Camera generation number<br />k&ndash;t: 0 fixed<br />uuu: Model ID<br />vvv: Model ID for remote
+					controller compatibility
+				</td>
 			</tr>
 			<tr>
 				<td>CAM_HDMIColorSpaceInq</td>
@@ -1885,7 +1895,7 @@
 				<td>CAM_StandbyModeInq</td>
 				<td class="packet">8x 09 7E 04 50 FF</td>
 				<td class="packet">y0 50 0p FF</td>
-				<td>p: 2=Side, 3=Neutral</td>
+				<td>p: 2=Side<sup>*3</sup>, 3=Neutral</td>
 			</tr>
 			<tr>
 				<td>CAM_VersionInq</td>
@@ -1899,78 +1909,104 @@
 		</table>
 
 		<h4>Block Inquiries</h4>
+		<!-- verified to match manual 2026-03-27 -->
+		<p>
+			Byte numbering is absolute: byte 0 is the address byte (<code>y0</code>), byte 1 is <code>50</code>, data begins
+			at byte 2, and the final byte is the <code>FF</code> terminator. Bit 0 is the least significant bit. The
+			<code>::</code> operator denotes concatenation, with the left operand as the most significant bits.
+		</p>
 		<table>
 			<tr>
 				<th>Command</th>
 				<th>Command Packet</th>
 				<th>Response Packet</th>
-				<th>Comments</th>
+				<th>Field Definitions</th>
 			</tr>
 			<tr>
 				<td>CAM_LensBlockInq</td>
 				<td class="packet">8x 09 7E 7E 00 FF</td>
-				<td class="packet">y0 50 0u 0u 0u 0u 00 00 0v 0v 0v 0v 00 0w 00 FF</td>
+				<td class="packet">y0 50 0z 0z 0z 0z 0n 0n 0f 0f 0f 0f 00 0b 0c FF</td>
 				<td>
-					uuuu: Zoom Position (bytes 0&ndash;3)<br />vvvv: Focus Position (bytes 6&ndash;9)<br />w.bit0: Focus Mode
-					(byte 11; 1=Auto, 0=Manual)
+					zoomPos = byte2[3:0] :: byte3[3:0] :: byte4[3:0] :: byte5[3:0]<br />focusNearLimit = byte6[3:0] ::
+					byte7[3:0]<br />focusPos = byte8[3:0] :: byte9[3:0] :: byte10[3:0] :: byte11[3:0]<br />zoomMode* = byte13[6]
+					:: byte13[1]<br />afMode = byte13[4:3]<br />afSensitivity = byte13[2]<br />focusMode = byte13[0]<br />presetRecallExec
+					= byte14[2]<br />focusCmdExec = byte14[1]<br />zoomCmdExec = byte14[0]<br /><em
+						>* Zoom Mode fixed at 00 for SRG-X120/HD1M2.</em
+					>
 				</td>
 			</tr>
 			<tr>
 				<td>CAM_CameraBlockInq</td>
 				<td class="packet">8x 09 7E 7E 01 FF</td>
-				<td class="packet">y0 50 0p 0p 0q 0q 0r 0s tt 0u vv ww yy xx 0z FF</td>
+				<td class="packet">y0 50 0p 0p 0q 0q 0r sd ce uu vv ww 0g 00 hz FF</td>
 				<td>
-					pp: R Gain (bytes 0&ndash;1)<br />qq: B Gain (bytes 2&ndash;3)<br />r: WB Mode (byte 4)<br />s: Aperture Gain
-					(byte 5)<br />tt: AE mode (byte 6; 00=Full Auto, 03=Manual, 0A=Shutter Priority, 0B=Iris Priority)<br />u.bit2:
-					Backlight (byte 7)<br />u.bit1: Exposure Comp On/Off (byte 7)<br />vv: Shutter Position (byte 8)<br />ww: Iris
-					Position (byte 9)<br />yy: Gain Position (byte 10)<br />xx: Bright Position (byte 11)<br />z: Exposure Comp
-					Position (byte 12)<br /><em>Note: Color Matrix bits (s) undefined for SRG models.</em>
+					rGain = byte2[3:0] :: byte3[3:0]<br />bGain = byte4[3:0] :: byte5[3:0]<br />wbMode = byte6[3:0]<br />wbSpeed =
+					byte7[6:4]<br />detailLevel = byte7[3:0]<br />colorMatrix* = byte14[6:4] :: byte8[6:5]<br />exposureMode =
+					byte8[3:0]<br />highSensitivity = byte9[5]<br />visibilityEnhancer = byte9[4]<br />backlight = byte9[2]<br />expCompOn
+					= byte9[1]<br />autoSlowShutter = byte9[0]<br />shutterPos = byte10[5:0]<br />irisPos = byte11[4:0]<br />gainPos
+					= byte12[4:0]<br />expCompLevel = byte14[3:0]<br /><em>* Color Matrix undefined for SRG models.</em>
 				</td>
 			</tr>
 			<tr>
 				<td>CAM_OtherBlockInq</td>
 				<td class="packet">8x 09 7E 7E 02 FF</td>
-				<td class="packet">y0 50 0p 0q 00 0r 00 00 00 00 00 00 00 00 00 FF</td>
+				<td class="packet">y0 50 pp qq 00 0r 00 0s tt uu vv ww 00 xx yy FF</td>
 				<td>
-					p.bit0: Power (byte 0; 1=On, 0=Off)<br />q.bit2: LR Reverse (byte 1; 1=On, 0=Off)<br />r.bit3&ndash;0: Picture
-					Effect Mode (byte 3)<br /><em>Note: Knee fields (Mode, Slope, Setting, Point) undefined for SRG models.</em>
+					spotlight = byte2[5]<br />flickerCancel = byte2[4]<br />autoICR = byte2[2]<br />power = byte2[0]<br />imageStabilizer
+					= byte3[6]<br />irCutFilter = byte3[4]<br />pictureEffect = byte5[3:0]<br />wbOffset = byte7[3:0]<br />cameraID
+					= byte8[3:0] :: byte9[3:0] :: byte10[3:0] :: byte11[3:0]<br />kneeMode* = byte13[4]<br />kneeSlope* =
+					byte13[3:0]<br />kneeSetting* = byte14[4]<br />kneePoint* = byte14[3:0]<br /><em
+						>* Knee fields undefined for SRG models.</em
+					>
 				</td>
 			</tr>
 			<tr>
 				<td>CAM_EnlargementBlockInq</td>
 				<td class="packet">8x 09 7E 7E 03 FF</td>
-				<td class="packet">y0 50 00 00 00 00 00 00 00 0p 0q rr 0s 0t 0u FF</td>
+				<td class="packet">y0 50 00 00 0p 0q 0r 0s tt uu vv ww 0a bb cc FF</td>
 				<td>
-					p: AF Sensitivity (byte 7)<br />q.bit0: Picture Flip (byte 8; 1=On, 0=Off)<br />rr.bit6&ndash;3: Color Gain
-					(bytes 9&ndash;10)<br />s: Flip (byte 11)<br />t.bit2&ndash;0: NR2D Level (byte 12)<br />u: Gain Limit (byte
-					13)<br /><em>Note: Gamma, Chroma Suppress, Color Gain fields undefined for SRG models.</em>
-				</td>
-			</tr>
-			<tr>
-				<td>CAM_ColorBlockInq</td>
-				<td class="packet">8x 09 7E 7E 04 FF</td>
-				<td class="packet">y0 50 0p 0q 0r 0r 0s 0s 0t 0u 0v 0w 0x 0y 0z FF</td>
-				<td>
-					p: WB Mode (byte 0)<br />q: Color Temp (byte 1)<br />rr: R Gain (bytes 2&ndash;3)<br />ss: B Gain (bytes
-					4&ndash;5)<br />t: Matrix (byte 6)<br />u: Chroma Level (byte 7)<br />v: Color Level (byte 8)<br />w: Color
-					Phase (byte 9)<br />x: Chroma Suppress (byte 10)<br />y: WB Speed (byte 11)<br />z: WB Offset (byte 12)<br /><em
-						>Note: Gamma Level, Black Gamma, Gamma Offset, Black Level fields undefined for SRG models.</em
+					afOperatingTime = byte4[3:0] :: byte5[3:0]<br />afStayingTime = byte6[3:0] :: byte7[3:0]<br />nr2dLevel =
+					byte8[6:4]<br />nr3dLevel = byte9[6:4]<br />gamma* = byte10[6:3] :: byte13[6:4]<br />imgFlip = byte10[0]<br />colorGain*
+					= byte11[6:3]<br />aeSpeed = byte12[5:0]<br />highSensitivity = byte13[3]<br />nrLevel = byte13[2:0]<br />chromaSuppress
+					= byte14[6:4]<br />gainLimit = byte14[3:0]<br /><em
+						>* Gamma, Chroma Suppress, Color Gain undefined for SRG models.</em
 					>
 				</td>
 			</tr>
 			<tr>
-				<td>CAM_DetailBlockInq<sup>&dagger;</sup></td>
-				<td class="packet">8x 09 7E 7E 05 FF</td>
-				<td class="packet">y0 50 0p 0q 0r 0s 0t 0u 0v 0w 0x 0y 0z 00 00 FF</td>
+				<td>CAM_EnlargementBlock2Inq</td>
+				<td class="packet">8x 09 7E 7E 04 FF</td>
+				<td class="packet">y0 50 pp qq rr ss tt uu vv 0w 0x yy zz aa bb FF</td>
 				<td>
-					p: Detail Mode (byte 0)<br />q: Detail Level (byte 1)<br />r: Bandwidth (byte 2)<br />s: Crispening (byte
-					3)<br />t: HV Balance (byte 4)<br />u: BW Balance (byte 5)<br />v: Limit (byte 6)<br />w: Highlight Detail
-					(byte 7)<br />x: Super Low (byte 8)<br />y: (reserved) (byte 9)<br />z: (reserved) (byte 10)
+					visibilityEnhancer = byte2[1:0]<br />blackLevel* = byte3[3:0] :: byte4[6:3]<br />veEffectLevel = byte4[2:0]<br />blackGammaLevel*
+					= byte5[5:2]<br />veBrightnessCompSel = byte5[1:0]<br />gammaLevel* = byte6[5:2]<br />veCompLevel =
+					byte6[1:0]<br />blackGammaRange* = byte7[6:5]<br />gammaOffset* = byte7[4:1] :: byte8[5:2]<br />defog =
+					byte7[0]<br />defogLevel = byte8[1:0]<br />minShutter = byte9[5:0]<br />maxShutter = byte10[5:0]<br />detailHVBalance
+					= byte11[5:3]<br />detailCrispening = byte11[2:0]<br />detailLimit = byte12[5:3]<br />detailBWBalance =
+					byte12[2:0]<br />detailHighlightDetail = byte13[5:3]<br />detailSuperLow = byte13[2:0]<br />detailMode =
+					byte14[3]<br />detailBandwidth = byte14[2:0]<br /><em
+						>* Gamma Level, Black Gamma, Gamma Offset, Black Level fields undefined for SRG models.</em
+					>
+				</td>
+			</tr>
+			<tr>
+				<td>CAM_EnlargementBlock3Inq<sup>&dagger;</sup></td>
+				<td class="packet">8x 09 7E 7E 05 FF</td>
+				<td class="packet">y0 50 0a 0b 0c 0d 0e 0f 0g 0h 0j 0k 0m 0n 0p FF</td>
+				<td>
+					colorPhase = byte2[3:0]<br />matrixRG = byte3[3:0] :: byte4[3:0]<br />matrixRB = byte5[3:0] :: byte6[3:0]<br />matrixGR
+					= byte7[3:0] :: byte8[3:0]<br />matrixGB = byte9[3:0] :: byte10[3:0]<br />matrixBR = byte11[3:0] ::
+					byte12[3:0]<br />matrixBG = byte13[3:0] :: byte14[3:0]<br />Matrix coefficients are 8-bit values: 00
+					(&minus;99)&ndash;63 (0)&ndash;C6 (+99)
 				</td>
 			</tr>
 		</table>
 
 		<p><sup>&dagger;</sup> BRC-X400/X401 only.</p>
+		<p>
+			<sup>*3</sup> Side: When transferring to Standby, move the Pan to the end point and the Tilt to 0&deg;. Aligned to
+			the right end when IMAGE FLIP is Off, and aligned to the left end when IMAGE FLIP is On.
+		</p>
 
 		<h3>Part 4: VISCA Command Setting Values</h3>
 
@@ -2154,7 +2190,7 @@
 		</table>
 
 		<h4>Max Shutter</h4>
-		<p>Same values as Shutter table above. 0E&ndash;11 available only when high-sensitivity mode is On.</p>
+		<p>Same shutter speeds as Shutter table. Max Shutter range starts from 0F (23.98p) or 10 (other rates) up to 21.</p>
 		<table>
 			<tr>
 				<th>Parameter</th>
@@ -2608,12 +2644,14 @@
 				<td>DE00 (left limit)&ndash;0000 (center)&ndash;2200 (right limit)<br />&plusmn;170 degrees</td>
 			</tr>
 			<tr>
-				<td>Tilt</td>
+				<td>Tilt (Flip Off)</td>
 				<td class="packet">FC00&ndash;0000&ndash;1200</td>
-				<td>
-					FC00 (bottom limit)&ndash;0000 (center)&ndash;1200 (top limit)<br />&minus;20 degrees to +90 degrees (IMG Flip
-					Off)<br />&minus;90 degrees to +20 degrees (IMG Flip On)
-				</td>
+				<td>FC00 (&minus;20&deg;)&ndash;0000 (center)&ndash;1200 (+90&deg;)</td>
+			</tr>
+			<tr>
+				<td>Tilt (Flip On)</td>
+				<td class="packet">EE00&ndash;0000&ndash;0400</td>
+				<td>EE00 (&minus;90&deg;)&ndash;0000 (center)&ndash;0400 (+20&deg;)</td>
 			</tr>
 		</table>
 
@@ -2876,6 +2914,7 @@
 				<td>60</td>
 			</tr>
 		</table>
+		<p>Up to 7F can be specified, but 19 to 7F are for maintenance.</p>
 
 		<h4>Preset Run Speed</h4>
 		<p>For reference. Same as SLOW OFF, with parameter 19 added.</p>
@@ -3343,5 +3382,170 @@
 				<td>3840&times;2160/23.98p<sup>&dagger;</sup></td>
 			</tr>
 		</table>
+
+		<h4>Lens Control Summary</h4>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>Range</th>
+				<th>Notes</th>
+			</tr>
+			<tr>
+				<td>Zoom Position</td>
+				<td class="packet">0000&ndash;4000&ndash;7AC0</td>
+				<td>
+					0000 (wide end)&ndash;4000 (optical tele end)&ndash;7AC0 (digital tele end)<br />SRG-X120/HD1M2 range:
+					0000&ndash;4000
+				</td>
+			</tr>
+			<tr>
+				<td>Focus Position</td>
+				<td class="packet">1000&ndash;F000</td>
+				<td>1000 (far end)&ndash;F000 (near end). Lower byte is fixed at 00.</td>
+			</tr>
+			<tr>
+				<td>Focus Near Limit</td>
+				<td class="packet">1000&ndash;F000</td>
+				<td>
+					1000 (&infin;), 2000 (5 m), 3000 (3 m), 4000 (2 m), 5000 (1.5 m), 6000 (1.2 m), 7000 (1 m), 8000 (0.8 m), 9000
+					(0.6 m), A000 (47 cm), B000 (35 cm, initial), C000 (26 cm), D000 (17 cm), E000 (10 cm), F000 (8 cm). Use
+					distance shown as a guide value as it may vary depending on temperature characteristics.
+				</td>
+			</tr>
+		</table>
+
+		<h4>Pan/Tilt Status Code</h4>
+		<table>
+			<tr>
+				<th>Bit Pattern (pppp)</th>
+				<th>Status</th>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;1
+				</td>
+				<td>Panning reaches the end of the left.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;&ndash;1&ndash;
+				</td>
+				<td>Panning reaches the end of the right.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;1&ndash;&ndash;
+				</td>
+				<td>Tilting reaches the upper limit.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash; 0&ndash;&ndash;&ndash; 1&ndash;&ndash;&ndash;
+				</td>
+				<td>Tilting reaches the lower limit.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash; &ndash;&ndash;00 &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Pan functions normally.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash; &ndash;&ndash;01 &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Pan mechanism is defective.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; &ndash;&ndash;00 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Tilt functions normally.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; &ndash;&ndash;01 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Tilt mechanism is defective.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; 00&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>No movement instruction.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; 01&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Pan/Tilt operating.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; 10&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Pan/Tilt operations complete.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;&ndash;&ndash; 11&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Pan/Tilt operating failed.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;00 &ndash;&ndash;&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Not initialized.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;01 &ndash;&ndash;&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Initializing.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;10 &ndash;&ndash;&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Initialization completes.</td>
+			</tr>
+			<tr>
+				<td class="packet">
+					&ndash;&ndash;11 &ndash;&ndash;&ndash;&ndash; 0&ndash;&ndash;&ndash; &ndash;&ndash;&ndash;&ndash;
+				</td>
+				<td>Initialization failed.</td>
+			</tr>
+		</table>
+
+		<h4>PRESET MODE Settings and PRESET Command Behaviors (BRC-X400/X401)<sup>&dagger;</sup></h4>
+		<table>
+			<tr>
+				<th>PRESET MODE</th>
+				<th>SET</th>
+				<th>RESET</th>
+				<th>RECALL</th>
+			</tr>
+			<tr>
+				<td>MODE1</td>
+				<td>Saves PAN, TILT, ZOOM, FOCUS positions and camera settings in PRESET.</td>
+				<td>Returns PRESET settings to initial value.</td>
+				<td>Calls PAN, TILT, ZOOM, FOCUS positions and camera settings in PRESET.</td>
+			</tr>
+			<tr>
+				<td>MODE2</td>
+				<td>Saves PAN, TILT, ZOOM, FOCUS positions and camera settings in PRESET.</td>
+				<td>Returns PRESET settings to initial value.</td>
+				<td>Calls PAN, TILT, ZOOM, FOCUS positions in PRESET (camera settings not changed).</td>
+			</tr>
+			<tr>
+				<td>TRACE</td>
+				<td>Starts recording of PTZ TRACE. During recording, stops the recording.</td>
+				<td>Deletes the settings saved in PTZ TRACE.</td>
+				<td>Prepares to reproduce the PTZ TRACE recording. While preparing for reproduction, starts reproducing.</td>
+			</tr>
+		</table>
+
+		<p><sup>&dagger;</sup> BRC-X400/X401 only.</p>
 	</body>
 </html>

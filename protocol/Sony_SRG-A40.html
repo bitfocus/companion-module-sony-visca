@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Sony SRG-X40UH Protocol Info</title>
+		<title>Sony SRG-A40 Protocol Info</title>
 		<style>
 			body {
 				font-family: Arial, Helvetica, sans-serif;
@@ -55,15 +55,14 @@
 		</style>
 	</head>
 	<body>
-		<h1>Sony SRG-X40UH Protocol Info</h1>
+		<h1>Sony SRG-A40 Protocol Info</h1>
 		<p>This document contains information about the VISCA Protocol for the following cameras:</p>
 		<ul>
-			<li>SRG-X40UH</li>
-			<li>SRG-H40UH</li>
+			<li>SRG-A40</li>
+			<li>SRG-A12</li>
 		</ul>
 		<p>
-			Note: Software Version 1.00. HDMI+USB output camera. 20&times; optical zoom. SRG-X40UH supports 4K (2160p);
-			SRG-H40UH does not.
+			Note: Software Version 1.0. SDI+HDMI output. SRG-A40: 20&times; optical zoom; SRG-A12: 12&times; optical zoom.
 		</p>
 
 		<h2>VISCA Command List</h2>
@@ -359,6 +358,12 @@
 				<td class="packet">8x 01 7E 01 2E 01 0p FF</td>
 				<td>p: 0 (&minus;7)&ndash;7 (0)&ndash;E (+7)</td>
 			</tr>
+			<tr>
+				<td>Chroma Suppress</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 04 5F 0p FF</td>
+				<td>p: 0 (Off), 1 (Weak)&ndash;3 (Strong)</td>
+			</tr>
 		</table>
 
 		<h4>DETAIL</h4>
@@ -452,6 +457,12 @@
 				<td>p: 2=On, 3=Off</td>
 			</tr>
 			<tr>
+				<td>Defog</td>
+				<td>On/Off + Level</td>
+				<td class="packet">8x 01 04 37 0p 0q FF</td>
+				<td>p: 2=On, 3=Off<br />q: Defog Level 0 (same as 2), 1 (Weak)&ndash;3 (Strong)</td>
+			</tr>
+			<tr>
 				<td>High Resolution</td>
 				<td>On/Off</td>
 				<td class="packet">8x 01 04 52 0p FF</td>
@@ -470,6 +481,12 @@
 				<td>
 					p: 2D NR Level 0 (Off), 1 (Weak)&ndash;5 (Strong)<br />q: 3D NR Level 0 (Off), 1 (Weak)&ndash;5 (Strong)
 				</td>
+			</tr>
+			<tr>
+				<td>Picture Effect</td>
+				<td>Mode</td>
+				<td class="packet">8x 01 04 63 0p FF</td>
+				<td>p: 0=Off, 4=Black&amp;White</td>
 			</tr>
 		</table>
 
@@ -509,9 +526,20 @@
 				<td>Zoom Mode</td>
 				<td>Direct</td>
 				<td class="packet">8x 01 04 06 0p FF</td>
-				<td>p: 3=Optical only, 4=Clear Image Zoom, 2=Digital</td>
+				<td>p: 3=Optical only, 4=Clear Image Zoom, 2=Digital<sup>*1</sup></td>
+			</tr>
+			<tr>
+				<td>Tele Convert</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 7E 04 36 0p FF</td>
+				<td>p: 2=On, 3=Off<sup>*2</sup></td>
 			</tr>
 		</table>
+		<p><sup>*1</sup> Clear Image Zoom and Digital not available for SRG-A12.</p>
+		<p>
+			<sup>*2</sup> Tele Convert only available for: 1920&times;1080/59.94p, 1080/59.94i, 1080/29.97p, 1080/50p,
+			1080/50i, 1080/25p, 1080/23.98p.
+		</p>
 
 		<h4>FOCUS</h4>
 		<table>
@@ -739,6 +767,28 @@
 				<td class="packet">8x 01 7E 04 1C 0p 0p FF</td>
 				<td>pp: Common Speed 01&ndash;19</td>
 			</tr>
+			<tr>
+				<td>Preset Call Mode</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 7E 04 3B 0p FF</td>
+				<td>p: 2=Freeze, 3=Normal</td>
+			</tr>
+		</table>
+
+		<h4>PTZ AUTO FRAMING</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Function</th>
+				<th>Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>PTZ Auto Framing</td>
+				<td>Start/Stop</td>
+				<td class="packet">8x 01 7E 04 3A 0p FF</td>
+				<td>p: 1=Start, 0=Stop</td>
+			</tr>
 		</table>
 
 		<h4>SYSTEM</h4>
@@ -786,6 +836,12 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>OSD</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 7E 04 76 0p 0q FF</td>
+				<td>p: 0=SDI, 1=HDMI<br />q: 2=On, 3=Off</td>
+			</tr>
+			<tr>
 				<td>ICR</td>
 				<td>On/Off</td>
 				<td class="packet">8x 01 04 01 0p FF</td>
@@ -802,6 +858,18 @@
 				<td>Direct</td>
 				<td class="packet">8x 01 04 21 00 00 0p 0p FF</td>
 				<td>pp: 00&ndash;FF</td>
+			</tr>
+			<tr>
+				<td>Tally</td>
+				<td>On/Off</td>
+				<td class="packet">8x 01 7E 01 0A 00 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>Tally Level</td>
+				<td>Direct</td>
+				<td class="packet">8x 01 7E 01 0A 01 0p FF</td>
+				<td>p: 0=OFF, 4=ON (LOW), 5=ON (HIGH)</td>
 			</tr>
 			<tr>
 				<td>HDMI Color Space</td>
@@ -995,6 +1063,12 @@
 				<td class="packet">y0 50 00 00 00 0p FF</td>
 				<td>p: 0 (&minus;7)&ndash;7 (0)&ndash;E (+7)</td>
 			</tr>
+			<tr>
+				<td>CAM_ChromaSuppressInq</td>
+				<td class="packet">8x 09 04 5F FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0 (Off), 1&ndash;3</td>
+			</tr>
 		</table>
 
 		<h4>DETAIL</h4>
@@ -1082,6 +1156,12 @@
 				<td>p: 2=On, 3=Off</td>
 			</tr>
 			<tr>
+				<td>CAM_DefogInq</td>
+				<td class="packet">8x 09 04 37 FF</td>
+				<td class="packet">y0 50 0p 0q FF</td>
+				<td>p: 2=On, 3=Off<br />q: Defog Level 0&ndash;3</td>
+			</tr>
+			<tr>
 				<td>CAM_HRModeInq</td>
 				<td class="packet">8x 09 04 52 FF</td>
 				<td class="packet">y0 50 0p FF</td>
@@ -1098,6 +1178,12 @@
 				<td class="packet">8x 09 05 53 FF</td>
 				<td class="packet">y0 50 0p 0q FF</td>
 				<td>p: 2D NR 0&ndash;5<br />q: 3D NR 0&ndash;5</td>
+			</tr>
+			<tr>
+				<td>CAM_PictureEffectModeInq</td>
+				<td class="packet">8x 09 04 63 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 0=Off, 4=Black&amp;White</td>
 			</tr>
 		</table>
 
@@ -1120,6 +1206,12 @@
 				<td class="packet">8x 09 04 47 FF</td>
 				<td class="packet">y0 50 0z 0z 0z 0z FF</td>
 				<td>zzzz: Zoom Position</td>
+			</tr>
+			<tr>
+				<td>CAM_TeleConvertModeInq</td>
+				<td class="packet">8x 09 7E 04 36 FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
 			</tr>
 		</table>
 
@@ -1253,6 +1345,28 @@
 				<td class="packet">y0 50 pp FF</td>
 				<td>pp: Last recalled Preset No. &minus; 1 (00&ndash;63, 7F if never recalled)</td>
 			</tr>
+			<tr>
+				<td>CAM_PresetCallModeInq</td>
+				<td class="packet">8x 09 7E 04 3B FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=Freeze, 3=Normal</td>
+			</tr>
+		</table>
+
+		<h4>PTZ AUTO FRAMING</h4>
+		<table>
+			<tr>
+				<th>Command</th>
+				<th>Command Packet</th>
+				<th>Response Packet</th>
+				<th>Comments</th>
+			</tr>
+			<tr>
+				<td>CAM_PTZAutoFramingInq</td>
+				<td class="packet">8x 09 7E 04 3A FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 1=Start, 0=Stop</td>
+			</tr>
 		</table>
 
 		<h4>SYSTEM</h4>
@@ -1318,6 +1432,18 @@
 				<td>pppp: 0000&ndash;FFFF</td>
 			</tr>
 			<tr>
+				<td>CAM_TallyInq</td>
+				<td class="packet">8x 09 7E 01 0A FF</td>
+				<td class="packet">y0 50 0p FF</td>
+				<td>p: 2=On, 3=Off</td>
+			</tr>
+			<tr>
+				<td>CAM_OSDInq</td>
+				<td class="packet">8x 09 7E 04 76 0p FF</td>
+				<td class="packet">y0 50 0q FF</td>
+				<td>p: 0=SDI, 1=HDMI<br />q: 2=On, 3=Off</td>
+			</tr>
+			<tr>
 				<td>CAM_CameraGenerationInq</td>
 				<td class="packet">8x 09 7E 04 30 FF</td>
 				<td class="packet">y0 50 0h 0k 0m 0n 0p 0q 0r 0s 0t 0u uu 0v vv FF</td>
@@ -1336,12 +1462,6 @@
 				<td>p: 2=On, 3=Off</td>
 			</tr>
 			<tr>
-				<td>CAM_OSDInq</td>
-				<td class="packet">8x 09 7E 04 76 0p FF</td>
-				<td class="packet">y0 50 0q FF</td>
-				<td>p: 1=HDMI<br />q: 2=On, 3=Off</td>
-			</tr>
-			<tr>
 				<td>CAM_PowerInq</td>
 				<td class="packet">8x 09 04 00 FF</td>
 				<td class="packet">y0 50 0p FF</td>
@@ -1358,7 +1478,7 @@
 				<td class="packet">8x 09 00 02 FF</td>
 				<td class="packet">y0 50 GG GG HH HH JJ JJ KK FF</td>
 				<td>
-					GGGG: Vendor ID (0001=Sony)<br />HHHH: Model ID (061F=SRG-X40UH, 0620=SRG-H40UH)<br />JJJJ: ROM Revision<br />KK:
+					GGGG: Vendor ID (0001=Sony)<br />HHHH: Model ID (0621=SRG-A40, 0622=SRG-A12)<br />JJJJ: ROM Revision<br />KK:
 					Maximum Socket Number (02)
 				</td>
 			</tr>
@@ -1384,10 +1504,13 @@
 				<td class="packet">y0 50 0z 0z 0z 0z 0n 0n 0f 0f 0f 0f 00 0b 0c FF</td>
 				<td>
 					zoomPos = byte2[3:0] :: byte3[3:0] :: byte4[3:0] :: byte5[3:0]<br />focusNearLimit = byte6[3:0] ::
-					byte7[3:0]<br />focusPos = byte8[3:0] :: byte9[3:0] :: byte10[3:0] :: byte11[3:0]<br />zoomMode = byte13[6] ::
-					byte13[1]<br />afMode = byte13[4:3]<br />afSensitivity = byte13[2]<br />focusMode = byte13[0]<br />presetRecallExec
-					= byte14[2]<br />focusCmdExec = byte14[1]<br />zoomCmdExec = byte14[0]
+					byte7[3:0]<br />focusPos = byte8[3:0] :: byte9[3:0] :: byte10[3:0] :: byte11[3:0]<br />zoomMode* = byte13[6]
+					:: byte13[1]<br />afMode = byte13[4:3]<br />afSensitivity = byte13[2]<br />focusMode = byte13[0]<br />lowContrastDetection
+					= byte14[3]<br />presetRecallExec = byte14[2]<br />focusCmdExec = byte14[1]<br />zoomCmdExec = byte14[0]
 				</td>
+			</tr>
+			<tr>
+				<td colspan="4"><em>* zoomMode fixed at 00 for SRG-A12.</em></td>
 			</tr>
 			<tr>
 				<td>CAM_CameraBlockInq</td>
@@ -1403,39 +1526,35 @@
 			<tr>
 				<td>CAM_OtherBlockInq</td>
 				<td class="packet">8x 09 7E 7E 02 FF</td>
-				<td class="packet">y0 50 pp qq 00 00 00 0r ss tt uu vv 00 00 00 00 FF</td>
+				<td class="packet">y0 50 pp qq 00 rr 00 0s tt uu vv ww 00 00 00 00 FF</td>
 				<td>
 					spotlight = byte2[5]<br />flickerCancel = byte2[4]<br />autoICR = byte2[2]<br />power = byte2[0]<br />imageStabilizer
-					= byte3[6]<br />irCutFilter = byte3[4]<br />wbOffset = byte7[3:0]<br />cameraID = byte8[3:0] :: byte9[3:0] ::
-					byte10[3:0] :: byte11[3:0]
+					= byte3[6]<br />irCutFilter = byte3[4]<br />pictureEffect = byte5[3:0]<br />wbOffset = byte7[3:0]<br />cameraID
+					= byte8[3:0] :: byte9[3:0] :: byte10[3:0] :: byte11[3:0]
 				</td>
 			</tr>
 			<tr>
 				<td>CAM_EnlargementBlockInq</td>
 				<td class="packet">8x 09 7E 7E 03 FF</td>
-				<td class="packet">y0 50 00 00 0p 0q 0r 0s tt uu 0v 00 0w 0x yy 00 FF</td>
+				<td class="packet">y0 50 00 00 0p 0q 0r 0s tt uu 0v 0w 0x 0y zz aa FF</td>
 				<td>
 					afOperatingTime = byte4[3:0] :: byte5[3:0]<br />afStayingTime = byte6[3:0] :: byte7[3:0]<br />nr2dLevel =
-					byte8[6:4]<br />nr3dLevel = byte9[6:4]<br />imgFlip = byte10[0]<br />aeSpeed = byte12[5:0]<br />highSensitivity
-					= byte13[3]<br />nrLevel = byte13[2:0]
+					byte8[6:4]<br />nr3dLevel = byte9[6:4]<br />imageFlipStatus = byte10[0]<br />imageFlip = byte11[0]<br />aeSpeed
+					= byte12[5:0]<br />highSensitivity = byte13[3]<br />nrLevel = byte13[2:0]<br />chromaSuppress = byte14[6:4]<br />gainLimit
+					= byte14[3:0]
 				</td>
 			</tr>
 			<tr>
 				<td>CAM_EnlargementBlock2Inq</td>
 				<td class="packet">8x 09 7E 7E 04 FF</td>
-				<td class="packet">y0 50 pp 00 qq rr ss 00 00 00 tt uu vv ww xx yy zz FF</td>
+				<td class="packet">y0 50 pp 00 qq rr ss 00 0t uu vv ww xx yy zz aa FF</td>
 				<td>
 					visibilityEnhancer = byte2[1:0]<br />veEffectLevel = byte4[2:0]<br />veBrightnessCompSel = byte5[1:0]<br />veCompLevel
-					= byte6[1:0]<br />minShutter = byte9[5:0]<br />maxShutter = byte10[5:0]<br />detailHVBalance = byte11[5:3]<br />detailCrispening
-					= byte11[2:0]<br />detailLimit = byte12[5:3]<br />detailBWBalance = byte12[2:0]<br />detailHighlightDetail =
-					byte13[5:3]<br />detailSuperLow = byte13[2:0]<br />detailMode = byte14[3]<br />detailBandwidth = byte14[2:0]
+					= byte6[1:0]<br />defog = byte7[0]<br />defogLevel = byte8[1:0]<br />minShutter = byte9[5:0]<br />maxShutter =
+					byte10[5:0]<br />detailHVBalance = byte11[5:3]<br />detailCrispening = byte11[2:0]<br />detailLimit =
+					byte12[5:3]<br />detailBWBalance = byte12[2:0]<br />detailHighlightDetail = byte13[5:3]<br />detailSuperLow =
+					byte13[2:0]<br />detailMode = byte14[3]<br />detailBandwidth = byte14[2:0]
 				</td>
-			</tr>
-			<tr>
-				<td>CAM_EnlargementBlock3Inq</td>
-				<td class="packet">8x 09 7E 7E 05 FF</td>
-				<td class="packet">y0 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00 FF</td>
-				<td>(all reserved/N/A)</td>
 			</tr>
 		</table>
 
@@ -1674,15 +1793,17 @@
 		</table>
 
 		<h4>Shutter / Min Shutter</h4>
-		<p>Shutter values vary by signal format. 2160p formats are SRG-X40UH only.</p>
+		<p>Shutter values vary by signal format.</p>
 		<table>
 			<tr>
 				<th>Parameter</th>
-				<th>2160/29.97p<sup>*</sup>,<br />1080/59.94p, 1080/59.94i,<br />720/59.94p</th>
-				<th>2160/25p<sup>*</sup>,<br />1080/50p, 1080/50i,<br />720/50p</th>
+				<th>2160/29.97p,<br />1080/59.94p, 1080/59.94i,<br />720/59.94p</th>
+				<th>2160/25p,<br />1080/50p, 1080/50i,<br />720/50p</th>
+				<th>2160/23.98p,<br />1080/23.98p</th>
 			</tr>
 			<tr>
 				<td class="packet">06</td>
+				<td>1/1</td>
 				<td>1/1</td>
 				<td>1/1</td>
 			</tr>
@@ -1690,9 +1811,11 @@
 				<td class="packet">07</td>
 				<td>2/3</td>
 				<td>2/3</td>
+				<td>2/3</td>
 			</tr>
 			<tr>
 				<td class="packet">08</td>
+				<td>1/2</td>
 				<td>1/2</td>
 				<td>1/2</td>
 			</tr>
@@ -1700,9 +1823,11 @@
 				<td class="packet">09</td>
 				<td>1/3</td>
 				<td>1/3</td>
+				<td>1/3</td>
 			</tr>
 			<tr>
 				<td class="packet">0A</td>
+				<td>1/4</td>
 				<td>1/4</td>
 				<td>1/4</td>
 			</tr>
@@ -1710,9 +1835,11 @@
 				<td class="packet">0B</td>
 				<td>1/6</td>
 				<td>1/6</td>
+				<td>1/6</td>
 			</tr>
 			<tr>
 				<td class="packet">0C</td>
+				<td>1/8</td>
 				<td>1/8</td>
 				<td>1/8</td>
 			</tr>
@@ -1720,215 +1847,254 @@
 				<td class="packet">0D</td>
 				<td>1/10</td>
 				<td>1/12</td>
+				<td>1/12</td>
 			</tr>
 			<tr>
 				<td class="packet">0E</td>
 				<td>1/15</td>
 				<td>1/15</td>
+				<td>1/20</td>
 			</tr>
 			<tr>
 				<td class="packet">0F</td>
 				<td>1/20</td>
 				<td>1/20</td>
+				<td>1/24</td>
 			</tr>
 			<tr>
 				<td class="packet">10</td>
 				<td>1/30</td>
+				<td>1/25</td>
 				<td>1/25</td>
 			</tr>
 			<tr>
 				<td class="packet">11</td>
 				<td>1/50</td>
 				<td>1/30</td>
+				<td>1/40</td>
 			</tr>
 			<tr>
 				<td class="packet">12</td>
 				<td>1/60</td>
 				<td>1/50</td>
+				<td>1/48</td>
 			</tr>
 			<tr>
 				<td class="packet">13</td>
 				<td>1/90</td>
 				<td>1/60</td>
+				<td>1/50</td>
 			</tr>
 			<tr>
 				<td class="packet">14</td>
 				<td>1/100</td>
 				<td>1/100</td>
+				<td>1/60</td>
 			</tr>
 			<tr>
 				<td class="packet">15</td>
 				<td>1/125</td>
 				<td>1/120</td>
+				<td>1/96</td>
 			</tr>
 			<tr>
 				<td class="packet">16</td>
 				<td>1/180</td>
 				<td>1/150</td>
+				<td>1/100</td>
 			</tr>
 			<tr>
 				<td class="packet">17</td>
 				<td>1/250</td>
 				<td>1/215</td>
+				<td>1/120</td>
 			</tr>
 			<tr>
 				<td class="packet">18</td>
 				<td>1/350</td>
 				<td>1/300</td>
+				<td>1/144</td>
 			</tr>
 			<tr>
 				<td class="packet">19</td>
 				<td>1/500</td>
 				<td>1/425</td>
+				<td>1/192</td>
 			</tr>
 			<tr>
 				<td class="packet">1A</td>
 				<td>1/725</td>
 				<td>1/600</td>
+				<td>1/200</td>
 			</tr>
 			<tr>
 				<td class="packet">1B</td>
 				<td>1/1000</td>
 				<td>1/1000</td>
+				<td>1/288</td>
 			</tr>
 			<tr>
 				<td class="packet">1C</td>
 				<td>1/1500</td>
 				<td>1/1250</td>
+				<td>1/400</td>
 			</tr>
 			<tr>
 				<td class="packet">1D</td>
 				<td>1/2000</td>
 				<td>1/1750</td>
+				<td>1/576</td>
 			</tr>
 			<tr>
 				<td class="packet">1E</td>
 				<td>1/3000</td>
 				<td>1/2500</td>
+				<td>1/1200</td>
 			</tr>
 			<tr>
 				<td class="packet">1F</td>
 				<td>1/4000</td>
 				<td>1/3500</td>
+				<td>1/2400</td>
 			</tr>
 			<tr>
 				<td class="packet">20</td>
 				<td>1/6000</td>
 				<td>1/6000</td>
+				<td>1/4800</td>
 			</tr>
 			<tr>
 				<td class="packet">21</td>
 				<td>1/10000</td>
 				<td>1/10000</td>
+				<td>1/10000</td>
 			</tr>
 		</table>
-		<p><sup>*</sup> 2160p formats are SRG-X40UH only.</p>
 
 		<h4>Max Shutter</h4>
 		<p>Same signal format columns as Shutter table above.</p>
 		<table>
 			<tr>
 				<th>Parameter</th>
-				<th>2160/29.97p<sup>*</sup>,<br />1080/59.94p, 1080/59.94i,<br />720/59.94p</th>
-				<th>2160/25p<sup>*</sup>,<br />1080/50p, 1080/50i,<br />720/50p</th>
+				<th>2160/29.97p,<br />1080/59.94p, 1080/59.94i,<br />720/59.94p</th>
+				<th>2160/25p,<br />1080/50p, 1080/50i,<br />720/50p</th>
+				<th>2160/23.98p,<br />1080/23.98p</th>
 			</tr>
 			<tr>
 				<td class="packet">0F</td>
 				<td>&ndash;</td>
 				<td>&ndash;</td>
+				<td>1/24</td>
 			</tr>
 			<tr>
 				<td class="packet">10</td>
 				<td>1/30</td>
+				<td>1/25</td>
 				<td>1/25</td>
 			</tr>
 			<tr>
 				<td class="packet">11</td>
 				<td>1/50</td>
 				<td>1/30</td>
+				<td>1/40</td>
 			</tr>
 			<tr>
 				<td class="packet">12</td>
 				<td>1/60</td>
 				<td>1/50</td>
+				<td>1/48</td>
 			</tr>
 			<tr>
 				<td class="packet">13</td>
 				<td>1/90</td>
 				<td>1/60</td>
+				<td>1/50</td>
 			</tr>
 			<tr>
 				<td class="packet">14</td>
 				<td>1/100</td>
 				<td>1/100</td>
+				<td>1/60</td>
 			</tr>
 			<tr>
 				<td class="packet">15</td>
 				<td>1/125</td>
 				<td>1/120</td>
+				<td>1/96</td>
 			</tr>
 			<tr>
 				<td class="packet">16</td>
 				<td>1/180</td>
 				<td>1/150</td>
+				<td>1/100</td>
 			</tr>
 			<tr>
 				<td class="packet">17</td>
 				<td>1/250</td>
 				<td>1/215</td>
+				<td>1/120</td>
 			</tr>
 			<tr>
 				<td class="packet">18</td>
 				<td>1/350</td>
 				<td>1/300</td>
+				<td>1/144</td>
 			</tr>
 			<tr>
 				<td class="packet">19</td>
 				<td>1/500</td>
 				<td>1/425</td>
+				<td>1/192</td>
 			</tr>
 			<tr>
 				<td class="packet">1A</td>
 				<td>1/725</td>
 				<td>1/600</td>
+				<td>1/200</td>
 			</tr>
 			<tr>
 				<td class="packet">1B</td>
 				<td>1/1000</td>
 				<td>1/1000</td>
+				<td>1/288</td>
 			</tr>
 			<tr>
 				<td class="packet">1C</td>
 				<td>1/1500</td>
 				<td>1/1250</td>
+				<td>1/400</td>
 			</tr>
 			<tr>
 				<td class="packet">1D</td>
 				<td>1/2000</td>
 				<td>1/1750</td>
+				<td>1/576</td>
 			</tr>
 			<tr>
 				<td class="packet">1E</td>
 				<td>1/3000</td>
 				<td>1/2500</td>
+				<td>1/1200</td>
 			</tr>
 			<tr>
 				<td class="packet">1F</td>
 				<td>1/4000</td>
 				<td>1/3500</td>
+				<td>1/2400</td>
 			</tr>
 			<tr>
 				<td class="packet">20</td>
 				<td>1/6000</td>
 				<td>1/6000</td>
+				<td>1/4800</td>
 			</tr>
 			<tr>
 				<td class="packet">21</td>
 				<td>1/10000</td>
 				<td>1/10000</td>
+				<td>1/10000</td>
 			</tr>
 		</table>
-		<p><sup>*</sup> 2160p formats are SRG-X40UH only.</p>
 
 		<h4>Exposure Compensation</h4>
 		<table>
@@ -2190,7 +2356,7 @@
 			<tr>
 				<td class="packet">18</td>
 				<td>101</td>
-				<td>91</td>
+				<td>&ndash;</td>
 			</tr>
 		</table>
 
@@ -2339,7 +2505,7 @@
 			</tr>
 		</table>
 
-		<h4>Zoom Position / Ratio</h4>
+		<h4>Zoom Position / Ratio (SRG-A40)</h4>
 		<p>
 			20&times; optical zoom. Zoom range: 0000 (wide) to 4000 (optical tele). Clear Image Zoom and digital zoom extend
 			beyond 4000.
@@ -2479,6 +2645,63 @@
 			</tr>
 		</table>
 
+		<h4>Zoom Position / Ratio (SRG-A12)</h4>
+		<p>12&times; optical zoom. Zoom range: 0000 (wide) to 4000 (optical tele).</p>
+		<table>
+			<tr>
+				<th>Parameter</th>
+				<th>Zoom Ratio</th>
+			</tr>
+			<tr>
+				<td class="packet">0000</td>
+				<td>&times;1</td>
+			</tr>
+			<tr>
+				<td class="packet">0FB4</td>
+				<td>&times;2</td>
+			</tr>
+			<tr>
+				<td class="packet">1BF0</td>
+				<td>&times;3</td>
+			</tr>
+			<tr>
+				<td class="packet">24C5</td>
+				<td>&times;4</td>
+			</tr>
+			<tr>
+				<td class="packet">2B1E</td>
+				<td>&times;5</td>
+			</tr>
+			<tr>
+				<td class="packet">2FE4</td>
+				<td>&times;6</td>
+			</tr>
+			<tr>
+				<td class="packet">33A9</td>
+				<td>&times;7</td>
+			</tr>
+			<tr>
+				<td class="packet">36C9</td>
+				<td>&times;8</td>
+			</tr>
+			<tr>
+				<td class="packet">3983</td>
+				<td>&times;9</td>
+			</tr>
+			<tr>
+				<td class="packet">3BF7</td>
+				<td>&times;10</td>
+			</tr>
+			<tr>
+				<td class="packet">3E1C</td>
+				<td>&times;11</td>
+			</tr>
+			<tr>
+				<td class="packet">4000</td>
+				<td>&times;12 (optical tele end)</td>
+			</tr>
+		</table>
+
 		<h4>Focus Distance</h4>
 		<p>For reference. Focus position range: 1000 (far end)&ndash;F000 (near end).</p>
 		<table>
@@ -2552,22 +2775,16 @@
 		<table>
 			<tr>
 				<th>Parameter</th>
-				<th>SRG-X40UH HDMI</th>
-				<th>SRG-X40UH USB</th>
-				<th>SRG-H40UH HDMI</th>
-				<th>SRG-H40UH USB</th>
+				<th>SDI</th>
+				<th>HDMI</th>
 			</tr>
 			<tr>
 				<td class="packet">00</td>
-				<td>720 &times; 480/59.94p (RGB)</td>
-				<td>Unsupported</td>
-				<td>720 &times; 480/59.94p (RGB)</td>
-				<td>Unsupported</td>
+				<td>1280 &times; 720/59.94p</td>
+				<td>640 &times; 480/59.94p</td>
 			</tr>
 			<tr>
 				<td class="packet">01</td>
-				<td>1280 &times; 720/59.94p</td>
-				<td>1280 &times; 720/59.94p</td>
 				<td>1280 &times; 720/59.94p</td>
 				<td>1280 &times; 720/59.94p</td>
 			</tr>
@@ -2575,41 +2792,29 @@
 				<td class="packet">02</td>
 				<td>1920 &times; 1080/29.97p</td>
 				<td>1920 &times; 1080/29.97p</td>
-				<td>1920 &times; 1080/29.97p</td>
-				<td>1920 &times; 1080/29.97p</td>
 			</tr>
 			<tr>
 				<td class="packet">03</td>
 				<td>1920 &times; 1080/59.94i</td>
-				<td>Unsupported</td>
 				<td>1920 &times; 1080/59.94i</td>
-				<td>Unsupported</td>
 			</tr>
 			<tr>
 				<td class="packet">04</td>
+				<td>1920 &times; 1080/59.94p (Level A)</td>
 				<td>1920 &times; 1080/59.94p</td>
-				<td>1920 &times; 1080/59.94p</td>
-				<td>1920 &times; 1080/59.94p</td>
+			</tr>
+			<tr>
+				<td class="packet">05</td>
+				<td>1920 &times; 1080/59.94p (Level B)</td>
 				<td>1920 &times; 1080/59.94p</td>
 			</tr>
 			<tr>
 				<td class="packet">06</td>
 				<td>3840 &times; 2160/29.97p</td>
-				<td>Unsupported</td>
-				<td>Unsupported</td>
-				<td>Unsupported</td>
-			</tr>
-			<tr>
-				<td class="packet">10</td>
-				<td>720 &times; 576/50p (RGB)</td>
-				<td>Unsupported</td>
-				<td>720 &times; 576/50p (RGB)</td>
-				<td>Unsupported</td>
+				<td>3840 &times; 2160/29.97p</td>
 			</tr>
 			<tr>
 				<td class="packet">11</td>
-				<td>1280 &times; 720/50p</td>
-				<td>1280 &times; 720/50p</td>
 				<td>1280 &times; 720/50p</td>
 				<td>1280 &times; 720/50p</td>
 			</tr>
@@ -2617,29 +2822,36 @@
 				<td class="packet">12</td>
 				<td>1920 &times; 1080/25p</td>
 				<td>1920 &times; 1080/25p</td>
-				<td>1920 &times; 1080/25p</td>
-				<td>1920 &times; 1080/25p</td>
 			</tr>
 			<tr>
 				<td class="packet">13</td>
 				<td>1920 &times; 1080/50i</td>
-				<td>Unsupported</td>
 				<td>1920 &times; 1080/50i</td>
-				<td>Unsupported</td>
 			</tr>
 			<tr>
 				<td class="packet">14</td>
+				<td>1920 &times; 1080/50p (Level A)</td>
 				<td>1920 &times; 1080/50p</td>
-				<td>1920 &times; 1080/50p</td>
-				<td>1920 &times; 1080/50p</td>
+			</tr>
+			<tr>
+				<td class="packet">15</td>
+				<td>1920 &times; 1080/50p (Level B)</td>
 				<td>1920 &times; 1080/50p</td>
 			</tr>
 			<tr>
 				<td class="packet">16</td>
 				<td>3840 &times; 2160/25p</td>
-				<td>Unsupported</td>
-				<td>Unsupported</td>
-				<td>Unsupported</td>
+				<td>3840 &times; 2160/25p</td>
+			</tr>
+			<tr>
+				<td class="packet">21</td>
+				<td>1920 &times; 1080/23.98p</td>
+				<td>1920 &times; 1080/23.98p</td>
+			</tr>
+			<tr>
+				<td class="packet">22</td>
+				<td>3840 &times; 2160/23.98p</td>
+				<td>3840 &times; 2160/23.98p</td>
 			</tr>
 		</table>
 
