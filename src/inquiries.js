@@ -470,6 +470,73 @@ const BLOCK_03_X1000 = {
 	],
 }
 
+// SRG-A40 family (group 5) — X40UH block 03 + chromaSuppress/gainLimit
+// Response: y0 50 00 00 0p 0q 0r 0s tt uu 0v 0w 0x 0y zz aa FF
+const BLOCK_03_A40 = {
+	name: 'Enlargement 1',
+	minLength: 16,
+	fields: [
+		{ variable: 'afOpTime', type: 'nibbleConcat', bytes: [4, 5] },
+		{ variable: 'afStayTime', type: 'nibbleConcat', bytes: [6, 7] },
+		{ variable: 'nr2dLevel', type: 'bits', byte: 8, shift: 4, mask: 0x07 },
+		{ variable: 'nr3dLevel', type: 'bits', byte: 9, shift: 4, mask: 0x07 },
+		{ variable: 'imageFlip', type: 'flag', byte: 10, bit: 0, on: 'On', off: 'Off' },
+		{ variable: 'aeSpeed', type: 'bits', byte: 12, shift: 0, mask: 0x3f },
+		{ variable: 'highSensitivity', type: 'flag', byte: 13, bit: 3, on: 'On', off: 'Off' },
+		{ variable: 'nrLevel', type: 'bits', byte: 13, shift: 0, mask: 0x07 },
+		{ variable: 'chromaSuppress', type: 'bits', byte: 14, shift: 4, mask: 0x07 },
+		{ variable: 'gainLimit', type: 'choiceLookup', byte: 14, mask: 0x0f, choiceKey: 'GAIN' },
+	],
+}
+
+// SRG-A40 family (group 5) — X40UH block 04 + defog/defogLevel
+// Response: y0 50 pp 00 qq rr ss 00 0t uu vv ww xx yy zz FF
+const BLOCK_04_A40 = {
+	name: 'Enlargement 2',
+	minLength: 16,
+	fields: [
+		{
+			variable: 'veMode',
+			type: 'mapped',
+			extract: (r) => r[2] & 0x03,
+			map: { 0: 'Off', 2: 'On', 3: 'Manual' },
+		},
+		{ variable: 'veLevel', type: 'bits', byte: 4, shift: 0, mask: 0x07 },
+		{
+			variable: 'veBrightnessComp',
+			type: 'mapped',
+			extract: (r) => r[5] & 0x03,
+			map: { 0: 'Very Dark', 1: 'Dark', 2: 'Standard', 3: 'Bright' },
+		},
+		{ variable: 'veCompLevel', type: 'bits', byte: 6, shift: 0, mask: 0x03 },
+		{ variable: 'defog', type: 'flag', byte: 7, bit: 0, on: 'On', off: 'Off' },
+		{ variable: 'defogLevel', type: 'bits', byte: 8, shift: 0, mask: 0x03 },
+		{ variable: 'minShutterSpeed', type: 'choiceLookup', byte: 9, mask: 0x3f, choiceKey: 'SHUTTER' },
+		{ variable: 'maxShutterSpeed', type: 'choiceLookup', byte: 10, mask: 0x3f, choiceKey: 'SHUTTER' },
+		{
+			variable: 'detailHVBalance',
+			type: 'custom',
+			extract: (r) => ((r[11] >> 3) & 0x07) - 2,
+		},
+		{ variable: 'detailCrispening', type: 'bits', byte: 11, shift: 0, mask: 0x07 },
+		{ variable: 'detailLimit', type: 'bits', byte: 12, shift: 3, mask: 0x07 },
+		{
+			variable: 'detailBWBalance',
+			type: 'custom',
+			extract: (r) => 'Type ' + (r[12] & 0x07),
+		},
+		{ variable: 'detailHighlightDetail', type: 'bits', byte: 13, shift: 3, mask: 0x07 },
+		{ variable: 'detailSuperLow', type: 'bits', byte: 13, shift: 0, mask: 0x07 },
+		{ variable: 'detailMode', type: 'flag', byte: 14, bit: 3, on: 'Manual', off: 'Auto' },
+		{
+			variable: 'detailBandwidth',
+			type: 'mapped',
+			extract: (r) => r[14] & 0x07,
+			map: { 0: 'Standard', 1: 'Low', 2: 'Mid', 3: 'High', 4: 'Wide' },
+		},
+	],
+}
+
 // SRG-120DH (group 3a) and SRG-300SE (group 3b) — identical block 03 layout
 // Response: y0 50 0a 0b 0c 0d 0e 0f 00 00 00 gg 00 hh jj FF
 const BLOCK_03_LEGACY = {
@@ -669,6 +736,14 @@ const BLOCKS_X1000 = {
 	'097e7e03': BLOCK_03_X1000,
 }
 
+const BLOCKS_A40 = {
+	'097e7e00': BLOCK_00_LENS,
+	'097e7e01': BLOCK_01_X40UH,
+	'097e7e02': BLOCK_02_X40UH,
+	'097e7e03': BLOCK_03_A40,
+	'097e7e04': BLOCK_04_A40,
+}
+
 const BLOCKS_120DH = {
 	'097e7e00': BLOCK_00_LENS,
 	'097e7e01': BLOCK_01_LEGACY,
@@ -742,6 +817,7 @@ const GROUP_TO_BLOCKS = {
 	'3a': BLOCKS_120DH,
 	'3b': BLOCKS_300SE,
 	4: BLOCKS_FR7,
+	5: BLOCKS_A40,
 }
 
 export function getInquiryBlocks(group) {
