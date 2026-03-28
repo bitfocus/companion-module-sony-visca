@@ -175,17 +175,16 @@ const BLOCK_01_X400 = {
 		{ variable: 'backlightComp', type: 'flag', byte: 9, bit: 2, on: 'On', off: 'Off' },
 		{ variable: 'expCompOnOff', type: 'flag', byte: 9, bit: 1, on: 'On', off: 'Off' },
 		{ variable: 'slowShutter', type: 'flag', byte: 9, bit: 0, on: 'Auto', off: 'Manual' },
-		{ variable: 'shutterSpeed', type: 'choiceLookup', byte: 10, mask: 0xff, choiceKey: 'SHUTTER' },
-		{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0xff, choiceKey: 'IRIS' },
-		{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0xff },
-		{ variable: 'gainLevel', type: 'choiceLookup', byte: 12, mask: 0xff, choiceKey: 'GAIN' },
+		{ variable: 'shutterSpeed', type: 'choiceLookup', byte: 10, mask: 0x3f, choiceKey: 'SHUTTER' },
+		{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0x1f, choiceKey: 'IRIS' },
+		{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0x1f },
+		{ variable: 'gainLevel', type: 'choiceLookup', byte: 12, mask: 0x1f, choiceKey: 'GAIN' },
 		{ variable: 'expCompLevel', type: 'offset', byte: 14, mask: 0x0f, center: 7 },
 	],
 }
 
 // SRG-X40UH family (group 1b)
-// Differences from X400: wbSpeed in lower nibble of byte 7, no colorMatrix,
-// highSensitivity replaces highResolution at byte 9 bit 5, detailLevel at byte 13
+// Response: y0 50 0r 0r 0b 0b 0w sd 0e uu vv ww 0g 00 0z FF
 const BLOCK_01_X40UH = {
 	name: 'Camera Control',
 	minLength: 16,
@@ -198,7 +197,8 @@ const BLOCK_01_X40UH = {
 			extract: (r) => r[6] & 0x0f,
 			map: WB_MODES,
 		},
-		{ variable: 'wbSpeed', type: 'bits', byte: 7, shift: 0, mask: 0x07 },
+		{ variable: 'wbSpeed', type: 'bits', byte: 7, shift: 4, mask: 0x07 },
+		{ variable: 'detailLevel', type: 'offset', byte: 7, mask: 0x0f, center: 7 },
 		{
 			variable: 'exposureMode',
 			type: 'mapped',
@@ -210,18 +210,16 @@ const BLOCK_01_X40UH = {
 		{ variable: 'backlightComp', type: 'flag', byte: 9, bit: 2, on: 'On', off: 'Off' },
 		{ variable: 'expCompOnOff', type: 'flag', byte: 9, bit: 1, on: 'On', off: 'Off' },
 		{ variable: 'slowShutter', type: 'flag', byte: 9, bit: 0, on: 'Auto', off: 'Manual' },
-		{ variable: 'shutterSpeed', type: 'choiceLookup', byte: 10, mask: 0xff, choiceKey: 'SHUTTER' },
-		{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0xff, choiceKey: 'IRIS' },
-		{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0xff },
-		{ variable: 'gainLevel', type: 'choiceLookup', byte: 12, mask: 0xff, choiceKey: 'GAIN' },
-		{ variable: 'detailLevel', type: 'offset', byte: 13, mask: 0x0f, center: 7 },
+		{ variable: 'shutterSpeed', type: 'choiceLookup', byte: 10, mask: 0x3f, choiceKey: 'SHUTTER' },
+		{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0x1f, choiceKey: 'IRIS' },
+		{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0x1f },
+		{ variable: 'gainLevel', type: 'choiceLookup', byte: 12, mask: 0x1f, choiceKey: 'GAIN' },
 		{ variable: 'expCompLevel', type: 'offset', byte: 14, mask: 0x0f, center: 7 },
 	],
 }
 
 // BRC-X1000 family (group 2)
-// Differences from X400: no wbSpeed/detailLevel at byte 7, wideDynamic at byte 8 bit 4,
-// byte 9 only has backlight + expComp, no highRes/VE/slowShutter, gain at byte 12 nibble
+// Response: y0 50 0r 0r 0b 0b 0w 0a ee 0u vv ww 0g 00 hz FF
 const BLOCK_01_X1000 = {
 	name: 'Camera Control',
 	minLength: 16,
@@ -240,13 +238,13 @@ const BLOCK_01_X1000 = {
 			extract: (r) => r[8] & 0x0f,
 			map: EXPOSURE_MODES,
 		},
-		{ variable: 'wideDynamic', type: 'flag', byte: 8, bit: 4, on: 'On', off: 'Off' },
+		{ variable: 'wideDynamic', type: 'flag', byte: 9, bit: 4, on: 'On', off: 'Off' },
 		{ variable: 'backlightComp', type: 'flag', byte: 9, bit: 2, on: 'On', off: 'Off' },
 		{ variable: 'expCompOnOff', type: 'flag', byte: 9, bit: 1, on: 'On', off: 'Off' },
-		{ variable: 'shutterSpeed', type: 'choiceLookup', byte: 10, mask: 0xff, choiceKey: 'SHUTTER' },
-		{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0xff, choiceKey: 'IRIS' },
-		{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0xff },
-		{ variable: 'gainLevel', type: 'choiceLookup', byte: 12, mask: 0x0f, choiceKey: 'GAIN' },
+		{ variable: 'shutterSpeed', type: 'choiceLookup', byte: 10, mask: 0x1f, choiceKey: 'SHUTTER' },
+		{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0x1f, choiceKey: 'IRIS' },
+		{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0x1f },
+		{ variable: 'gainLevel', type: 'choiceLookup', byte: 12, mask: 0x1f, choiceKey: 'GAIN' },
 		{ variable: 'expCompLevel', type: 'offset', byte: 14, mask: 0x0f, center: 7 },
 	],
 }
@@ -277,11 +275,11 @@ const BLOCK_01_LEGACY = {
 		{ variable: 'backlightComp', type: 'flag', byte: 9, bit: 2, on: 'On', off: 'Off' },
 		{ variable: 'expCompOnOff', type: 'flag', byte: 9, bit: 1, on: 'On', off: 'Off' },
 		{ variable: 'slowShutter', type: 'flag', byte: 9, bit: 0, on: 'Auto', off: 'Manual' },
-		{ variable: 'shutterSpeed', type: 'choiceLookup', byte: 10, mask: 0xff, choiceKey: 'SHUTTER' },
-		{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0xff, choiceKey: 'IRIS' },
-		{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0xff },
+		{ variable: 'shutterSpeed', type: 'choiceLookup', byte: 10, mask: 0x1f, choiceKey: 'SHUTTER' },
+		{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0x1f, choiceKey: 'IRIS' },
+		{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0x1f },
 		{ variable: 'gainLevel', type: 'choiceLookup', byte: 12, mask: 0x0f, choiceKey: 'GAIN' },
-		{ variable: 'brightPosition', type: 'choiceLookup', byte: 13, mask: 0x0f, choiceKey: 'BRIGHTNESS' },
+		{ variable: 'brightPosition', type: 'choiceLookup', byte: 13, mask: 0x1f, choiceKey: 'BRIGHTNESS' },
 		{ variable: 'expCompLevel', type: 'offset', byte: 14, mask: 0x0f, center: 7 },
 	],
 }
@@ -318,28 +316,28 @@ const BLOCK_02_X400 = {
 }
 
 // SRG-X40UH family (group 1b)
-// Response: y0 50 0p 0q 00 0r 00 00 00 00 ss tt uu vv 00 FF
+// Response: y0 50 pp qq 00 00 00 0r ss tt uu vv 00 00 00 00 FF
 const BLOCK_02_X40UH = {
 	name: 'Other',
 	minLength: 16,
 	fields: [
+		{ variable: 'spotlightComp', type: 'flag', byte: 2, bit: 5, on: 'On', off: 'Off' },
+		{ variable: 'flickerCancel', type: 'flag', byte: 2, bit: 4, on: 'On', off: 'Off' },
+		{ variable: 'IRCutFilterAuto', type: 'flag', byte: 2, bit: 2, on: 'Auto', off: 'Manual' },
 		{ variable: 'power', type: 'flag', byte: 2, bit: 0, on: 'On', off: 'Off' },
-		{ variable: 'IRCutFilter', type: 'flag', byte: 2, bit: 4, on: 'On', off: 'Off' },
-		{ variable: 'flickerCancel', type: 'flag', byte: 2, bit: 5, on: 'On', off: 'Off' },
-		{ variable: 'imageStabilizer', type: 'flag', byte: 2, bit: 6, on: 'On', off: 'Off' },
-		{ variable: 'IRCutFilterAuto', type: 'flag', byte: 3, bit: 2, on: 'Auto', off: 'Manual' },
-		{ variable: 'spotlightComp', type: 'flag', byte: 3, bit: 5, on: 'On', off: 'Off' },
-		{ variable: 'wbOffset', type: 'offset', byte: 5, mask: 0x0f, center: 7 },
+		{ variable: 'imageStabilizer', type: 'flag', byte: 3, bit: 6, on: 'On', off: 'Off' },
+		{ variable: 'IRCutFilter', type: 'flag', byte: 3, bit: 4, on: 'On', off: 'Off' },
+		{ variable: 'wbOffset', type: 'offset', byte: 7, mask: 0x0f, center: 7 },
 		{
 			variable: 'cameraIdReported',
 			type: 'custom',
-			extract: (r) => nibbleConcat(r, [10, 11, 12, 13]).toString(16).padStart(4, '0').toUpperCase(),
+			extract: (r) => nibbleConcat(r, [8, 9, 10, 11]).toString(16).padStart(4, '0').toUpperCase(),
 		},
 	],
 }
 
 // BRC-X1000 family (group 2)
-// Response: y0 50 pp 0q 00 00 0r 00 00 00 00 0s tt uu vv FF
+// Response: y0 50 pp 0q 00 rr 00 ss 00 00 00 00 tt uu vv FF
 const BLOCK_02_X1000 = {
 	name: 'Other',
 	minLength: 16,
@@ -348,12 +346,12 @@ const BLOCK_02_X1000 = {
 		{ variable: 'flickerCancel', type: 'flag', byte: 2, bit: 4, on: 'On', off: 'Off' },
 		{ variable: 'power', type: 'flag', byte: 2, bit: 0, on: 'On', off: 'Off' },
 		{ variable: 'IRCutFilter', type: 'flag', byte: 3, bit: 4, on: 'On', off: 'Off' },
-		{ variable: 'wbOffset', type: 'offset', byte: 6, mask: 0x0f, center: 7 },
 		{
 			variable: 'pictureEffectOn',
 			type: 'custom',
-			extract: (r) => '0x' + (r[11] & 0x0f).toString(16).toUpperCase(),
+			extract: (r) => '0x' + (r[5] & 0x0f).toString(16).toUpperCase(),
 		},
+		{ variable: 'wbOffset', type: 'offset', byte: 7, mask: 0x0f, center: 7 },
 		{ variable: 'imageStabilizer', type: 'flag', byte: 12, bit: 1, on: 'On', off: 'Off' },
 		{ variable: 'kneeMode', type: 'flag', byte: 13, bit: 4, on: 'Manual', off: 'Auto' },
 		{ variable: 'kneeSlope', type: 'offset', byte: 13, mask: 0x0f, center: 7 },
@@ -395,7 +393,7 @@ const BLOCK_02_300SE = {
 		{
 			variable: 'pictureEffectOn',
 			type: 'custom',
-			extract: (r) => '0x' + (r[7] & 0x0f).toString(16).toUpperCase(),
+			extract: (r) => '0x' + (r[5] & 0x0f).toString(16).toUpperCase(),
 		},
 		{
 			variable: 'cameraIdReported',
@@ -433,19 +431,42 @@ const BLOCK_03_X400 = {
 }
 
 // SRG-X40UH family (group 1b)
-// Response: y0 50 00 00 00 00 pp qq rr ss tt uu vv ww 00 FF
+// Response: y0 50 00 00 0p 0q 0r 0s tt uu 0v 00 0w 0x yy 00 FF
 const BLOCK_03_X40UH = {
 	name: 'Enlargement 1',
 	minLength: 16,
 	fields: [
-		{ variable: 'afOpTime', type: 'nibbleConcat', bytes: [6, 7] },
-		{ variable: 'afStayTime', type: 'nibbleConcat', bytes: [8, 9] },
-		{ variable: 'aeSpeed', type: 'bits', byte: 10, shift: 0, mask: 0x3f },
-		{ variable: 'highSensitivity', type: 'flag', byte: 11, bit: 3, on: 'On', off: 'Off' },
-		{ variable: 'nrLevel', type: 'bits', byte: 11, shift: 0, mask: 0x07 },
-		{ variable: 'nr2dLevel', type: 'bits', byte: 12, shift: 4, mask: 0x07 },
-		{ variable: 'nr3dLevel', type: 'bits', byte: 12, shift: 0, mask: 0x07 },
-		{ variable: 'imageFlip', type: 'flag', byte: 13, bit: 0, on: 'On', off: 'Off' },
+		{ variable: 'afOpTime', type: 'nibbleConcat', bytes: [4, 5] },
+		{ variable: 'afStayTime', type: 'nibbleConcat', bytes: [6, 7] },
+		{ variable: 'nr2dLevel', type: 'bits', byte: 8, shift: 4, mask: 0x07 },
+		{ variable: 'nr3dLevel', type: 'bits', byte: 9, shift: 4, mask: 0x07 },
+		{ variable: 'imageFlip', type: 'flag', byte: 10, bit: 0, on: 'On', off: 'Off' },
+		{ variable: 'aeSpeed', type: 'bits', byte: 12, shift: 0, mask: 0x3f },
+		{ variable: 'highSensitivity', type: 'flag', byte: 13, bit: 3, on: 'On', off: 'Off' },
+		{ variable: 'nrLevel', type: 'bits', byte: 13, shift: 0, mask: 0x07 },
+	],
+}
+
+// BRC-X1000 family (group 2)
+// Response: y0 50 0a 00 00 00 00 00 cc dd ee ff 0g hh jj kk FF
+const BLOCK_03_X1000 = {
+	name: 'Enlargement 1',
+	minLength: 16,
+	fields: [
+		{ variable: 'nr2dLevel', type: 'bits', byte: 8, shift: 4, mask: 0x07 },
+		{ variable: 'nr3dLevel', type: 'bits', byte: 9, shift: 4, mask: 0x07 },
+		{
+			variable: 'gamma',
+			type: 'mapped',
+			extract: (r) => (r[10] & 0x78) | ((r[13] >> 4) & 0x07),
+			map: GAMMA_VALUES,
+		},
+		{ variable: 'imageFlip', type: 'flag', byte: 10, bit: 0, on: 'On', off: 'Off' },
+		{ variable: 'colorGain', type: 'bits', byte: 11, shift: 3, mask: 0x0f },
+		{ variable: 'aeSpeed', type: 'bits', byte: 12, shift: 0, mask: 0x3f },
+		{ variable: 'nrLevel', type: 'bits', byte: 13, shift: 0, mask: 0x07 },
+		{ variable: 'chromaSuppress', type: 'bits', byte: 14, shift: 4, mask: 0x07 },
+		{ variable: 'gainLimit', type: 'choiceLookup', byte: 14, mask: 0x0f, choiceKey: 'GAIN' },
 	],
 }
 
@@ -457,11 +478,17 @@ const BLOCK_04_X400 = {
 	minLength: 16,
 	fields: [
 		{
+			variable: 'veMode',
+			type: 'mapped',
+			extract: (r) => r[2] & 0x03,
+			map: { 0: 'Off', 2: 'On', 3: 'Manual' },
+		},
+		{
 			variable: 'blackLevel',
 			type: 'custom',
-			extract: (r) => (r[3] << 4) | ((r[4] >> 3) & 0x0f),
+			extract: (r) => ((r[3] & 0x0f) << 4) | ((r[4] >> 3) & 0x0f),
 		},
-		{ variable: 'veLevel', type: 'offset', byte: 4, mask: 0x07, center: 3 },
+		{ variable: 'veLevel', type: 'bits', byte: 4, shift: 0, mask: 0x07 },
 		{ variable: 'blackGammaLevel', type: 'offset', byte: 5, shift: 2, mask: 0x0f, center: 7 },
 		{
 			variable: 'veBrightnessComp',
@@ -482,19 +509,21 @@ const BLOCK_04_X400 = {
 			type: 'custom',
 			extract: (r) => {
 				const sign = (r[7] >> 4) & 0x01
-				const magnitude = ((r[7] & 0x0f) << 4) | ((r[8] >> 4) & 0x0f)
+				const magnitude = (((r[7] >> 1) & 0x07) << 4) | ((r[8] >> 2) & 0x0f)
 				return sign ? -magnitude : magnitude
 			},
 		},
-		{ variable: 'minShutterSpeed', type: 'choiceLookup', byte: 9, mask: 0xff, choiceKey: 'SHUTTER' },
-		{ variable: 'maxShutterSpeed', type: 'choiceLookup', byte: 10, mask: 0xff, choiceKey: 'SHUTTER' },
+		{ variable: 'defog', type: 'flag', byte: 7, bit: 0, on: 'On', off: 'Off' },
+		{ variable: 'defogLevel', type: 'bits', byte: 8, shift: 0, mask: 0x03 },
+		{ variable: 'minShutterSpeed', type: 'choiceLookup', byte: 9, mask: 0x3f, choiceKey: 'SHUTTER' },
+		{ variable: 'maxShutterSpeed', type: 'choiceLookup', byte: 10, mask: 0x3f, choiceKey: 'SHUTTER' },
 		{
 			variable: 'detailHVBalance',
 			type: 'custom',
 			extract: (r) => ((r[11] >> 3) & 0x07) - 2,
 		},
 		{ variable: 'detailCrispening', type: 'bits', byte: 11, shift: 0, mask: 0x07 },
-		{ variable: 'detailLimit', type: 'bits', byte: 12, shift: 3, mask: 0x0f },
+		{ variable: 'detailLimit', type: 'bits', byte: 12, shift: 3, mask: 0x07 },
 		{
 			variable: 'detailBWBalance',
 			type: 'custom',
@@ -513,35 +542,48 @@ const BLOCK_04_X400 = {
 }
 
 // SRG-X40UH family (group 1b)
-// Response: y0 50 0p 0q 0r 0s 0t 0u 0v 0w 0x 0y 0z 00 00 FF
+// Response: y0 50 pp 00 qq rr ss 00 00 00 tt uu vv ww xx yy zz FF
 const BLOCK_04_X40UH = {
 	name: 'Enlargement 2',
 	minLength: 16,
 	fields: [
-		{ variable: 'veCompLevel', type: 'bits', byte: 2, shift: 0, mask: 0x03 },
-		{ variable: 'veLevel', type: 'offset', byte: 3, mask: 0x07, center: 3 },
-		{ variable: 'minShutterSpeed', type: 'choiceLookup', byte: 4, mask: 0x0f, choiceKey: 'SHUTTER' },
-		{ variable: 'maxShutterSpeed', type: 'choiceLookup', byte: 5, mask: 0x0f, choiceKey: 'SHUTTER' },
+		{
+			variable: 'veMode',
+			type: 'mapped',
+			extract: (r) => r[2] & 0x03,
+			map: { 0: 'Off', 2: 'On', 3: 'Manual' },
+		},
+		{ variable: 'veLevel', type: 'bits', byte: 4, shift: 0, mask: 0x07 },
 		{
 			variable: 'veBrightnessComp',
 			type: 'mapped',
-			extract: (r) => r[7] & 0x03,
+			extract: (r) => r[5] & 0x03,
 			map: { 0: 'Very Dark', 1: 'Dark', 2: 'Standard', 3: 'Bright' },
 		},
+		{ variable: 'veCompLevel', type: 'bits', byte: 6, shift: 0, mask: 0x03 },
+		{ variable: 'minShutterSpeed', type: 'choiceLookup', byte: 9, mask: 0x3f, choiceKey: 'SHUTTER' },
+		{ variable: 'maxShutterSpeed', type: 'choiceLookup', byte: 10, mask: 0x3f, choiceKey: 'SHUTTER' },
 		{
 			variable: 'detailHVBalance',
 			type: 'custom',
-			extract: (r) => (r[8] & 0x07) - 2,
+			extract: (r) => ((r[11] >> 3) & 0x07) - 2,
 		},
-		{ variable: 'detailCrispening', type: 'bits', byte: 9, shift: 0, mask: 0x07 },
-		{ variable: 'detailLimit', type: 'bits', byte: 10, shift: 0, mask: 0x0f },
+		{ variable: 'detailCrispening', type: 'bits', byte: 11, shift: 0, mask: 0x07 },
+		{ variable: 'detailLimit', type: 'bits', byte: 12, shift: 3, mask: 0x07 },
 		{
 			variable: 'detailBWBalance',
 			type: 'custom',
-			extract: (r) => 'Type ' + (r[11] & 0x07),
+			extract: (r) => 'Type ' + (r[12] & 0x07),
 		},
-		{ variable: 'detailHighlightDetail', type: 'bits', byte: 12, shift: 3, mask: 0x07 },
-		{ variable: 'detailSuperLow', type: 'bits', byte: 12, shift: 0, mask: 0x07 },
+		{ variable: 'detailHighlightDetail', type: 'bits', byte: 13, shift: 3, mask: 0x07 },
+		{ variable: 'detailSuperLow', type: 'bits', byte: 13, shift: 0, mask: 0x07 },
+		{ variable: 'detailMode', type: 'flag', byte: 14, bit: 3, on: 'Manual', off: 'Auto' },
+		{
+			variable: 'detailBandwidth',
+			type: 'mapped',
+			extract: (r) => r[14] & 0x07,
+			map: { 0: 'Standard', 1: 'Low', 2: 'Mid', 3: 'High', 4: 'Wide' },
+		},
 	],
 }
 
@@ -585,6 +627,7 @@ const BLOCKS_X1000 = {
 	'097e7e00': BLOCK_00_LENS,
 	'097e7e01': BLOCK_01_X1000,
 	'097e7e02': BLOCK_02_X1000,
+	'097e7e03': BLOCK_03_X1000,
 }
 
 const BLOCKS_120DH = {
