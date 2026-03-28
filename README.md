@@ -5,6 +5,65 @@ This module uses the Sony Visca protocol to control PTZ cameras. While it is foc
 - See [HELP.md](https://github.com/bitfocus/companion-module-sony-visca/blob/master/companion/HELP.md) for features implemented and operational instructions.
 - See [LICENSE](https://github.com/bitfocus/companion-module-sony-visca/blob/master/LICENSE)
 
+## Testing Needed
+
+We've recently added per-model inquiry polling, new camera support, and protocol-accurate byte-level parsing for all supported camera families. Much of this was implemented from protocol documentation without hardware access. We need community help verifying behavior on cameras other than the BRC-X400.
+
+### General Testing
+
+If you have any of the following cameras, please test the module and report any issues with variables showing incorrect values, feedbacks not highlighting correctly, or unexpected log errors.
+
+**Untested models:**
+- BRC-X1000
+- BRC-H780
+- BRC-H800
+- BRC-X401
+- ILME-FR7 / ILME-FR7K
+- SRG-A40 / SRG-A12
+- SRG-X40UH / SRG-H40UH
+- SRG-120DH
+- SRG-201SE / SRG-300SE / SRG-301SE
+- SRG-X120 / SRG-X400 / SRG-X402
+- SRG-201M2 / SRG-HD1M2
+
+### Specific Testing
+
+**BRC-X1000 / BRC-H780 / BRC-H800 — Pan/tilt position**
+The X1000 family uses 5-nibble (20-bit) pan coordinates with 4-nibble (16-bit) tilt, a mixed format unique to this family. Please verify:
+1. Pan and tilt position variables update correctly as the camera moves
+2. Pan and tilt position bars track smoothly from end to end
+3. If image flip is supported on your model, confirm the tilt position bar adjusts when flip is toggled
+
+**BRC-X1000 / BRC-H780 / BRC-H800 — Inquiry block 03**
+Block 03 (Enlargement) was recently added for the X1000 family. Please verify these variables update correctly:
+- NR 2D/3D Level, Gamma, Image Flip, Color Gain, AE Speed, NR Level, Chroma Suppress, Gain Limit
+
+**ILME-FR7 / ILME-FR7K — Individual inquiry polling**
+The FR7 does not support block inquiries. Polling uses individual VISCA queries instead. Please verify:
+1. Zoom position, focus position, focus mode, power, and WB mode update in real time
+2. Pan/tilt position bar tracks correctly (FR7 uses 20-bit coordinates on both axes)
+3. Low-priority state updates work: knee setting/mode, detail mode, auto iris, AGC, auto shutter, ND filter mode/auto/clear
+4. If ceiling-mounted, confirm the tilt position bar range adjusts correctly
+
+**SRG-X40UH / SRG-H40UH — Inquiry blocks 01-04**
+All four blocks were corrected from protocol documentation. Please verify:
+1. White balance speed and detail level show correct values (previously read from wrong byte positions)
+2. Block 02 variables: spotlight, flicker cancel, IR cut filter, image stabilizer, WB offset, camera ID
+3. Block 03/04 variables: AF timing, NR levels, image flip, AE speed, detail settings, visibility enhancer
+
+**SRG-A40 / SRG-A12 — New model support**
+These are newly added models. Please verify:
+1. Basic connection and polling works
+2. Gain limit action is available and shows correct values
+3. Block 03 variables include chroma suppress and gain limit
+4. Block 04 variables include defog and defog level
+
+**SRG-120DH / SRG-201SE / SRG-300SE / SRG-301SE — Inquiry blocks 03-05**
+Blocks 03-05 were recently added for legacy cameras. Please verify:
+1. Block 03: AF timing, color gain, gamma, high sensitivity, NR level, chroma suppress, gain limit
+2. Block 04: defog status
+3. Block 05: color hue
+
 ## Changes
 
 ### v2.7.5
