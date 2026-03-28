@@ -54,6 +54,31 @@ export function getFeedbackDefinitions(self) {
 				return self.state.focusMode === 'Manual'
 			},
 		},
+		zoomMode: {
+			type: 'boolean',
+			name: 'Zoom Mode',
+			description: 'Highlights when zoom mode matches the selected mode',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					choices: [
+						{ id: 'Optical', label: 'Optical' },
+						{ id: 'Digital', label: 'Digital' },
+						{ id: 'Clr Img', label: 'Clear Image Zoom' },
+					],
+					default: 'Clr Img',
+				},
+			],
+			callback: function (feedback) {
+				return self.state.zoomMode === feedback.options.mode
+			},
+		},
 		exposureMode: {
 			type: 'boolean',
 			name: 'Exposure Mode',

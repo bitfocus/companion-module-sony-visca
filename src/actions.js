@@ -514,6 +514,60 @@ function getLensActionDefinitions(self, camId) {
 				self.checkFeedbacks()
 			},
 		},
+		zoomModeToggle: {
+			name: 'Zoom Mode Toggle (up to three modes)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode A',
+					id: 'modeA',
+					choices: [
+						{ id: '4', label: 'Clear Image Zoom' },
+						{ id: '3', label: 'Optical only' },
+						{ id: '2', label: 'Digital' },
+					],
+					default: '4',
+				},
+				{
+					type: 'dropdown',
+					label: 'Mode B (optional)',
+					id: 'modeB',
+					choices: [
+						{ id: 'none', label: 'None' },
+						{ id: '4', label: 'Clear Image Zoom' },
+						{ id: '3', label: 'Optical only' },
+						{ id: '2', label: 'Digital' },
+					],
+					default: '3',
+				},
+				{
+					type: 'dropdown',
+					label: 'Mode C (optional)',
+					id: 'modeC',
+					choices: [
+						{ id: 'none', label: 'None' },
+						{ id: '4', label: 'Clear Image Zoom' },
+						{ id: '3', label: 'Optical only' },
+						{ id: '2', label: 'Digital' },
+					],
+					default: 'none',
+				},
+			],
+			callback: async (event) => {
+				const viscaCmds = { 2: '\x02', 3: '\x03', 4: '\x04' }
+				const stateNames = { 2: 'Digital', 3: 'Optical', 4: 'Clr Img' }
+				const modes = [event.options.modeA]
+				if (event.options.modeB !== 'none') modes.push(event.options.modeB)
+				if (event.options.modeC !== 'none') modes.push(event.options.modeC)
+				const currentIdx = modes.findIndex((m) => stateNames[m] === self.state.zoomMode)
+				const nextIdx = currentIdx >= 0 ? (currentIdx + 1) % modes.length : 0
+				const target = modes[nextIdx]
+				self.VISCA.send(camId + '\x01\x04\x06' + viscaCmds[target] + '\xFF')
+				self.state.zoomMode = stateNames[target]
+				self.updateVariables()
+				self.checkFeedbacks()
+			},
+		},
 		zoomSpeedAdjust: {
 			name: 'Zoom Speed (up/down/default)',
 			options: [

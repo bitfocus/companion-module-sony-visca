@@ -427,8 +427,8 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Zoom In (variable speed)',
 		style: {
-			text: 'ZOOM\\nIN',
-			size: '12',
+			text: 'ZOOM\\n$(sony-visca:zoomRatio)\\nIN\\n$(sony-visca:zoomPositionBar)',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -457,8 +457,8 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Zoom Out (variable speed)',
 		style: {
-			text: 'ZOOM\\nOUT',
-			size: '18',
+			text: 'ZOOM\\n$(sony-visca:zoomRatio)\\nOUT\\n$(sony-visca:zoomPositionBar)',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -482,13 +482,13 @@ const lensPresets = {
 		],
 		feedbacks: [],
 	},
-	'lens-zoomMode': {
+	'lens-zoomModeToggle': {
 		type: 'button',
 		category: 'Lens',
-		name: 'Zoom Mode',
+		name: 'Zoom Mode Toggle',
 		style: {
 			text: 'Zoom\\nMode\\n$(sony-visca:zoomMode)',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -497,43 +497,30 @@ const lensPresets = {
 			{
 				down: [
 					{
-						actionId: 'zoomMode',
-						options: {
-							mode: '3',
-						},
-					},
-				],
-			},
-			{
-				down: [
-					{
-						actionId: 'zoomMode',
-						options: {
-							mode: '4',
-						},
-					},
-				],
-			},
-			{
-				down: [
-					{
-						actionId: 'zoomMode',
-						options: {
-							mode: '2',
-						},
+						actionId: 'zoomModeToggle',
+						options: { modeA: '4', modeB: '3', modeC: 'none' },
 					},
 				],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: 'zoomMode',
+				options: { mode: 'Clr Img' },
+				style: {
+					color: COLORS.WHITE,
+					bgcolor: COLORS.DARK_ORANGE,
+				},
+			},
+		],
 	},
 	'lens-focusFar': {
 		type: 'button',
 		category: 'Lens',
 		name: 'Focus Far (variable speed)',
 		style: {
-			text: 'FOCUS\\nFAR',
-			size: '18',
+			text: 'FOCUS\\nFAR\\n$(sony-visca:focusPositionBar)',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -562,8 +549,8 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Focus Near (variable speed)',
 		style: {
-			text: 'FOCUS\\nNEAR',
-			size: '18',
+			text: 'FOCUS\\nNEAR\\n$(sony-visca:focusPositionBar)',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
@@ -644,8 +631,8 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Zoom Speed Faster',
 		style: {
-			text: 'Zoom\\nFaster\\n$(sony-visca:zoomSpeed)',
-			size: '18',
+			text: 'Zoom\\n$(sony-visca:zoomSpeed)\\nFaster',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -667,8 +654,8 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Zoom Speed Slower',
 		style: {
-			text: 'Zoom\\nSlower\\n$(sony-visca:zoomSpeed)',
-			size: '18',
+			text: 'Zoom\\n$(sony-visca:zoomSpeed)\\nSlower',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -691,7 +678,7 @@ const lensPresets = {
 		name: 'Zoom Speed Default (1)',
 		style: {
 			text: 'Zoom\\nSpeed\\nDefault',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -713,8 +700,8 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Focus Speed Faster',
 		style: {
-			text: 'Focus\\nFaster\\n$(sony-visca:focusSpeed)',
-			size: '18',
+			text: 'Focus\\n$(sony-visca:focusSpeed)\\nFaster',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -736,8 +723,8 @@ const lensPresets = {
 		category: 'Lens',
 		name: 'Focus Speed Slower',
 		style: {
-			text: 'Focus\\nSlower\\n$(sony-visca:focusSpeed)',
-			size: '18',
+			text: 'Focus\\n$(sony-visca:focusSpeed)\\nSlower',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -760,7 +747,7 @@ const lensPresets = {
 		name: 'Focus Speed Default (1)',
 		style: {
 			text: 'Focus\\nSpeed\\nDefault',
-			size: '18',
+			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 			show_topbar: false,
@@ -996,7 +983,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Exposure Compensation On/Off',
 		style: {
-			text: 'Expose\\nComp\\n$(sony-visca:expCompOnOff)',
+			text: 'Exp\\nComp\\n$(sony-visca:expCompOnOff)',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -1028,7 +1015,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Exposure Compensation Up',
 		style: {
-			text: 'Expose\\nComp\\nUp',
+			text: 'Exp\\nComp\\n$(sony-visca:expCompLevel)\\nUp',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -1051,7 +1038,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Exposure Compensation Down',
 		style: {
-			text: 'Expose\\nComp\\nDown',
+			text: 'Exp\\nComp\\n$(sony-visca:expCompLevel)\\nDown',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
@@ -1074,7 +1061,7 @@ const exposurePresets = {
 		category: 'Exposure',
 		name: 'Exposure Compensation Reset',
 		style: {
-			text: 'Expose\\nComp\\nReset',
+			text: 'Exp\\nComp\\nReset',
 			size: '14',
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,

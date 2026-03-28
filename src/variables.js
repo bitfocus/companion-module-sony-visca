@@ -16,6 +16,123 @@ const TILT_MAX_FLIP_OFF = 0x1200 // +4608 (top, flip off: +90°)
 const TILT_MIN_FLIP_ON = -0x1200 // 0xEE00 = -4608 (bottom, flip on: -90°)
 const TILT_MAX_FLIP_ON = 0x0400 // +1024 (top, flip on: +20°)
 
+// Zoom position → ratio lookup tables (from protocol docs)
+// Each table is an array of [position, ratio] pairs sorted by position
+// Includes optical, Clear Image Zoom, and digital ranges where documented
+// prettier-ignore
+const ZOOM_20X_X400 = [
+	[0x0000, 1], [0x0DC1, 2], [0x186C, 3], [0x2015, 4], [0x2594, 5],
+	[0x29B7, 6], [0x2CFB, 7], [0x2FB0, 8], [0x320C, 9], [0x342D, 10],
+	[0x3608, 11], [0x37AA, 12], [0x391C, 13], [0x3A66, 14], [0x3B90, 15],
+	[0x3C9C, 16], [0x3D91, 17], [0x3E72, 18], [0x3F40, 19], [0x4000, 20],
+	[0x5556, 30], [0x6000, 40], [0x6AAB, 60], [0x7000, 80],
+	[0x7334, 100], [0x7556, 120], [0x76DC, 140], [0x7800, 160],
+	[0x78E4, 180], [0x799A, 200], [0x7A2F, 220], [0x7AC0, 240],
+]
+// prettier-ignore
+const ZOOM_12X_X120 = [
+	[0x0000, 1], [0x0FB4, 2], [0x1BF0, 3], [0x24C5, 4], [0x2B1E, 5],
+	[0x2FE4, 6], [0x33A9, 7], [0x36C9, 8], [0x3983, 9], [0x3BF7, 10],
+	[0x3E1C, 11], [0x4000, 12],
+]
+// prettier-ignore
+const ZOOM_12X_X1000 = [
+	[0x0000, 1], [0x1800, 2], [0x2340, 3], [0x2A40, 4], [0x2F00, 5],
+	[0x3300, 6], [0x3600, 7], [0x3880, 8], [0x3AC0, 9], [0x3CC0, 10],
+	[0x3E80, 11], [0x4000, 12], [0x5580, 18], [0x6000, 24],
+]
+// prettier-ignore
+const ZOOM_12X_120DH = [
+	[0x0000, 1], [0x1970, 2], [0x249C, 3], [0x2B5F, 4], [0x3020, 5],
+	[0x33C4, 6], [0x36B7, 7], [0x392F, 8], [0x3B4D, 9], [0x3D1E, 10],
+	[0x3EAD, 11], [0x4000, 12],
+	[0x6000, 24], [0x6A80, 36], [0x7000, 48], [0x7300, 60],
+	[0x7540, 72], [0x76C0, 84], [0x7800, 96], [0x78C0, 108],
+	[0x7980, 120], [0x7A00, 132], [0x7AC0, 144],
+]
+// prettier-ignore
+const ZOOM_30X_300SE = [
+	[0x0000, 1], [0x16A1, 2], [0x2063, 3], [0x2628, 4], [0x2A1D, 5],
+	[0x2D13, 6], [0x2F6D, 7], [0x3161, 8], [0x330D, 9], [0x3486, 10],
+	[0x3A0A, 15], [0x3D60, 20], [0x3F1E, 25], [0x4000, 30],
+	[0x6000, 60], [0x6A80, 90], [0x7000, 120], [0x7300, 150],
+	[0x7540, 180], [0x76C0, 210], [0x7800, 240], [0x78C0, 270],
+	[0x7980, 300], [0x7A00, 330], [0x7AC0, 360],
+]
+// prettier-ignore
+const ZOOM_20X_201SE = [
+	[0x0000, 1], [0x1780, 2], [0x21C0, 3], [0x27C0, 4], [0x2C00, 5],
+	[0x2F00, 6], [0x3180, 7], [0x3380, 8], [0x3540, 9], [0x36C0, 10],
+	[0x3C80, 15], [0x4000, 20],
+	[0x6000, 40], [0x6A80, 60], [0x7000, 80], [0x7300, 100],
+	[0x7540, 120], [0x76C0, 140], [0x7800, 160], [0x78C0, 180],
+	[0x7980, 200], [0x7A00, 220], [0x7AC0, 240],
+]
+
+// Model ID → zoom ratio table
+const ZOOM_RATIO_TABLES = {
+	'051C': ZOOM_20X_X400, // BRC-X400
+	'051D': ZOOM_20X_X400, // BRC-X401
+	'061A': ZOOM_20X_X400, // SRG-201M2
+	'061B': ZOOM_12X_X120, // SRG-HD1M2
+	'0618': ZOOM_12X_X120, // SRG-X120
+	'0617': ZOOM_20X_X400, // SRG-X400
+	'061C': ZOOM_20X_X400, // SRG-X402
+	'061F': ZOOM_20X_X400, // SRG-X40UH
+	'0620': ZOOM_20X_X400, // SRG-H40UH
+	'0519': ZOOM_12X_X1000, // BRC-X1000
+	'051B': ZOOM_12X_X1000, // BRC-H780
+	'051A': ZOOM_12X_X1000, // BRC-H800
+	'0511': ZOOM_12X_120DH, // SRG-120DH
+	'0516a': ZOOM_20X_201SE, // SRG-201SE
+	'0516b': ZOOM_30X_300SE, // SRG-300SE
+	'0516c': ZOOM_30X_300SE, // SRG-301SE
+}
+
+// Focus position ranges (from protocol docs): higher position = closer
+// Most cameras: 0x1000 (far/infinity) to 0xF000 (near), 120DH: to 0xE000, FR7: 0x0000 to 0xFFFF
+const FOCUS_RANGES = {
+	'0511': [0x1000, 0xe000], // SRG-120DH
+	'051E': [0x0000, 0xffff], // ILME-FR7
+	'051Ek': [0x0000, 0xffff], // ILME-FR7K
+}
+const FOCUS_DEFAULT_RANGE = [0x1000, 0xf000]
+
+function getFocusRange(modelId) {
+	return FOCUS_RANGES[modelId] ?? FOCUS_DEFAULT_RANGE
+}
+
+const ZOOM_OPTICAL_MAX = 0x4000
+const ZOOM_CIZ_MAX = 0x6000
+
+function getZoomMax(modelId, zoomMode) {
+	if (zoomMode === 'Optical') return ZOOM_OPTICAL_MAX
+	if (zoomMode === 'Clr Img') return ZOOM_CIZ_MAX
+	const table = ZOOM_RATIO_TABLES[modelId]
+	return table ? table[table.length - 1][0] : ZOOM_OPTICAL_MAX
+}
+
+function interpolateZoomRatio(position, table) {
+	if (position <= table[0][0]) return table[0][1]
+	if (position >= table[table.length - 1][0]) return table[table.length - 1][1]
+	for (let i = 1; i < table.length; i++) {
+		if (position <= table[i][0]) {
+			const [pos0, ratio0] = table[i - 1]
+			const [pos1, ratio1] = table[i]
+			const t = (position - pos0) / (pos1 - pos0)
+			return ratio0 + t * (ratio1 - ratio0)
+		}
+	}
+	return table[table.length - 1][1]
+}
+
+function formatZoomRatio(position, modelId) {
+	if (position == null) return ''
+	const table = ZOOM_RATIO_TABLES[modelId]
+	if (!table) return position.toString()
+	return interpolateZoomRatio(position, table).toFixed(1) + 'x'
+}
+
 function progressBar(pct, width = 10, start = '', end = '') {
 	if (pct != null && pct >= 0 && pct <= 100) {
 		const filled = Math.floor((pct * width) / 100)
@@ -53,6 +170,7 @@ const variables = [
 	{ variableId: 'tiltPosition', name: 'Tilt Position' },
 	{ variableId: 'panPositionBar', name: 'Pan Position Bar' },
 	{ variableId: 'tiltPositionBar', name: 'Tilt Position Bar' },
+	{ variableId: 'zoomRatio', name: 'Zoom Ratio (e.g. 3.9x)' },
 	{ variableId: 'zoomPositionBar', name: 'Zoom Position Bar' },
 	{ variableId: 'focusPositionBar', name: 'Focus Position Bar' },
 	{ variableId: 'irisPositionBar', name: 'Iris Position Bar' },
@@ -151,8 +269,14 @@ export async function updateVariables() {
 	const tiltMin = this.state.imageFlip === 'On' ? TILT_MIN_FLIP_ON : TILT_MIN_FLIP_OFF
 	const tiltMax = this.state.imageFlip === 'On' ? TILT_MAX_FLIP_ON : TILT_MAX_FLIP_OFF
 	const tiltPct = normalizePct(this.state.tiltPosition, tiltMin, tiltMax)
-	const zoomPct = normalizePct(this.state.zoomPosition, 0, 0xffff)
-	const focusPct = normalizePct(this.state.focusPosition, 0, 0xffff)
+	const zoomMax = getZoomMax(this.config.model, this.state.zoomMode)
+	const zoomClamped = this.state.zoomPosition != null ? Math.min(this.state.zoomPosition, zoomMax) : null
+	const zoomPct = normalizePct(zoomClamped, 0, zoomMax)
+	const [focusFar, focusNear] = getFocusRange(this.config.model)
+	const focusClamped =
+		this.state.focusPosition != null ? Math.max(focusFar, Math.min(this.state.focusPosition, focusNear)) : null
+	const focusPctRaw = normalizePct(focusClamped, focusFar, focusNear)
+	const focusPct = focusPctRaw != null ? 100 - focusPctRaw : null
 	// Iris range: find min/max byte values from the model's IRIS choices
 	const irisChoices = this.choices?.IRIS
 	let irisPct = null
@@ -164,7 +288,8 @@ export async function updateVariables() {
 	}
 
 	const allValues = {
-		// Position bars
+		// Position bars and zoom ratio
+		zoomRatio: formatZoomRatio(this.state.zoomPosition, this.config.model),
 		panPosition: this.state.panPosition,
 		tiltPosition: this.state.tiltPosition,
 		panPositionBar: progressBar(panPct, 10, 'L', 'R'),
