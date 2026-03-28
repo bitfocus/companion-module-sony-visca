@@ -470,6 +470,45 @@ const BLOCK_03_X1000 = {
 	],
 }
 
+// SRG-120DH (group 3a) and SRG-300SE (group 3b) — identical block 03 layout
+// Response: y0 50 0a 0b 0c 0d 0e 0f 00 00 00 gg 00 hh jj FF
+const BLOCK_03_LEGACY = {
+	name: 'Enlargement 1',
+	minLength: 16,
+	fields: [
+		{ variable: 'digitalZoomPos', type: 'nibbleConcat', bytes: [2, 3] },
+		{ variable: 'afOpTime', type: 'nibbleConcat', bytes: [4, 5] },
+		{ variable: 'afStayTime', type: 'nibbleConcat', bytes: [6, 7] },
+		{ variable: 'colorGain', type: 'bits', byte: 11, shift: 3, mask: 0x0f },
+		{
+			variable: 'gamma',
+			type: 'mapped',
+			extract: (r) => (r[13] >> 4) & 0x07,
+			map: GAMMA_VALUES,
+		},
+		{ variable: 'highSensitivity', type: 'flag', byte: 13, bit: 3, on: 'On', off: 'Off' },
+		{ variable: 'nrLevel', type: 'bits', byte: 13, shift: 0, mask: 0x07 },
+		{ variable: 'chromaSuppress', type: 'bits', byte: 14, shift: 4, mask: 0x07 },
+		{ variable: 'gainLimit', type: 'choiceLookup', byte: 14, mask: 0x0f, choiceKey: 'GAIN' },
+	],
+}
+
+// SRG-120DH and SRG-300SE — only defog at byte7[0]
+// Response: y0 50 pp 00 qq rr ss 00 0t 00 00 00 00 00 00 00 FF
+const BLOCK_04_LEGACY = {
+	name: 'Enlargement 2',
+	minLength: 16,
+	fields: [{ variable: 'defog', type: 'flag', byte: 7, bit: 0, on: 'On', off: 'Off' }],
+}
+
+// SRG-120DH and SRG-300SE — only colorHue at byte2[3:0]
+// Response: y0 50 0a 00 00 00 00 00 00 00 00 00 00 00 00 00 FF
+const BLOCK_05_LEGACY = {
+	name: 'Enlargement 3',
+	minLength: 16,
+	fields: [{ variable: 'colorHue', type: 'offset', byte: 2, mask: 0x0f, center: 7 }],
+}
+
 // ==================== Block 04: Enlargement 2 / Color (per-family) ====================
 
 // BRC-X400 family (group 1a) — tested on hardware
@@ -634,12 +673,18 @@ const BLOCKS_120DH = {
 	'097e7e00': BLOCK_00_LENS,
 	'097e7e01': BLOCK_01_LEGACY,
 	'097e7e02': BLOCK_02_120DH,
+	'097e7e03': BLOCK_03_LEGACY,
+	'097e7e04': BLOCK_04_LEGACY,
+	'097e7e05': BLOCK_05_LEGACY,
 }
 
 const BLOCKS_300SE = {
 	'097e7e00': BLOCK_00_LENS,
 	'097e7e01': BLOCK_01_LEGACY,
 	'097e7e02': BLOCK_02_300SE,
+	'097e7e03': BLOCK_03_LEGACY,
+	'097e7e04': BLOCK_04_LEGACY,
+	'097e7e05': BLOCK_05_LEGACY,
 }
 
 // ILME-FR7 (group 4) — individual inquiries only, no block inquiry support.
