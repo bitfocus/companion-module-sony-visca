@@ -98,7 +98,15 @@ class SonyVISCAInstance extends InstanceBase {
 			this.initVariables(undefined, modelId)
 		} else {
 			const blocks = getInquiryBlocks(model?.group)
-			this.initVariables(new Set(Object.keys(blocks)), modelId)
+			const activeBlockKeys = new Set(Object.keys(blocks))
+			// FR7 uses individual inquiries instead of block inquiries.
+			// Add standard block keys so block-tagged variables are registered.
+			if (model?.group === '4') {
+				activeBlockKeys.add('097e7e00')
+				activeBlockKeys.add('097e7e01')
+				activeBlockKeys.add('097e7e02')
+			}
+			this.initVariables(activeBlockKeys, modelId)
 		}
 	}
 
@@ -222,18 +230,39 @@ class SonyVISCAInstance extends InstanceBase {
 				}
 			}
 		}
-		// CAM_PanTiltPosInq: 8x 09 06 12 FF → y0 50 0p 0p 0p 0p 0t 0t 0t 0t FF
+		// CAM_PanTiltPosInq: 8x 09 06 12 FF
+		// Standard: y0 50 0p 0p 0p 0p 0t 0t 0t 0t FF (4-nibble, 16-bit)
+		// FR7:      y0 50 0p 0p 0p 0p 0p 0t 0t 0t 0t 0t FF (5-nibble, 20-bit)
 		callbacks['090612'] = (payload) => {
-			if (payload.length >= 10 && payload[1] === 0x50) {
+			if (payload[1] !== 0x50) return
+			if (payload.length >= 13) {
+				// FR7: 5-nibble (20-bit) coordinates
+				const panRaw =
+					((payload[2] & 0x0f) << 16) |
+					((payload[3] & 0x0f) << 12) |
+					((payload[4] & 0x0f) << 8) |
+					((payload[5] & 0x0f) << 4) |
+					(payload[6] & 0x0f)
+				const tiltRaw =
+					((payload[7] & 0x0f) << 16) |
+					((payload[8] & 0x0f) << 12) |
+					((payload[9] & 0x0f) << 8) |
+					((payload[10] & 0x0f) << 4) |
+					(payload[11] & 0x0f)
+				this.state.panPosition = panRaw > 0x7ffff ? panRaw - 0x100000 : panRaw
+				this.state.tiltPosition = tiltRaw > 0x7ffff ? tiltRaw - 0x100000 : tiltRaw
+			} else if (payload.length >= 10) {
+				// Standard: 4-nibble (16-bit) coordinates
 				const panRaw =
 					((payload[2] & 0x0f) << 12) | ((payload[3] & 0x0f) << 8) | ((payload[4] & 0x0f) << 4) | (payload[5] & 0x0f)
 				const tiltRaw =
 					((payload[6] & 0x0f) << 12) | ((payload[7] & 0x0f) << 8) | ((payload[8] & 0x0f) << 4) | (payload[9] & 0x0f)
-				// Convert to signed 16-bit
 				this.state.panPosition = panRaw > 0x7fff ? panRaw - 0x10000 : panRaw
 				this.state.tiltPosition = tiltRaw > 0x7fff ? tiltRaw - 0x10000 : tiltRaw
-				this.updateVariables()
+			} else {
+				return
 			}
+			this.updateVariables()
 		}
 		this.VISCA.initializeInquiries(callbacks)
 		this.setupLowPriorityInquiries()

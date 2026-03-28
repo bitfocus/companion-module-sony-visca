@@ -642,10 +642,52 @@ const BLOCKS_300SE = {
 	'097e7e02': BLOCK_02_300SE,
 }
 
+// ILME-FR7 (group 4) — individual inquiries only, no block inquiry support.
+// FR7 uses 02=On/03=Off instead of bit flags, and has unique WB mode values.
+const FR7_WB_MODES = {
+	0x04: 'ATW',
+	0x05: 'Memory A',
+	0x0a: 'Preset',
+}
+
+function fr7OnOff(variable, on = 'On', off = 'Off') {
+	return {
+		minLength: 4,
+		fields: [{ variable, type: 'mapped', extract: (r) => r[2], map: { 0x02: on, 0x03: off } }],
+	}
+}
+
 const BLOCKS_FR7 = {
-	'097e7e00': BLOCK_00_LENS,
-	'097e7e01': BLOCK_01_X400,
-	'097e7e02': BLOCK_02_X400,
+	// ZoomPosInq: y0 50 0z 0z 0z 0z FF
+	'090447': {
+		minLength: 7,
+		fields: [{ variable: 'zoomPosition', type: 'nibbleConcat', bytes: [2, 3, 4, 5] }],
+	},
+	// FocusPosInq: y0 50 0p 0p 0p 0p FF
+	'090448': {
+		minLength: 7,
+		fields: [{ variable: 'focusPosition', type: 'nibbleConcat', bytes: [2, 3, 4, 5] }],
+	},
+	// FocusModeInq: y0 50 pp FF (02=Auto, 03=Manual)
+	'090438': fr7OnOff('focusMode', 'Auto', 'Manual'),
+	// PowerInq: y0 50 0p FF (02=On, 03=Standby)
+	'090400': fr7OnOff('power'),
+	// WBModeInq: y0 50 0p FF (04=ATW, 05=Memory A, 0A=Preset)
+	'090435': {
+		minLength: 4,
+		fields: [
+			{
+				variable: 'wbMode',
+				type: 'mapped',
+				extract: (r) => r[2] & 0x0f,
+				map: FR7_WB_MODES,
+			},
+		],
+	},
+	// BacklightCompInq: y0 50 0p FF (02=On, 03=Off)
+	'090433': fr7OnOff('backlightComp'),
+	// SpotlightCompInq: y0 50 0p FF (02=On, 03=Off)
+	'09043a': fr7OnOff('spotlightComp'),
 }
 
 const GROUP_TO_BLOCKS = {

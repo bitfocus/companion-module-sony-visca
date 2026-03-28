@@ -3,7 +3,7 @@
 const FAMILY_X400_CORE = new Set(['051C', '051D']) // BRC-X400, BRC-X401
 const FAMILY_X400_SRG = new Set(['061A', '061B', '0618', '0617', '061C']) // SRG-201M2, HD1M2, X120, X400, X402
 const FAMILY_X400 = new Set([...FAMILY_X400_CORE, ...FAMILY_X400_SRG])
-const FAMILY_X40UH = new Set(['061F', '0620']) // SRG-X40UH, SRG-H40UH
+const FAMILY_X40UH = new Set(['061F', '0620', '0621', '0622']) // SRG-X40UH, SRG-H40UH, SRG-A40, SRG-A12
 const FAMILY_X1000 = new Set(['0519', '051B', '051A']) // BRC-X1000, BRC-H780, BRC-H800
 const FAMILY_X1000_NO_H780 = new Set(['0519', '051A']) // X1000 doc † = not available for H780
 const FAMILY_FR7 = new Set(['051E', '051Ek']) // ILME-FR7, ILME-FR7K
