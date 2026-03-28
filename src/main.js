@@ -269,19 +269,66 @@ class SonyVISCAInstance extends InstanceBase {
 	}
 
 	setupLowPriorityInquiries() {
-		const callbacks = {
-			// CAM_PanTiltSlowInq: 8x 09 06 44 FF → y0 50 0p FF (p: 2=On, 3=Off)
-			'090644': (payload) => {
-				if (payload.length >= 3 && payload[1] === 0x50) {
-					const prev = this.state.ptSlowMode
-					this.state.ptSlowMode = payload[2] === 0x02 ? 'Slow' : 'Normal'
-					if (this.state.ptSlowMode !== prev) {
+		// Helper for on/off state updates from y0 50 0p FF responses
+		const onOffCallback =
+			(stateKey, on = 'On', off = 'Off') =>
+			(payload) => {
+				if (payload.length >= 4 && payload[1] === 0x50) {
+					const prev = this.state[stateKey]
+					this.state[stateKey] = payload[2] === 0x02 ? on : off
+					if (this.state[stateKey] !== prev) {
 						this.updateVariables()
 						this.checkFeedbacks()
 					}
 				}
-			},
+			}
+
+		const callbacks = {
+			// CAM_PanTiltSlowInq: 8x 09 06 44 FF → y0 50 0p FF (02=Slow, 03=Normal)
+			'090644': onOffCallback('ptSlowMode', 'Slow', 'Normal'),
 		}
+
+		// FR7-specific individual inquiries — FR7 has no block inquiries, so
+		// these low-priority queries provide state that other cameras get from blocks.
+		if (this.isFr7Model()) {
+			// KneeSettingInq: 8x 09 7E 01 6D FF → y0 50 0p FF (02=On, 03=Off)
+			callbacks['097e016d'] = onOffCallback('kneeSetting')
+			// KneeModeInq: 8x 09 7E 01 54 FF → y0 50 0p FF (00=Auto, 04=Manual)
+			callbacks['097e0154'] = (payload) => {
+				if (payload.length >= 4 && payload[1] === 0x50) {
+					const prev = this.state.kneeMode
+					this.state.kneeMode = payload[2] === 0x04 ? 'Manual' : 'Auto'
+					if (this.state.kneeMode !== prev) {
+						this.updateVariables()
+						this.checkFeedbacks()
+					}
+				}
+			}
+			// DetailSettingInq: 8x 09 7E 01 60 FF → y0 50 0p FF (02=On, 03=Off)
+			callbacks['097e0160'] = onOffCallback('detailMode', 'Manual', 'Auto')
+			// AutoIrisInq: 8x 09 05 34 FF → y0 50 0p FF (02=On, 03=Off)
+			callbacks['090534'] = onOffCallback('autoIris')
+			// AGCInq: 8x 09 7E 01 75 FF → y0 50 0p FF (02=On, 03=Off)
+			callbacks['097e0175'] = onOffCallback('agc')
+			// AutoShutterInq: 8x 09 05 35 FF → y0 50 0p FF (02=On, 03=Off)
+			callbacks['090535'] = onOffCallback('autoShutter')
+			// NDFilterModeInq: 8x 09 7E 04 52 FF → y0 50 0p FF (0=Preset, 1=Variable)
+			callbacks['097e0452'] = (payload) => {
+				if (payload.length >= 4 && payload[1] === 0x50) {
+					const prev = this.state.ndFilterMode
+					this.state.ndFilterMode = (payload[2] & 0x0f) === 0x01 ? 'Variable' : 'Preset'
+					if (this.state.ndFilterMode !== prev) {
+						this.updateVariables()
+						this.checkFeedbacks()
+					}
+				}
+			}
+			// AutoNDFilterInq: 8x 09 7E 04 53 FF → y0 50 0p FF (02=On, 03=Off)
+			callbacks['097e0453'] = onOffCallback('autoNDFilter')
+			// NDClearInq: 8x 09 7E 04 54 FF → y0 50 0p FF (02=Filtered, 03=Clear)
+			callbacks['097e0454'] = onOffCallback('ndClear', 'Filtered', 'Clear')
+		}
+
 		this.VISCA.initializeLowPriorityInquiries(callbacks)
 	}
 
