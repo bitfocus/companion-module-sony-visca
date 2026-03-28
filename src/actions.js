@@ -3034,6 +3034,9 @@ function getPresetActionDefinitions(self, camId) {
 				const presetNumber =
 					event.options.val === 'ps' ? self.state.presetSelector - 1 : parseInt(event.options.val, 16)
 				self.VISCA.send(camId + '\x01\x04\x3F\x02' + String.fromCharCode(presetNumber & 0xff) + '\xFF')
+				self.state.lastPresetUsed = presetNumber + 1
+				self.updateVariables()
+				self.checkFeedbacks()
 			},
 		},
 		speedPset: {

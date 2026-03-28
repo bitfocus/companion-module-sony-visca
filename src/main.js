@@ -44,7 +44,7 @@ class SonyVISCAInstance extends InstanceBase {
 			recordingStatus: 'Unknown',
 			recordingPulsePhase: false,
 			viscaId: this.config.id,
-			presetSelector: 1,
+			presetSelector: 64,
 		}
 		this.speed = { pan: 0x0c, tilt: 0x0c, zoom: 1, focus: 1 }
 

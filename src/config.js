@@ -60,5 +60,40 @@ export function getConfigDefinitions(CHOICES) {
 				{ id: '24', label: '23.98 fps' },
 			],
 		},
+		{
+			type: 'static-text',
+			id: 'presetColorInfo',
+			width: 12,
+			label: 'Color for Presets',
+			value: 'Default color for new camera presets',
+		},
+		{
+			type: 'colorpicker',
+			id: 'presetColorText',
+			label: 'Text',
+			default: '#FFFFFF',
+			width: 2,
+		},
+		{
+			type: 'colorpicker',
+			id: 'presetColorBG',
+			label: 'Background',
+			default: '#36454F',
+			width: 3,
+		},
+		{
+			type: 'colorpicker',
+			id: 'presetSelectedText',
+			label: 'Selected Text',
+			default: '#FFFFFF',
+			width: 2,
+		},
+		{
+			type: 'colorpicker',
+			id: 'presetSelectedBG',
+			label: 'Selected Background',
+			default: '#777788',
+			width: 2,
+		},
 	]
 }

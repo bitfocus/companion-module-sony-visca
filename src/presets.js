@@ -1673,6 +1673,8 @@ const systemPresets = {
 function getCameraPresets(self) {
 	const textColor = self?.config?.presetColorText ?? COLORS.WHITE
 	const bgColor = self?.config?.presetColorBG ?? COLORS.CHARCOAL
+	const selectedText = self?.config?.presetSelectedText ?? COLORS.WHITE
+	const selectedBG = self?.config?.presetSelectedBG ?? 0x777788
 	const presets = {}
 	for (let i = 0; i < 64; i++) {
 		presets['presets-Preset' + i] = {
@@ -1726,6 +1728,22 @@ function getCameraPresets(self) {
 			],
 			feedbacks: [
 				{
+					feedbackId: 'lastPresetUsed',
+					options: { preset: i + 1 },
+					style: {
+						color: COLORS.WHITE,
+						bgcolor: COLORS.DARK_ORANGE,
+					},
+				},
+				{
+					feedbackId: 'selectedPreset',
+					options: { preset: i + 1 },
+					style: {
+						color: selectedText,
+						bgcolor: selectedBG,
+					},
+				},
+				{
 					feedbackId: 'heldFeedback',
 					options: {},
 					style: {
@@ -1763,8 +1781,8 @@ function getCameraPresets(self) {
 					feedbackId: 'selectedPreset',
 					options: { preset: i },
 					style: {
-						color: COLORS.BLACK,
-						bgcolor: COLORS.WHITE,
+						color: selectedText,
+						bgcolor: selectedBG,
 					},
 				},
 			],

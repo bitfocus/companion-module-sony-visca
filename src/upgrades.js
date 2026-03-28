@@ -271,4 +271,15 @@ export const UpgradeScripts = [
 		}
 		return result
 	},
+	function migratePresetSelectedColors(_context, props) {
+		const result = { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
+		if (props.config && props.config.presetSelectedText == null) {
+			result.updatedConfig = {
+				...props.config,
+				presetSelectedText: 0xffffff, // white
+				presetSelectedBG: 0x777788,
+			}
+		}
+		return result
+	},
 ]

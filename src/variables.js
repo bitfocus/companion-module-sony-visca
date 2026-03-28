@@ -172,6 +172,7 @@ const variables = [
 	{ variableId: 'spotlightComp', name: 'Spotlight Compensation (on/off)' },
 	{ variableId: 'recordingStatus', name: 'Recording status (unknown/standby/recording)', models: CAP_FR7 },
 	{ variableId: 'presetSelector', name: 'Preset Selection Variable' },
+	{ variableId: 'lastPresetUsed', name: 'Last Preset Recalled (1-64)' },
 	{ variableId: 'viscaId', name: 'Specific ViscaID to interact with (serial only)' },
 	{ variableId: 'lastCmdSent', name: 'Last Command Sent (hex values)' },
 	// Position bars
@@ -321,6 +322,7 @@ export async function updateVariables() {
 		spotlightComp: this.state.spotlightComp,
 		recordingStatus: this.state.recordingStatus,
 		presetSelector: this.state.presetSelector,
+		lastPresetUsed: this.state.lastPresetUsed,
 		viscaId: this.state.viscaId - 0x80,
 		// Block 097e7e00 — Lens Control
 		zoomPosition: this.state.zoomPosition,

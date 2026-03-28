@@ -19,14 +19,23 @@ export function getFeedbackDefinitions(self) {
 		lastPresetUsed: {
 			type: 'boolean',
 			name: 'Last Preset Used',
-			description: 'Highlight the last preset used',
+			description: 'Highlight the last preset recalled',
 			defaultStyle: {
-				color: COLORS.BLACK,
-				bgcolor: COLORS.WHITE,
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
 			},
-			options: [],
-			callback: function () {
-				// return self.state.heldThresholdReached
+			options: [
+				{
+					type: 'number',
+					label: 'Preset Number (1-64)',
+					id: 'preset',
+					default: 1,
+					min: 1,
+					max: 64,
+				},
+			],
+			callback: function (feedback) {
+				return feedback.options.preset === self.state.lastPresetUsed
 			},
 		},
 		selectedPreset: {
@@ -34,8 +43,8 @@ export function getFeedbackDefinitions(self) {
 			name: 'Selected Preset',
 			description: 'Highlight the selected preset',
 			defaultStyle: {
-				color: COLORS.BLACK,
-				bgcolor: COLORS.WHITE,
+				color: COLORS.WHITE,
+				bgcolor: 0x777788,
 			},
 			options: [],
 			callback: function (feedback) {
