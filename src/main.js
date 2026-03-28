@@ -231,37 +231,55 @@ class SonyVISCAInstance extends InstanceBase {
 			}
 		}
 		// CAM_PanTiltPosInq: 8x 09 06 12 FF
-		// Standard: y0 50 0p 0p 0p 0p 0t 0t 0t 0t FF (4-nibble, 16-bit)
-		// FR7:      y0 50 0p 0p 0p 0p 0p 0t 0t 0t 0t 0t FF (5-nibble, 20-bit)
+		// Standard: y0 50 0p 0p 0p 0p 0t 0t 0t 0t FF         (4+4 nibble, 10 bytes)
+		// X1000:    y0 50 0p 0p 0p 0p 0p 0t 0t 0t 0t FF      (5+4 nibble, 12 bytes)
+		// FR7:      y0 50 0p 0p 0p 0p 0p 0t 0t 0t 0t 0t FF   (5+5 nibble, 13 bytes)
 		callbacks['090612'] = (payload) => {
 			if (payload[1] !== 0x50) return
+			let panRaw, tiltRaw, panBits, tiltBits
 			if (payload.length >= 13) {
-				// FR7: 5-nibble (20-bit) coordinates
-				const panRaw =
+				// FR7: 5-nibble pan + 5-nibble tilt (20+20 bit)
+				panRaw =
 					((payload[2] & 0x0f) << 16) |
 					((payload[3] & 0x0f) << 12) |
 					((payload[4] & 0x0f) << 8) |
 					((payload[5] & 0x0f) << 4) |
 					(payload[6] & 0x0f)
-				const tiltRaw =
+				tiltRaw =
 					((payload[7] & 0x0f) << 16) |
 					((payload[8] & 0x0f) << 12) |
 					((payload[9] & 0x0f) << 8) |
 					((payload[10] & 0x0f) << 4) |
 					(payload[11] & 0x0f)
-				this.state.panPosition = panRaw > 0x7ffff ? panRaw - 0x100000 : panRaw
-				this.state.tiltPosition = tiltRaw > 0x7ffff ? tiltRaw - 0x100000 : tiltRaw
+				panBits = 20
+				tiltBits = 20
+			} else if (payload.length >= 12) {
+				// X1000: 5-nibble pan (20-bit) + 4-nibble tilt (16-bit)
+				panRaw =
+					((payload[2] & 0x0f) << 16) |
+					((payload[3] & 0x0f) << 12) |
+					((payload[4] & 0x0f) << 8) |
+					((payload[5] & 0x0f) << 4) |
+					(payload[6] & 0x0f)
+				tiltRaw =
+					((payload[7] & 0x0f) << 12) | ((payload[8] & 0x0f) << 8) | ((payload[9] & 0x0f) << 4) | (payload[10] & 0x0f)
+				panBits = 20
+				tiltBits = 16
 			} else if (payload.length >= 10) {
-				// Standard: 4-nibble (16-bit) coordinates
-				const panRaw =
+				// Standard: 4-nibble pan + 4-nibble tilt (16+16 bit)
+				panRaw =
 					((payload[2] & 0x0f) << 12) | ((payload[3] & 0x0f) << 8) | ((payload[4] & 0x0f) << 4) | (payload[5] & 0x0f)
-				const tiltRaw =
+				tiltRaw =
 					((payload[6] & 0x0f) << 12) | ((payload[7] & 0x0f) << 8) | ((payload[8] & 0x0f) << 4) | (payload[9] & 0x0f)
-				this.state.panPosition = panRaw > 0x7fff ? panRaw - 0x10000 : panRaw
-				this.state.tiltPosition = tiltRaw > 0x7fff ? tiltRaw - 0x10000 : tiltRaw
+				panBits = 16
+				tiltBits = 16
 			} else {
 				return
 			}
+			const panSign = 1 << (panBits - 1)
+			const tiltSign = 1 << (tiltBits - 1)
+			this.state.panPosition = panRaw >= panSign ? panRaw - (panSign << 1) : panRaw
+			this.state.tiltPosition = tiltRaw >= tiltSign ? tiltRaw - (tiltSign << 1) : tiltRaw
 			this.updateVariables()
 		}
 		this.VISCA.initializeInquiries(callbacks)

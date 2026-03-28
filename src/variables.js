@@ -12,6 +12,9 @@ import {
 // tiltOff = image flip off / desktop, tiltOn = image flip on / ceiling
 const PT_RANGES = {
 	'0511': { pan: [-0x1400, 0x1400], tiltOff: [-0x0500, 0x0500], tiltOn: [-0x0500, 0x0500] }, // SRG-120DH (±100°, ±25°)
+	'0519': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0x52ef], tiltOn: [-0x52ef, 0x1ba5] }, // BRC-X1000 (20-bit pan, 16-bit tilt)
+	'051A': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0x52ef], tiltOn: [-0x52ef, 0x1ba5] }, // BRC-H800
+	'051B': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0x52ef], tiltOn: [-0x52ef, 0x1ba5] }, // BRC-H780
 	'051E': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0xb3b0], tiltOn: [-0xc183, 0x0dd2] }, // ILME-FR7 (20-bit)
 	'051Ek': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0xb3b0], tiltOn: [-0xc183, 0x0dd2] }, // ILME-FR7K (20-bit)
 }
