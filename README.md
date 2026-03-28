@@ -76,6 +76,35 @@ Blocks 03-05 were recently added for legacy cameras. Please verify:
 
 ## Changes
 
+### v2.8.0
+
+- Added inquiry polling with per-family block definitions for real-time camera state (zoom, focus, iris, gain, shutter, exposure mode, WB mode, pan/tilt position, and many more)
+- Added per-model filtering of actions, presets, feedbacks, and variables based on camera capabilities
+- Added 97+ variables with confirmed state from camera polling
+- Added 14 boolean feedbacks (focus mode, exposure mode, WB mode, zoom mode, backlight, spotlight, exposure comp, recording, PT slow mode, selected preset, last preset used, and more)
+- Added position bar variables for pan, tilt, zoom, focus, and iris
+- Added zoom ratio variable with per-model interpolation tables
+- Added zoom mode toggle action (cycles through up to three modes)
+- Added FR7 individual inquiry polling (FR7 does not support block inquiries)
+- Added FR7 low-priority inquiries for knee, detail, ND filter, auto iris, AGC, auto shutter, and ceiling mode
+- Added FR7 20-bit pan/tilt coordinate support with per-model position bar ranges
+- Added SRG-A40 and SRG-A12 camera support with dedicated inquiry blocks and GAIN_LIMIT choices
+- Added inquiry blocks 03-05 for SRG-120DH and SRG-300SE legacy cameras
+- Added X1000 inquiry block 03 (enlargement settings)
+- Added configurable preset colors for multi-camera identification (set per-instance in connection config)
+- Added last preset recalled feedback and variable
+- Added selected preset feedback to camera preset buttons
+- Added focus near limit individual inquiry for full 16-bit precision
+- Fixed per-family inquiry block byte positions and masks across X40UH, X1000, X400, 300SE, and legacy families
+- Fixed X1000 pan/tilt parsing for mixed 5-nibble pan / 4-nibble tilt format
+- Fixed focus position bar to scale based on actual focusNearLimit instead of protocol maximum
+- Fixed focusNearLimit value from block inquiry (was 1/256 of actual value)
+- Fixed redundant "Status: ok" logging during normal polling
+- Fixed upgrade script ordering to preserve v2.7.5 positional indexes
+- Updated protocol documentation with clarified byte/nibble/bit notation
+- Updated presets with position bars, zoom ratio, and improved text sizing
+- Updated custom command action to support variables in command strings
+
 ### v2.7.5
 
 - Added details for enabling VISCA to HELP.md
