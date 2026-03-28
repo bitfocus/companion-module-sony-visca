@@ -281,7 +281,8 @@ export async function updateVariables() {
 	const zoomMax = getZoomMax(this.config.model, this.state.zoomMode)
 	const zoomClamped = this.state.zoomPosition != null ? Math.min(this.state.zoomPosition, zoomMax) : null
 	const zoomPct = normalizePct(zoomClamped, 0, zoomMax)
-	const [focusFar, focusNear] = getFocusRange(this.config.model)
+	const [focusFar] = getFocusRange(this.config.model)
+	const focusNear = this.state.focusNearLimit ?? getFocusRange(this.config.model)[1]
 	const focusClamped =
 		this.state.focusPosition != null ? Math.max(focusFar, Math.min(this.state.focusPosition, focusNear)) : null
 	const focusPctRaw = normalizePct(focusClamped, focusFar, focusNear)
