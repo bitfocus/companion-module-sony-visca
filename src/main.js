@@ -304,6 +304,18 @@ class SonyVISCAInstance extends InstanceBase {
 		const callbacks = {
 			// CAM_PanTiltSlowInq: 8x 09 06 44 FF → y0 50 0p FF (02=Slow, 03=Normal)
 			'090644': onOffCallback('ptSlowMode', 'Slow', 'Normal'),
+			// CAM_FocusNearLimitInq: 8x 09 04 28 FF → y0 50 0p 0p 0p 0p FF (16-bit position)
+			// Block 00 only returns 2 nibbles (8-bit); this gives full 16-bit precision
+			'090428': (payload) => {
+				if (payload.length >= 7 && payload[1] === 0x50) {
+					const value =
+						((payload[2] & 0x0f) << 12) | ((payload[3] & 0x0f) << 8) | ((payload[4] & 0x0f) << 4) | (payload[5] & 0x0f)
+					if (this.state.focusNearLimit !== value) {
+						this.state.focusNearLimit = value
+						this.updateVariables()
+					}
+				}
+			},
 		}
 
 		// FR7-specific individual inquiries — FR7 has no block inquiries, so

@@ -119,7 +119,11 @@ const BLOCK_00_LENS = {
 	minLength: 16,
 	fields: [
 		{ variable: 'zoomPosition', type: 'nibbleConcat', bytes: [2, 3, 4, 5] },
-		{ variable: 'focusNearLimit', type: 'nibbleConcat', bytes: [6, 7] },
+		{
+			variable: 'focusNearLimit',
+			type: 'custom',
+			extract: (r) => (((r[6] & 0x0f) << 4) | (r[7] & 0x0f)) << 8,
+		},
 		{ variable: 'focusPosition', type: 'nibbleConcat', bytes: [8, 9, 10, 11] },
 		{ variable: 'focusMode', type: 'flag', byte: 13, bit: 0, on: 'Auto', off: 'Manual' },
 		{
