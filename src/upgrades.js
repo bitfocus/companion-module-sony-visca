@@ -260,4 +260,15 @@ export const UpgradeScripts = [
 		}
 		return result
 	},
+	function migratePresetColors(_context, props) {
+		const result = { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
+		if (props.config && !props.config.presetColorText) {
+			result.updatedConfig = {
+				...props.config,
+				presetColorText: 0xffffff, // white
+				presetColorBG: 0x36454f, // charcoal
+			}
+		}
+		return result
+	},
 ]

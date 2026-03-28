@@ -18,7 +18,7 @@ export function getPresetDefinitions(self, availableActionIds) {
 		...exposurePresets,
 		...colorPresets,
 		...systemPresets,
-		...cameraPresets,
+		...getCameraPresets(self),
 		...rotationEnabledPresets,
 	}
 	if (!availableActionIds) return all
@@ -1670,17 +1670,116 @@ const systemPresets = {
 	},
 }
 
-const cameraPresets = {}
-for (let i = 0; i < 64; i++) {
-	const preset = {
+function getCameraPresets(self) {
+	const textColor = self?.config?.presetColorText ?? COLORS.WHITE
+	const bgColor = self?.config?.presetColorBG ?? COLORS.CHARCOAL
+	const presets = {}
+	for (let i = 0; i < 64; i++) {
+		presets['presets-Preset' + i] = {
+			type: 'button',
+			category: 'Presets',
+			name: 'Preset ' + (i + 1),
+			style: {
+				text: 'Preset\\n' + (i + 1),
+				size: '18',
+				color: textColor,
+				bgcolor: bgColor,
+			},
+			steps: [
+				{
+					down: [],
+					up: [
+						{
+							actionId: 'recallPset',
+							options: {
+								val: ('0' + i.toString(16)).slice(-2).toUpperCase(),
+							},
+							delay: 0,
+						},
+					],
+					2000: {
+						options: {
+							runWhileHeld: true,
+						},
+						actions: [
+							{
+								actionId: 'savePset',
+								options: {
+									val: ('0' + i.toString(16)).slice(-2).toUpperCase(),
+								},
+								delay: 0,
+							},
+							{
+								actionId: 'buttonFeedback',
+								options: { bol: '1' },
+								delay: 0,
+							},
+						],
+					},
+					2001: [
+						{
+							actionId: 'buttonFeedback',
+							options: { bol: '0' },
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'heldFeedback',
+					options: {},
+					style: {
+						color: COLORS.BLACK,
+						bgcolor: COLORS.YELLOW,
+					},
+				},
+			],
+		}
+	}
+	for (let i = 1; i < 65; i++) {
+		presets['presets-PresetSelector' + i] = {
+			type: 'button',
+			category: 'Presets',
+			name: 'Set presetSelector variable',
+			style: {
+				text: 'Select\\nPreset\\n' + i,
+				size: '18',
+				color: textColor,
+				bgcolor: bgColor,
+				show_topbar: false,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'setPresetSelector',
+							options: { val: i },
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'selectedPreset',
+					options: { preset: i },
+					style: {
+						color: COLORS.BLACK,
+						bgcolor: COLORS.WHITE,
+					},
+				},
+			],
+		}
+	}
+	presets['presets-PresetPS'] = {
 		type: 'button',
 		category: 'Presets',
-		name: 'Preset ' + (i + 1),
+		name: 'Preset using variable presetSelector',
 		style: {
-			text: 'Preset\\n' + (i + 1),
+			text: 'Preset\\n$(sony-visca:presetSelector)\\nSelect',
 			size: '18',
-			color: COLORS.WHITE,
-			bgcolor: COLORS.CHARCOAL,
+			color: textColor,
+			bgcolor: bgColor,
+			show_topbar: false,
 		},
 		steps: [
 			{
@@ -1689,7 +1788,7 @@ for (let i = 0; i < 64; i++) {
 					{
 						actionId: 'recallPset',
 						options: {
-							val: ('0' + i.toString(16)).slice(-2).toUpperCase(),
+							val: 'ps',
 						},
 						delay: 0,
 					},
@@ -1702,7 +1801,7 @@ for (let i = 0; i < 64; i++) {
 						{
 							actionId: 'savePset',
 							options: {
-								val: ('0' + i.toString(16)).slice(-2).toUpperCase(),
+								val: 'ps',
 							},
 							delay: 0,
 						},
@@ -1732,149 +1831,53 @@ for (let i = 0; i < 64; i++) {
 			},
 		],
 	}
-	cameraPresets['presets-Preset' + i] = preset
-}
-for (let i = 1; i < 65; i++) {
-	const preset = {
+	presets['presets-PresetInc'] = {
 		type: 'button',
 		category: 'Presets',
-		name: 'Set presetSelector variable',
+		name: 'Increment presetSelector variable',
 		style: {
-			text: 'Select\\nPreset\\n' + i,
+			text: 'Preset\\nSelect\\n+1',
 			size: '18',
-			color: COLORS.WHITE,
-			bgcolor: COLORS.DARK_GRAY,
+			color: textColor,
+			bgcolor: bgColor,
 			show_topbar: false,
 		},
 		steps: [
 			{
 				down: [
 					{
-						actionId: 'setPresetSelector',
-						options: { val: i },
+						actionId: 'modifyPresetSelector',
+						options: { val: '1' },
 					},
 				],
 			},
 		],
-		feedbacks: [
-			{
-				feedbackId: 'selectedPreset',
-				options: { preset: i },
-				style: {
-					color: COLORS.BLACK,
-					bgcolor: COLORS.WHITE,
-				},
-			},
-		],
+		feedbacks: [],
 	}
-	cameraPresets['presets-PresetSelector' + i] = preset
-}
-cameraPresets['presets-PresetPS'] = {
-	type: 'button',
-	category: 'Presets',
-	name: 'Preset using variable presetSelector',
-	style: {
-		text: 'Preset\\n$(sony-visca:presetSelector)\\nSelect',
-		size: '18',
-		color: COLORS.WHITE,
-		bgcolor: COLORS.DARKER_GRAY,
-		show_topbar: false,
-	},
-	steps: [
-		{
-			down: [],
-			up: [
-				{
-					actionId: 'recallPset',
-					options: {
-						val: 'ps',
-					},
-					delay: 0,
-				},
-			],
-			2000: {
-				options: {
-					runWhileHeld: true,
-				},
-				actions: [
+	presets['presets-PresetDec'] = {
+		type: 'button',
+		category: 'Presets',
+		name: 'Decrement presetSelector variable',
+		style: {
+			text: 'Preset\\nSelect\\n-1',
+			size: '18',
+			color: textColor,
+			bgcolor: bgColor,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
 					{
-						actionId: 'savePset',
-						options: {
-							val: 'ps',
-						},
-						delay: 0,
-					},
-					{
-						actionId: 'buttonFeedback',
-						options: { bol: '1' },
-						delay: 0,
+						actionId: 'modifyPresetSelector',
+						options: { val: '-1' },
 					},
 				],
 			},
-			2001: [
-				{
-					actionId: 'buttonFeedback',
-					options: { bol: '0' },
-				},
-			],
-		},
-	],
-	feedbacks: [
-		{
-			feedbackId: 'heldFeedback',
-			options: {},
-			style: {
-				color: COLORS.BLACK,
-				bgcolor: COLORS.YELLOW,
-			},
-		},
-	],
-}
-cameraPresets['presets-PresetInc'] = {
-	type: 'button',
-	category: 'Presets',
-	name: 'Increment presetSelector variable',
-	style: {
-		text: 'Preset\\nSelect\\n+1',
-		size: '18',
-		color: COLORS.WHITE,
-		bgcolor: COLORS.DARK_GRAY,
-		show_topbar: false,
-	},
-	steps: [
-		{
-			down: [
-				{
-					actionId: 'modifyPresetSelector',
-					options: { val: '1' },
-				},
-			],
-		},
-	],
-	feedbacks: [],
-}
-cameraPresets['presets-PresetDec'] = {
-	type: 'button',
-	category: 'Presets',
-	name: 'Decrement presetSelector variable',
-	style: {
-		text: 'Preset\\nSelect\\n-1',
-		size: '18',
-		color: COLORS.WHITE,
-		bgcolor: COLORS.DARK_GRAY,
-		show_topbar: false,
-	},
-	steps: [
-		{
-			down: [
-				{
-					actionId: 'modifyPresetSelector',
-					options: { val: '-1' },
-				},
-			],
-		},
-	],
-	feedbacks: [],
+		],
+		feedbacks: [],
+	}
+	return presets
 }
 
 const rotationEnabledPresets = {
