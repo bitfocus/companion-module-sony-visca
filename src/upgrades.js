@@ -4,16 +4,12 @@ export const UpgradeScripts = [
 	 * Remember that once it has been added it cannot be removed!
 	 */
 
+	// Position 0 — v2.3.0 placeholder (do not remove or reorder)
 	function pre230(_context, _props) {
 		return { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
 	},
-	function migrateOtherModel(_context, props) {
-		const result = { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
-		if (props.config?.model === 'other') {
-			result.updatedConfig = { ...props.config, model: 'other_all' }
-		}
-		return result
-	},
+
+	// Position 1 — v2.3.x action/feedback migrations (do not remove or reorder)
 	function v23x(_context, props) {
 		const result = {
 			updatedActions: [],
@@ -242,8 +238,18 @@ export const UpgradeScripts = [
 		}
 		return result
 	},
-	function migrateExposureFeedbacks(_context, props) {
+
+	// Position 2 — v2.8.0 combined migrations
+	function v280(_context, props) {
 		const result = { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
+
+		// Migrate 'other' model to 'other_all'
+		if (props.config?.model === 'other') {
+			props.config.model = 'other_all'
+			result.updatedConfig = { ...props.config }
+		}
+
+		// Migrate exposure feedbacks
 		for (const feedback of props.feedbacks) {
 			switch (feedback.feedbackId) {
 				case 'exposureManual':
@@ -258,28 +264,23 @@ export const UpgradeScripts = [
 					break
 			}
 		}
-		return result
-	},
-	function migratePresetColors(_context, props) {
-		const result = { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
+
+		// Set default preset colors for configs that predate the colorpicker fields
 		if (props.config && !props.config.presetColorText) {
 			result.updatedConfig = {
-				...props.config,
+				...(result.updatedConfig ?? props.config),
 				presetColorText: 0xffffff, // white
 				presetColorBG: 0x36454f, // charcoal
 			}
 		}
-		return result
-	},
-	function migratePresetSelectedColors(_context, props) {
-		const result = { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
 		if (props.config && props.config.presetSelectedText == null) {
 			result.updatedConfig = {
-				...props.config,
+				...(result.updatedConfig ?? props.config),
 				presetSelectedText: 0xffffff, // white
 				presetSelectedBG: 0x777788,
 			}
 		}
+
 		return result
 	},
 ]
