@@ -5,6 +5,16 @@ This module uses the Sony Visca protocol to control PTZ cameras. While it is foc
 - See [HELP.md](https://github.com/bitfocus/companion-module-sony-visca/blob/master/companion/HELP.md) for features implemented and operational instructions.
 - See [LICENSE](https://github.com/bitfocus/companion-module-sony-visca/blob/master/LICENSE)
 
+## How to Test
+
+1. Go to the [Actions tab](https://github.com/bitfocus/companion-module-sony-visca/actions) on GitHub
+2. Find the latest workflow run for the branch you want to test
+3. Download the **pkg** artifact (it will save as `pkg.zip` containing the module `.tgz`)
+4. Extract the `.tgz` file from the zip
+5. In Companion, go to **Connections** and click the **Developer modules** button (bottom of the page, you may need to enable developer mode in the settings)
+6. Install the `.tgz` file
+7. Restart Companion if prompted
+
 ## Testing Needed
 
 We've recently added per-model inquiry polling, new camera support, and protocol-accurate byte-level parsing for all supported camera families. Much of this was implemented from protocol documentation without hardware access. We need community help verifying behavior on cameras other than the BRC-X400.
