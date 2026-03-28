@@ -261,9 +261,12 @@ export class Visca {
 	}
 
 	#onSuccessfulResponse() {
+		const wasRecovering = this.#consecutiveTimeouts > 0
 		this.#consecutiveTimeouts = 0
 		this.#totalSuccesses++
-		this.#instance.updateStatus(InstanceStatus.Ok)
+		if (wasRecovering || this.#totalSuccesses === 1) {
+			this.#instance.updateStatus(InstanceStatus.Ok)
+		}
 	}
 
 	#handleTimeout(seq) {
