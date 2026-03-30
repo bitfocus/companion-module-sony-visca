@@ -1158,6 +1158,8 @@ const _choices = {
 		},
 	},
 }
+// Group 3c models: SRG-360SHE, SRG-280SHE — identical choice tables to group 3b
+_choices['3c'] = _choices['3b']
 export const CHOICES = {
 	EXPOSURE_COMPENSATION: [
 		{ id: '0E', label: '+7' },

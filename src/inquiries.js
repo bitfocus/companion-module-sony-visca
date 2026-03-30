@@ -766,6 +766,14 @@ const BLOCKS_300SE = {
 	'097e7e05': BLOCK_05_LEGACY,
 }
 
+// SRG-360SHE family (group 3c) — same blocks as 300SE but only 00-03 (no 04-05)
+const BLOCKS_360SHE = {
+	'097e7e00': BLOCK_00_LENS,
+	'097e7e01': BLOCK_01_LEGACY,
+	'097e7e02': BLOCK_02_300SE,
+	'097e7e03': BLOCK_03_LEGACY,
+}
+
 // ILME-FR7 (group 4) — individual inquiries only, no block inquiry support.
 // FR7 uses 02=On/03=Off instead of bit flags, and has unique WB mode values.
 const FR7_WB_MODES = {
@@ -820,6 +828,7 @@ const GROUP_TO_BLOCKS = {
 	2: BLOCKS_X1000,
 	'3a': BLOCKS_120DH,
 	'3b': BLOCKS_300SE,
+	'3c': BLOCKS_360SHE,
 	4: BLOCKS_FR7,
 	5: BLOCKS_A40,
 }

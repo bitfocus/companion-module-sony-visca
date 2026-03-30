@@ -9,6 +9,7 @@ const FAMILY_X1000_NO_H780 = new Set(['0519', '051A']) // X1000 doc † = not av
 const FAMILY_FR7 = new Set(['051E', '051Ek']) // ILME-FR7, ILME-FR7K
 const FAMILY_120DH = new Set(['0511']) // SRG-120DH
 const FAMILY_SE = new Set(['0516a', '0516b', '0516c']) // SRG-201SE, SRG-300SE, SRG-301SE
+const FAMILY_360SHE = new Set(['0604', '0605']) // SRG-360SHE, SRG-280SHE
 
 // --- Capability sets — used as `models` property on actions/feedbacks/variables ---
 
@@ -20,6 +21,7 @@ export const CAP_ALL_CAMERAS = new Set([
 	...FAMILY_FR7,
 	...FAMILY_120DH,
 	...FAMILY_SE,
+	...FAMILY_360SHE,
 ])
 
 // All modern protocol cameras (non-dagger X400 commands shared by X40UH + X1000)
@@ -32,13 +34,14 @@ export const CAP_ADVANCED_LEGACY = new Set([
 	...FAMILY_X1000,
 	...FAMILY_120DH,
 	...FAMILY_SE,
+	...FAMILY_360SHE,
 ])
 
 // X400 full family + X40UH (non-dagger X400 commands also in X40UH, absent from X1000)
 export const CAP_X400_X40UH = new Set([...FAMILY_X400, ...FAMILY_X40UH])
 
-// X400 full family + X40UH + SE (auto ICR, image stabilizer)
-export const CAP_X400_X40UH_SE = new Set([...FAMILY_X400, ...FAMILY_X40UH, ...FAMILY_SE])
+// X400 full family + X40UH + SE + 360SHE (auto ICR, image stabilizer)
+export const CAP_X400_X40UH_SE = new Set([...FAMILY_X400, ...FAMILY_X40UH, ...FAMILY_SE, ...FAMILY_360SHE])
 
 // X400/X401 + X1000 (X400 dagger commands also present in X1000 protocol)
 export const CAP_X400_X1000 = new Set([...FAMILY_X400_CORE, ...FAMILY_X1000])
@@ -55,8 +58,14 @@ export const CAP_X400_ONLY = new Set([...FAMILY_X400_CORE])
 // Tele Convert: X400/X401 + SRG-X402 (*3 footnote) + X1000 family
 export const CAP_TELECONVERT = new Set([...FAMILY_X400_CORE, '061C', ...FAMILY_X1000])
 
-// ICR: X400 all + X40UH + X1000(no H780) + SE (per protocol docs)
-export const CAP_ICR = new Set([...FAMILY_X400, ...FAMILY_X40UH, ...FAMILY_X1000_NO_H780, ...FAMILY_SE])
+// ICR: X400 all + X40UH + X1000(no H780) + SE + 360SHE (per protocol docs)
+export const CAP_ICR = new Set([
+	...FAMILY_X400,
+	...FAMILY_X40UH,
+	...FAMILY_X1000_NO_H780,
+	...FAMILY_SE,
+	...FAMILY_360SHE,
+])
 
 // X1000 family only
 export const CAP_X1000 = new Set([...FAMILY_X1000])
@@ -67,11 +76,14 @@ export const CAP_X1000_FR7 = new Set([...FAMILY_X1000, ...FAMILY_FR7])
 // FR7 only
 export const CAP_FR7 = new Set([...FAMILY_FR7])
 
-// Wide Dynamic Range: X1000 + legacy cameras (120DH, SE)
-export const CAP_WIDE_DYNAMIC = new Set([...FAMILY_X1000, ...FAMILY_120DH, ...FAMILY_SE])
+// Wide Dynamic Range: X1000 + legacy cameras (120DH, SE, 360SHE)
+export const CAP_WIDE_DYNAMIC = new Set([...FAMILY_X1000, ...FAMILY_120DH, ...FAMILY_SE, ...FAMILY_360SHE])
 
 // Brightness position: only legacy cameras have BRIGHTNESS choices
-export const CAP_BRIGHTNESS = new Set([...FAMILY_120DH, ...FAMILY_SE])
+export const CAP_BRIGHTNESS = new Set([...FAMILY_120DH, ...FAMILY_SE, ...FAMILY_360SHE])
+
+// Tally on/off: X400/X401 + X1000 + 360SHE (same 7E 01 0A command format)
+export const CAP_TALLY = new Set([...FAMILY_X400_CORE, ...FAMILY_X1000, ...FAMILY_360SHE])
 
 /**
  * Filter definitions by model ID.

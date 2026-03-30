@@ -17,6 +17,8 @@ const PT_RANGES = {
 	'051B': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0x52ef], tiltOn: [-0x52ef, 0x1ba5] }, // BRC-H780
 	'051E': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0xb3b0], tiltOn: [-0xc183, 0x0dd2] }, // ILME-FR7 (20-bit)
 	'051Ek': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0xb3b0], tiltOn: [-0xc183, 0x0dd2] }, // ILME-FR7K (20-bit)
+	'0604': { pan: [-0x15400, 0x15400], tiltOff: [-0x3c00, 0x0b400], tiltOn: [-0x0b400, 0x03c00] }, // SRG-360SHE (20-bit)
+	'0605': { pan: [-0x15400, 0x15400], tiltOff: [-0x3c00, 0x0b400], tiltOn: [-0x0b400, 0x03c00] }, // SRG-280SHE (20-bit)
 }
 // Default: X400/X40UH/A40/300SE (±170° pan, -20°/+90° flip off, -90°/+20° flip on)
 const PT_DEFAULT = { pan: [-0x2200, 0x2200], tiltOff: [-0x0400, 0x1200], tiltOn: [-0x1200, 0x0400] }
@@ -78,6 +80,16 @@ const ZOOM_20X_201SE = [
 	[0x7980, 200], [0x7A00, 220], [0x7AC0, 240],
 ]
 
+// prettier-ignore
+const ZOOM_26X_280SHE = [
+	[0x0000, 1], [0x16DD, 2], [0x20B9, 3], [0x268D, 4], [0x2A8D, 5],
+	[0x2D8B, 6], [0x2FEB, 7], [0x31E4, 8], [0x3395, 9], [0x3512, 10],
+	[0x3AA4, 15], [0x3E03, 20], [0x3FC6, 25], [0x4000, 26],
+	[0x6000, 52], [0x6A80, 78], [0x7000, 104], [0x7300, 130],
+	[0x7540, 156], [0x76C0, 182], [0x7800, 208], [0x78C0, 234],
+	[0x7980, 260], [0x7A00, 286], [0x7AC0, 312],
+]
+
 // Model ID → zoom ratio table
 const ZOOM_RATIO_TABLES = {
 	'051C': ZOOM_20X_X400, // BRC-X400
@@ -96,6 +108,8 @@ const ZOOM_RATIO_TABLES = {
 	'0516a': ZOOM_20X_201SE, // SRG-201SE
 	'0516b': ZOOM_30X_300SE, // SRG-300SE
 	'0516c': ZOOM_30X_300SE, // SRG-301SE
+	'0604': ZOOM_30X_300SE, // SRG-360SHE (30x, same optical table as 300SE)
+	'0605': ZOOM_26X_280SHE, // SRG-280SHE (26x)
 }
 
 // Focus position ranges (from protocol docs): higher position = closer

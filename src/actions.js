@@ -16,6 +16,7 @@ import {
 	CAP_X400_X1000_NO_H780,
 	CAP_X400_X40UH,
 	CAP_X400_X40UH_SE,
+	CAP_TALLY,
 	filterByModel,
 } from './model-caps.js'
 
@@ -317,25 +318,9 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 			],
 			callback: async (event) => {
 				const spd = Math.min(Math.max(parseInt(event.options.speed), 1), 24)
-				const pan = parseInt(event.options.pan) & 0xffff
-				const tilt = parseInt(event.options.tilt) & 0xffff
-				let cmd = Buffer.alloc(15)
-				cmd.writeUInt8(parseInt(self.state.viscaId), 0)
-				cmd.writeUInt8(0x01, 1)
-				cmd.writeUInt8(0x06, 2)
-				cmd.writeUInt8(0x02, 3)
-				cmd.writeUInt8(spd, 4)
-				cmd.writeUInt8(0x00, 5)
-				cmd.writeUInt8((pan >> 12) & 0x0f, 6)
-				cmd.writeUInt8((pan >> 8) & 0x0f, 7)
-				cmd.writeUInt8((pan >> 4) & 0x0f, 8)
-				cmd.writeUInt8(pan & 0x0f, 9)
-				cmd.writeUInt8((tilt >> 12) & 0x0f, 10)
-				cmd.writeUInt8((tilt >> 8) & 0x0f, 11)
-				cmd.writeUInt8((tilt >> 4) & 0x0f, 12)
-				cmd.writeUInt8(tilt & 0x0f, 13)
-				cmd.writeUInt8(0xff, 14)
-				self.VISCA.send(cmd)
+				const pan = parseInt(event.options.pan)
+				const tilt = parseInt(event.options.tilt)
+				self.VISCA.send(buildPtPositionCmd(self, 0x02, spd, pan, tilt))
 			},
 		},
 		ptSpeedType: {
@@ -3212,7 +3197,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		tally: {
-			models: CAP_X400_X1000,
+			models: CAP_TALLY,
 			name: 'Tally (on/off)',
 			options: [
 				{
@@ -4344,6 +4329,47 @@ function getIdOfDefault(props) {
 function isFr7Model(self) {
 	const model = self?.config?.model
 	return model === '051E' || model === '051Ek'
+}
+
+// Pan/tilt position encoding format per model:
+// 5+5 nibble (20-bit pan + 20-bit tilt): FR7, 360SHE/280SHE
+const PT_5_5_MODELS = new Set(['051E', '051Ek', '0604', '0605'])
+// 5+4 nibble (20-bit pan + 16-bit tilt): X1000, H780, H800
+const PT_5_4_MODELS = new Set(['0519', '051A', '051B'])
+
+function writeNibbles(cmd, offset, value, count) {
+	const shift = (count - 1) * 4
+	for (let i = 0; i < count; i++) {
+		cmd.writeUInt8((value >> (shift - i * 4)) & 0x0f, offset + i)
+	}
+}
+
+function buildPtPositionCmd(self, cmdByte, speed, pan, tilt) {
+	const camId = parseInt(self.state.viscaId)
+	const model = self?.config?.model
+	let panNibbles = 4
+	let tiltNibbles = 4
+	if (PT_5_5_MODELS.has(model)) {
+		panNibbles = 5
+		tiltNibbles = 5
+	} else if (PT_5_4_MODELS.has(model)) {
+		panNibbles = 5
+		tiltNibbles = 4
+	}
+	const len = 6 + panNibbles + tiltNibbles + 1 // header(6) + pan + tilt + FF
+	const cmd = Buffer.alloc(len)
+	cmd.writeUInt8(camId, 0)
+	cmd.writeUInt8(0x01, 1)
+	cmd.writeUInt8(0x06, 2)
+	cmd.writeUInt8(cmdByte, 3)
+	cmd.writeUInt8(speed, 4)
+	cmd.writeUInt8(0x00, 5)
+	const panMask = (1 << (panNibbles * 4)) - 1
+	const tiltMask = (1 << (tiltNibbles * 4)) - 1
+	writeNibbles(cmd, 6, pan & panMask, panNibbles)
+	writeNibbles(cmd, 6 + panNibbles, tilt & tiltMask, tiltNibbles)
+	cmd.writeUInt8(0xff, len - 1)
+	return cmd
 }
 
 async function sendFr7GainAdjust(self, camId, direction, step) {
