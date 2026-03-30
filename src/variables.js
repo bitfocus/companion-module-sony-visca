@@ -27,6 +27,64 @@ function getPanTiltRange(modelId) {
 	return PT_RANGES[modelId] ?? PT_DEFAULT
 }
 
+// Per-model pan/tilt degree ranges (from protocol docs)
+// Format mirrors PT_RANGES: { pan: [min, max], tiltOff: [min, max], tiltOn: [min, max] }
+const PT_DEGREE_RANGES = {
+	'0511': { pan: [-100, 100], tiltOff: [-25, 25], tiltOn: [-25, 25] }, // SRG-120DH
+	'0519': { pan: [-170, 170], tiltOff: [-30, 90], tiltOn: [-90, 30] }, // BRC-X1000
+	'051A': { pan: [-170, 170], tiltOff: [-30, 90], tiltOn: [-90, 30] }, // BRC-H800
+	'051B': { pan: [-170, 170], tiltOff: [-30, 90], tiltOn: [-90, 30] }, // BRC-H780
+	'051E': { pan: [-170, 170], tiltOff: [-30, 195], tiltOn: [-210, 15] }, // ILME-FR7
+	'051Ek': { pan: [-170, 170], tiltOff: [-30, 195], tiltOn: [-210, 15] }, // ILME-FR7K
+	'0604': { pan: [-170, 170], tiltOff: [-30, 90], tiltOn: [-90, 30] }, // SRG-360SHE
+	'0605': { pan: [-170, 170], tiltOff: [-30, 90], tiltOn: [-90, 30] }, // SRG-280SHE
+}
+// Default: X400/X40UH/A40/300SE (±170° pan, -20°/+90° flip off, -90°/+20° flip on)
+const PT_DEGREE_DEFAULT = { pan: [-170, 170], tiltOff: [-20, 90], tiltOn: [-90, 20] }
+
+export function getPanTiltDegreeRange(modelId) {
+	return PT_DEGREE_RANGES[modelId] ?? PT_DEGREE_DEFAULT
+}
+
+/**
+ * Convert degrees to raw VISCA position value.
+ * Linear interpolation: 0° = 0 raw for all models.
+ */
+export function degreesToRaw(modelId, degrees, axis, imageFlip) {
+	const rawRange = getPanTiltRange(modelId)
+	const degRange = getPanTiltDegreeRange(modelId)
+	let rawMin, rawMax, degMin, degMax
+	if (axis === 'pan') {
+		;[rawMin, rawMax] = rawRange.pan
+		;[degMin, degMax] = degRange.pan
+	} else {
+		;[rawMin, rawMax] = imageFlip === 'On' ? rawRange.tiltOn : rawRange.tiltOff
+		;[degMin, degMax] = imageFlip === 'On' ? degRange.tiltOn : degRange.tiltOff
+	}
+	const clamped = Math.max(degMin, Math.min(degMax, degrees))
+	const raw = Math.round((clamped / degMax) * rawMax)
+	return Math.max(rawMin, Math.min(rawMax, raw))
+}
+
+/**
+ * Convert raw VISCA position value to degrees.
+ * Returns a number with 1 decimal place precision.
+ */
+export function rawToDegrees(modelId, raw, axis, imageFlip) {
+	if (raw == null) return null
+	const rawRange = getPanTiltRange(modelId)
+	const degRange = getPanTiltDegreeRange(modelId)
+	let rawMax, degMax
+	if (axis === 'pan') {
+		rawMax = rawRange.pan[1]
+		degMax = degRange.pan[1]
+	} else {
+		rawMax = imageFlip === 'On' ? rawRange.tiltOn[1] : rawRange.tiltOff[1]
+		degMax = imageFlip === 'On' ? degRange.tiltOn[1] : degRange.tiltOff[1]
+	}
+	return Math.round((raw / rawMax) * degMax * 10) / 10
+}
+
 // Zoom position → ratio lookup tables (from protocol docs)
 // Each table is an array of [position, ratio] pairs sorted by position
 // Includes optical, Clear Image Zoom, and digital ranges where documented
@@ -192,6 +250,8 @@ const variables = [
 	// Position bars
 	{ variableId: 'panPosition', name: 'Pan Position' },
 	{ variableId: 'tiltPosition', name: 'Tilt Position' },
+	{ variableId: 'panDegrees', name: 'Pan Position (degrees)' },
+	{ variableId: 'tiltDegrees', name: 'Tilt Position (degrees)' },
 	{ variableId: 'panPositionBar', name: 'Pan Position Bar' },
 	{ variableId: 'tiltPositionBar', name: 'Tilt Position Bar' },
 	{ variableId: 'zoomRatio', name: 'Zoom Ratio (e.g. 3.9x)' },
@@ -317,6 +377,9 @@ export async function updateVariables() {
 		zoomRatio: formatZoomRatio(this.state.zoomPosition, this.config.model),
 		panPosition: this.state.panPosition,
 		tiltPosition: this.state.tiltPosition,
+		panDegrees: rawToDegrees(this.config.model, this.state.panPosition, 'pan', this.state.imageFlip)?.toFixed(1) ?? '',
+		tiltDegrees:
+			rawToDegrees(this.config.model, this.state.tiltPosition, 'tilt', this.state.imageFlip)?.toFixed(1) ?? '',
 		panPositionBar: progressBar(panPct, 10, 'L', 'R'),
 		tiltPositionBar: progressBar(tiltPct, 10, 'D', 'U'),
 		zoomPositionBar: progressBar(zoomPct, 10, 'W', 'T'),

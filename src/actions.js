@@ -1,5 +1,6 @@
 // import { CHOICES } from './choices.js'
 // import { Regex } from '@companion-module/base'
+import { degreesToRaw, rawToDegrees } from './variables.js'
 import {
 	CAP_ADVANCED,
 	CAP_ADVANCED_LEGACY,
@@ -292,6 +293,16 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 			name: 'Pan/Tilt Absolute Position',
 			options: [
 				{
+					type: 'dropdown',
+					label: 'Units',
+					id: 'units',
+					choices: [
+						{ id: 'raw', label: 'Raw' },
+						{ id: 'deg', label: 'Degrees' },
+					],
+					default: 'raw',
+				},
+				{
 					type: 'number',
 					label: 'Pan Speed (1-24)',
 					id: 'speed',
@@ -301,25 +312,84 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 				},
 				{
 					type: 'number',
-					label: 'Pan Position (-8704 to 8704)',
+					label: 'Pan Position',
 					id: 'pan',
-					min: -8704,
-					max: 8704,
+					tooltip: 'Raw: model dependent (e.g. -8704 to 8704 for X400). Degrees: e.g. -170 to 170',
+					min: -87040,
+					max: 87040,
 					default: 0,
+					step: 0.1,
 				},
 				{
 					type: 'number',
-					label: 'Tilt Position (-1024 to 4608)',
+					label: 'Tilt Position',
 					id: 'tilt',
-					min: -4608,
-					max: 4608,
+					tooltip: 'Raw: model dependent (e.g. -1024 to 4608 for X400). Degrees: e.g. -20 to 90',
+					min: -49539,
+					max: 45999,
 					default: 0,
+					step: 0.1,
 				},
 			],
 			callback: async (event) => {
 				const spd = Math.min(Math.max(parseInt(event.options.speed), 1), 24)
-				const pan = parseInt(event.options.pan)
-				const tilt = parseInt(event.options.tilt)
+				let pan = parseFloat(event.options.pan)
+				let tilt = parseFloat(event.options.tilt)
+				if (event.options.units === 'deg') {
+					pan = degreesToRaw(self.config.model, pan, 'pan', self.state.imageFlip)
+					tilt = degreesToRaw(self.config.model, tilt, 'tilt', self.state.imageFlip)
+				}
+				self.VISCA.send(buildPtPositionCmd(self, 0x02, spd, pan, tilt))
+			},
+		},
+		ptRelative: {
+			name: 'Pan/Tilt Relative Move (degrees)',
+			options: [
+				{
+					type: 'number',
+					label: 'Pan Speed (1-24)',
+					id: 'speed',
+					min: 1,
+					max: 24,
+					default: 12,
+				},
+				{
+					type: 'number',
+					label: 'Pan Offset (degrees)',
+					id: 'pan',
+					tooltip: 'Positive = right, negative = left',
+					min: -340,
+					max: 340,
+					default: 0,
+					step: 0.1,
+				},
+				{
+					type: 'number',
+					label: 'Tilt Offset (degrees)',
+					id: 'tilt',
+					tooltip: 'Positive = up, negative = down',
+					min: -300,
+					max: 300,
+					default: 0,
+					step: 0.1,
+				},
+			],
+			callback: async (event) => {
+				const spd = Math.min(Math.max(parseInt(event.options.speed), 1), 24)
+				const curPanDeg = rawToDegrees(self.config.model, self.state.panPosition, 'pan', self.state.imageFlip) ?? 0
+				const curTiltDeg = rawToDegrees(self.config.model, self.state.tiltPosition, 'tilt', self.state.imageFlip) ?? 0
+				const pan = degreesToRaw(
+					self.config.model,
+					curPanDeg + parseFloat(event.options.pan),
+					'pan',
+					self.state.imageFlip,
+				)
+				const tilt = degreesToRaw(
+					self.config.model,
+					curTiltDeg + parseFloat(event.options.tilt),
+					'tilt',
+					self.state.imageFlip,
+				)
 				self.VISCA.send(buildPtPositionCmd(self, 0x02, spd, pan, tilt))
 			},
 		},

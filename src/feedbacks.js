@@ -1,5 +1,6 @@
 import { COLORS } from './colors.js'
 import { CAP_FR7, filterByModel } from './model-caps.js'
+import { rawToDegrees } from './variables.js'
 
 export function getFeedbackDefinitions(self) {
 	const feedbacks = {
@@ -248,6 +249,49 @@ export function getFeedbackDefinitions(self) {
 			options: [],
 			callback: function () {
 				return self.state.power === 'On'
+			},
+		},
+		ptAtPosition: {
+			type: 'boolean',
+			name: 'PT At Position (degrees)',
+			description: 'Highlights when camera is within tolerance of a target pan/tilt position',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
+			},
+			options: [
+				{
+					type: 'number',
+					label: 'Target Pan (degrees)',
+					id: 'pan',
+					default: 0,
+					step: 0.1,
+				},
+				{
+					type: 'number',
+					label: 'Target Tilt (degrees)',
+					id: 'tilt',
+					default: 0,
+					step: 0.1,
+				},
+				{
+					type: 'number',
+					label: 'Tolerance (degrees)',
+					id: 'tolerance',
+					default: 1,
+					min: 0.1,
+					max: 10,
+					step: 0.1,
+				},
+			],
+			callback: function (feedback) {
+				const panDeg = rawToDegrees(self.config.model, self.state.panPosition, 'pan', self.state.imageFlip)
+				const tiltDeg = rawToDegrees(self.config.model, self.state.tiltPosition, 'tilt', self.state.imageFlip)
+				if (panDeg == null || tiltDeg == null) return false
+				return (
+					Math.abs(panDeg - feedback.options.pan) <= feedback.options.tolerance &&
+					Math.abs(tiltDeg - feedback.options.tilt) <= feedback.options.tolerance
+				)
 			},
 		},
 	}

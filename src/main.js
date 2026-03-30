@@ -281,6 +281,7 @@ class SonyVISCAInstance extends InstanceBase {
 			this.state.panPosition = panRaw >= panSign ? panRaw - (panSign << 1) : panRaw
 			this.state.tiltPosition = tiltRaw >= tiltSign ? tiltRaw - (tiltSign << 1) : tiltRaw
 			this.updateVariables()
+			this.checkFeedbacks()
 		}
 		this.VISCA.initializeInquiries(callbacks)
 		this.setupLowPriorityInquiries()

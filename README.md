@@ -7,6 +7,13 @@ This module uses the Sony Visca protocol to control PTZ cameras. While it is foc
 
 ## How to Test
 
+### Requirements
+
+- **Companion v3.5 or later** — This module requires `@companion-module/base` v1.11+ which uses the `node22` runtime, supported starting in Companion v3.5.
+- **Latest camera firmware** — Sony periodically releases firmware updates that fix VISCA protocol issues. Please ensure your camera is running the latest available firmware before reporting bugs. Firmware updates can be found on [Sony's support site](https://www.sony.com/en/articles/product-support).
+
+### Installing a Development Build
+
 1. Go to the [Actions tab](https://github.com/bitfocus/companion-module-sony-visca/actions) on GitHub
 2. Find the latest workflow run for the branch you want to test
 3. Download the **pkg** artifact (it will save as `pkg.zip` containing the module `.tgz`)
@@ -82,6 +89,17 @@ Blocks 03-05 were recently added for legacy cameras. Please verify:
 3. Block 05: color hue
 
 ## Changes
+
+### v2.9.0
+
+- Added degree-based pan/tilt positioning with Raw/Degrees unit toggle on the Absolute Position action
+- Added Pan/Tilt Relative Move action for offset moves in degrees (e.g. "+10° pan")
+- Added panDegrees and tiltDegrees variables showing current position in degrees
+- Added PT At Position feedback that highlights when camera is within a configurable tolerance of a target degree position
+- Added degree-based presets: Center, Pan Left/Right 90°, Tilt Up 45°, Pan ±10° relative
+- Added per-model degree-to-raw conversion covering all supported camera families
+- Fixed pan/tilt position inquiry not triggering feedback updates (checkFeedbacks was missing)
+- Updated README with minimum Companion version (v3.5) and camera firmware requirements
 
 ### v2.8.1
 

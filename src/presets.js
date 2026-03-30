@@ -419,6 +419,108 @@ const panTiltPresets = {
 			},
 		],
 	},
+	'panTilt-center': {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Go To Center (0°/0°)',
+		style: {
+			text: 'Center\\n0°/0°',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'ptAbsolute', options: { units: 'deg', speed: 12, pan: 0, tilt: 0 } }] }],
+		feedbacks: [
+			{
+				feedbackId: 'ptAtPosition',
+				options: { pan: 0, tilt: 0, tolerance: 1 },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
+	},
+	'panTilt-left90': {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Pan Left 90°',
+		style: {
+			text: 'Pan\\nLeft 90°',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'ptAbsolute', options: { units: 'deg', speed: 12, pan: -90, tilt: 0 } }] }],
+		feedbacks: [
+			{
+				feedbackId: 'ptAtPosition',
+				options: { pan: -90, tilt: 0, tolerance: 1 },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
+	},
+	'panTilt-right90': {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Pan Right 90°',
+		style: {
+			text: 'Pan\\nRight 90°',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'ptAbsolute', options: { units: 'deg', speed: 12, pan: 90, tilt: 0 } }] }],
+		feedbacks: [
+			{
+				feedbackId: 'ptAtPosition',
+				options: { pan: 90, tilt: 0, tolerance: 1 },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
+	},
+	'panTilt-tiltUp45': {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Tilt Up 45°',
+		style: {
+			text: 'Tilt\\nUp 45°',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'ptAbsolute', options: { units: 'deg', speed: 12, pan: 0, tilt: 45 } }] }],
+		feedbacks: [
+			{
+				feedbackId: 'ptAtPosition',
+				options: { pan: 0, tilt: 45, tolerance: 1 },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
+	},
+	'panTilt-relPanRight10': {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Pan +10°',
+		style: {
+			text: 'Pan\\n+10°',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'ptRelative', options: { speed: 12, pan: 10, tilt: 0 } }] }],
+		feedbacks: [],
+	},
+	'panTilt-relPanLeft10': {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Pan -10°',
+		style: {
+			text: 'Pan\\n-10°',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'ptRelative', options: { speed: 12, pan: -10, tilt: 0 } }] }],
+		feedbacks: [],
+	},
 }
 
 const lensPresets = {
