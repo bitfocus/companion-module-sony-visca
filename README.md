@@ -83,6 +83,14 @@ Blocks 03-05 were recently added for legacy cameras. Please verify:
 
 ## Changes
 
+### v2.8.1
+
+- Added SRG-360SHE and SRG-280SHE camera support (group 3c) with 20-bit pan/tilt, block inquiries 00-03, tally, and zoom ratio tables
+- Added Bright exposure mode to exposure mode actions and toggle for cameras that support it (120DH, 300SE/301SE/201SE, 360SHE/280SHE)
+- Added Bright Mode preset (toggle between Auto and Bright)
+- Added CAP_TALLY capability set for tally support across X400/X1000 and 360SHE families
+- Refactored pan/tilt absolute position command to support 4+4, 5+4, and 5+5 nibble encoding across all camera families
+
 ### v2.8.0
 
 - Added inquiry polling with per-family block definitions for real-time camera state (zoom, focus, iris, gain, shutter, exposure mode, WB mode, pan/tilt position, and many more)

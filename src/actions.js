@@ -957,7 +957,7 @@ function getExposureActionDefinitions(self, camId) {
 	return {
 		// TODO Add variable and rework feedbacks
 		expM: {
-			name: 'Exposure Mode (auto/manual/shutter/iris/gain priority)',
+			name: 'Exposure Mode (auto/manual/shutter/iris/gain/bright)',
 			options: [
 				{
 					type: 'dropdown',
@@ -969,35 +969,21 @@ function getExposureActionDefinitions(self, camId) {
 						{ id: '2', label: 'Shutter Pri' },
 						{ id: '3', label: 'Iris Pri' },
 						{ id: '4', label: 'Gain Pri' },
+						{ id: '5', label: 'Bright' },
 					],
 					default: '0',
 				},
 			],
 			callback: async (event) => {
-				switch (parseInt(event.options.val)) {
-					case 0:
-						self.VISCA.send(camId + '\x01\x04\x39\x00\xFF')
-						self.state.exposureMode = 'Auto'
-						break
-					case 1:
-						self.VISCA.send(camId + '\x01\x04\x39\x03\xFF')
-						self.state.exposureMode = 'Manual'
-						break
-					case 2:
-						self.VISCA.send(camId + '\x01\x04\x39\x0A\xFF')
-						self.state.exposureMode = 'Shutter Pri'
-						break
-					case 3:
-						self.VISCA.send(camId + '\x01\x04\x39\x0B\xFF')
-						self.state.exposureMode = 'Iris Pri'
-						break
-					case 4:
-						self.VISCA.send(camId + '\x01\x04\x39\x0E\xFF')
-						self.state.exposureMode = 'Gain Pri'
-						break
+				const viscaCmds = { 0: '\x00', 1: '\x03', 2: '\x0A', 3: '\x0B', 4: '\x0E', 5: '\x0D' }
+				const stateNames = { 0: 'Auto', 1: 'Manual', 2: 'Shutter Pri', 3: 'Iris Pri', 4: 'Gain Pri', 5: 'Bright' }
+				const val = parseInt(event.options.val)
+				if (viscaCmds[val]) {
+					self.VISCA.send(camId + '\x01\x04\x39' + viscaCmds[val] + '\xFF')
+					self.state.exposureMode = stateNames[val]
+					self.updateVariables()
+					self.checkFeedbacks()
 				}
-				self.updateVariables()
-				self.checkFeedbacks()
 			},
 		},
 		expMToggle: {
@@ -1013,6 +999,7 @@ function getExposureActionDefinitions(self, camId) {
 						{ id: '2', label: 'Shutter Pri' },
 						{ id: '3', label: 'Iris Pri' },
 						{ id: '4', label: 'Gain Pri' },
+						{ id: '5', label: 'Bright' },
 					],
 					default: '0',
 				},
@@ -1026,13 +1013,14 @@ function getExposureActionDefinitions(self, camId) {
 						{ id: '2', label: 'Shutter Pri' },
 						{ id: '3', label: 'Iris Pri' },
 						{ id: '4', label: 'Gain Pri' },
+						{ id: '5', label: 'Bright' },
 					],
 					default: '1',
 				},
 			],
 			callback: async (event) => {
-				const viscaCmds = { 0: '\x00', 1: '\x03', 2: '\x0A', 3: '\x0B', 4: '\x0E' }
-				const stateNames = { 0: 'Auto', 1: 'Manual', 2: 'Shutter Pri', 3: 'Iris Pri', 4: 'Gain Pri' }
+				const viscaCmds = { 0: '\x00', 1: '\x03', 2: '\x0A', 3: '\x0B', 4: '\x0E', 5: '\x0D' }
+				const stateNames = { 0: 'Auto', 1: 'Manual', 2: 'Shutter Pri', 3: 'Iris Pri', 4: 'Gain Pri', 5: 'Bright' }
 				const a = parseInt(event.options.modeA)
 				const b = parseInt(event.options.modeB)
 				const target = self.state.exposureMode === stateNames[a] ? b : a

@@ -76,7 +76,7 @@ Please refer to the manual for your camera for specific instructions.
 
 ### Exposure Actions
 
-- Exposure Mode (auto/manual/shutter/iris/gain priority)
+- Exposure Mode (auto/manual/shutter/iris/gain/bright)
 - Exposure Mode Toggle (between two modes)
 - Iris Adjust (up/down)
 - Set Iris
@@ -245,6 +245,7 @@ Please refer to the manual for your camera for specific instructions.
 ### Exposure Presets
 
 - Exposure Mode Toggle
+- Bright Mode (toggle with Auto)
 - Iris Up
 - Iris Down
 - Gain Up

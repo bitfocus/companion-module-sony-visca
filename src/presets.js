@@ -802,6 +802,41 @@ const exposurePresets = {
 			},
 		],
 	},
+	'exposure-brightMode': {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Bright Mode (toggle with Auto)',
+		style: {
+			text: '$(sony-visca:expMode)\\nExpose',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'expMToggle',
+						options: {
+							modeA: '0',
+							modeB: '5',
+						},
+					},
+				],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'exposureMode',
+				options: { mode: 'Bright' },
+				style: {
+					color: COLORS.WHITE,
+					bgcolor: COLORS.DARK_ORANGE,
+				},
+			},
+		],
+	},
 	'exposure-irisUp': {
 		type: 'button',
 		category: 'Exposure',
