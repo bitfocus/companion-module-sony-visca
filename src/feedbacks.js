@@ -1,5 +1,5 @@
 import { COLORS } from './colors.js'
-import { CAP_FR7, filterByModel } from './model-caps.js'
+import { CAP_AUTO_FRAMING, CAP_FR7, CAP_TALLY, filterByModel } from './model-caps.js'
 import { rawToDegrees } from './variables.js'
 
 export function getFeedbackDefinitions(self) {
@@ -230,6 +230,9 @@ export function getFeedbackDefinitions(self) {
 						{ id: 'One Push', label: 'One Push WB' },
 						{ id: 'Auto 2', label: 'Auto 2 - ATW' },
 						{ id: 'Manual', label: 'Manual' },
+						{ id: 'ATW', label: 'ATW (FR7)' },
+						{ id: 'Memory A', label: 'Memory A (FR7)' },
+						{ id: 'Preset', label: 'Preset (FR7)' },
 					],
 					default: 'Auto 1',
 				},
@@ -249,6 +252,48 @@ export function getFeedbackDefinitions(self) {
 			options: [],
 			callback: function () {
 				return self.state.power === 'On'
+			},
+		},
+		tallyRedOn: {
+			models: CAP_TALLY,
+			type: 'boolean',
+			name: 'Tally Red Active',
+			description: 'Highlights when red tally is on',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: COLORS.RED,
+			},
+			options: [],
+			callback: function () {
+				return self.state.tallyRed === 'On'
+			},
+		},
+		tallyGreenOn: {
+			models: CAP_FR7,
+			type: 'boolean',
+			name: 'Tally Green Active (FR7)',
+			description: 'Highlights when green tally is on',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: 0x00aa00,
+			},
+			options: [],
+			callback: function () {
+				return self.state.tallyGreen === 'On'
+			},
+		},
+		ptzAutoFramingOn: {
+			models: CAP_AUTO_FRAMING,
+			type: 'boolean',
+			name: 'PTZ Auto Framing Active',
+			description: 'Highlights when PTZ Auto Framing is on',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
+			},
+			options: [],
+			callback: function () {
+				return self.state.ptzAutoFraming === 'On'
 			},
 		},
 		ptAtPosition: {

@@ -9,7 +9,8 @@ This module uses the Sony VISCA protocol to control PTZ cameras.
 - Type in the IP address of the device.
 - Type in the port of the device (default is 52381)
 - You can also specify the Camera ID  
-(In most cases **id 1** is the best choice)
+  (In most cases **id 1** is the best choice)
+
 ## Enabling VISCA over IP on your camera
 
 Several Sony PTZ camera models do not enable VISCA over IP by default. On some models you can enable it using the on screen menu.
@@ -170,7 +171,7 @@ Please refer to the manual for your camera for specific instructions.
 ### Miscellaneous Actions
 
 - Camera Power (on/off)
-- Tally (on/off)
+- Tally
 - Menu (on/off/enter)
 - Video Latency (normal/low)
 - Button Feedback (highlight/clear)
@@ -198,7 +199,7 @@ Please refer to the manual for your camera for specific instructions.
 - ND Filter
 - HDMI Video Format
 - Push AF / Push MF (FR7)
-- PTZ Auto Framing (FR7)
+- PTZ Auto Framing
 - Audio Level Control (FR7)
 - Audio Input Level Direct (FR7)
 - Audio Input Level Adjust (FR7)
@@ -206,7 +207,7 @@ Please refer to the manual for your camera for specific instructions.
 - Assignable Button (FR7)
 - Direct Menu (FR7)
 - Preset Separate Duration (FR7)
-- Custom Command - *If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)*
+- Custom Command - _If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)_
 
 ## Presets Implemented
 
@@ -231,6 +232,7 @@ Please refer to the manual for your camera for specific instructions.
 - Tilt Up 45°
 - Pan +10°
 - Pan -10°
+- Auto Framing Toggle
 
 ### Lens Presets
 
@@ -241,6 +243,7 @@ Please refer to the manual for your camera for specific instructions.
 - Focus Near (variable speed)
 - Focus Mode - Auto/Manual
 - One Push Auto Focus
+- Push AF/MF (FR7)
 - Zoom Speed Faster
 - Zoom Speed Slower
 - Zoom Speed Default (1)
@@ -276,6 +279,9 @@ Please refer to the manual for your camera for specific instructions.
 - White Balance Mode - Manual
 - White Balance Mode - Custom
 - White Balance Mode - One push WB
+- WB Mode - ATW (FR7)
+- WB Mode - Memory A (FR7)
+- WB Mode - Preset (FR7)
 - White Balance - Red Gain Up (must be in WB Manual)
 - White Balance - Red Gain Down (must be in WB Manual)
 - White Balance - Blue Gain Up (must be in WB Manual)
@@ -291,11 +297,13 @@ Please refer to the manual for your camera for specific instructions.
 - Menu/Back Button
 - Menu Enter Button
 - Recording Button (press/release)
+- Tally Red Toggle
+- Tally Green Toggle (FR7)
 
 ### Camera Presets
 
 - Presets 1-64 are available
-- Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.*
+- Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.\*
 - Presets using presetSelector variable
 - Preset Selector Set, Increment and Decrement
 
@@ -313,107 +321,110 @@ Please refer to the manual for your camera for specific instructions.
 - Zoom Speed - tap for standard (1)
 - Focus Speed - tap for standard (1)
 
-*Rotation enabled presets are intended for devices like the Stream Deck+ and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Tapping the knob defaults the setting.*
+_Rotation enabled presets are intended for devices like the Stream Deck+ and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Tapping the knob defaults the setting._
 
 ## Variables Implemented
 
-| Id | Name |
-|----|------|
-| ptSlowMode | Pan/Tilt Slow mode (slow/normal) |
-| panSpeed | Pan Speed |
-| tiltSpeed | Tilt Speed |
-| zoomSpeed | Zoom Speed |
-| focusSpeed | Focus Speed |
-| zoomMode | Zoom Mode (optical/digital/clr img) |
-| focusMode | Focus Mode (auto/manual) |
-| expMode | Exposure Mode |
-| expCompOnOff | Exposure Compensation (on/off) |
-| backlightComp | Backlight Compensation (on/off) |
-| spotlightComp | Spotlight Compensation (on/off) |
-| recordingStatus | Recording status (unknown/standby/recording) |
-| presetSelector | Preset Selection Variable |
-| lastPresetUsed | Last Preset Recalled (1-64) |
-| viscaId | Specific ViscaID to interact with (serial only) |
-| lastCmdSent | Last Command Sent (hex values) |
-| panPosition | Pan Position |
-| tiltPosition | Tilt Position |
-| panDegrees | Pan Position (degrees) |
-| tiltDegrees | Tilt Position (degrees) |
-| panPositionBar | Pan Position Bar |
-| tiltPositionBar | Tilt Position Bar |
-| zoomRatio | Zoom Ratio (e.g. 3.9x) |
-| zoomPositionBar | Zoom Position Bar |
-| focusPositionBar | Focus Position Bar |
-| irisPositionBar | Iris Position Bar |
-| zoomPosition | Zoom Position |
-| focusPosition | Focus Position |
-| focusNearLimit | Focus Near Limit |
-| afMode | Auto Focus Mode |
-| afSensitivity | Auto Focus Sensitivity |
-| presetRecallExecuting | Preset Recall Executing |
-| focusCmdExecuting | Focus Command Executing |
-| zoomCmdExecuting | Zoom Command Executing |
-| wbMode | White Balance Mode |
-| wbSpeed | White Balance Speed |
-| detailLevel | Detail Level |
-| colorMatrix | Color Matrix |
-| irisLevel | Iris Level |
-| gainLevel | Gain Level |
-| shutterSpeed | Shutter Speed |
-| redGain | Red Gain |
-| blueGain | Blue Gain |
-| slowShutter | Slow Shutter (auto/manual) |
-| highResolution | High Resolution (on/off) |
-| ve | Visibility Enhancer (on/off) |
-| expCompLevel | Exposure Compensation Level |
-| brightPosition | Bright Position |
-| wideDynamic | Wide Dynamic Range (on/off) |
-| power | Power (on/off) |
-| flickerCancel | Flicker Cancel (on/off) |
-| IRCutFilterAuto | IR Cut Filter Auto (auto/manual) |
-| imageStabilizer | Image Stabilization (on/off) |
-| IRCutFilter | IR Cut Filter (on/off) |
-| pictureEffectOn | Picture Effect |
-| wbOffset | White Balance Offset |
-| cameraIdReported | Camera ID (reported) |
-| kneeMode | Knee Mode (Manual/Auto) |
-| kneeSlope | Knee Slope |
-| kneeSetting | Knee Setting (on/off) |
-| kneePoint | Knee Point |
-| afOpTime | AF Operating Time |
-| afStayTime | AF Stay Time |
-| nr2dLevel | 2D Noise Reduction Level |
-| nr3dLevel | 3D Noise Reduction Level |
-| nrLevel | Noise Reduction Level |
-| gamma | Gamma |
-| imageFlip | Image Flip (on/off) |
-| colorGain | Color Gain |
-| aeSpeed | AE Speed |
-| highSensitivity | High Sensitivity (on/off) |
-| chromaSuppress | Chroma Suppress Level |
-| gainLimit | Max Gain Limit |
-| blackLevel | Black Level |
-| veLevel | Visibility Enhancer Level |
-| blackGammaLevel | Black Gamma Level |
-| veBrightnessComp | VE Brightness Compensation |
-| gammaLevel | Gamma Level |
-| veCompLevel | VE Compensation Level |
-| blackGammaRange | Black Gamma Range |
-| gammaOffset | Gamma Offset |
-| minShutterSpeed | Min Shutter Speed |
-| maxShutterSpeed | Max Shutter Speed |
-| detailHVBalance | Detail H/V Balance |
-| detailCrispening | Detail Crispening |
-| detailLimit | Detail Limit |
-| detailBWBalance | Detail B/W Balance |
-| detailHighlightDetail | Detail Highlight Detail |
-| detailSuperLow | Detail Super Low |
-| detailMode | Detail Mode (Manual/Auto) |
-| detailBandwidth | Detail Bandwidth |
-| colorHue | Color Hue |
-| colorRG | Color Matrix R-G |
-| colorRB | Color Matrix R-B |
-| colorGR | Color Matrix G-R |
-| colorGB | Color Matrix G-B |
-| colorBR | Color Matrix B-R |
-| colorBG | Color Matrix B-G |
+| Id                    | Name                                            |
+| --------------------- | ----------------------------------------------- |
+| ptSlowMode            | Pan/Tilt Slow mode (slow/normal)                |
+| panSpeed              | Pan Speed                                       |
+| tiltSpeed             | Tilt Speed                                      |
+| zoomSpeed             | Zoom Speed                                      |
+| focusSpeed            | Focus Speed                                     |
+| zoomMode              | Zoom Mode (optical/digital/clr img)             |
+| focusMode             | Focus Mode (auto/manual)                        |
+| expMode               | Exposure Mode                                   |
+| expCompOnOff          | Exposure Compensation (on/off)                  |
+| backlightComp         | Backlight Compensation (on/off)                 |
+| spotlightComp         | Spotlight Compensation (on/off)                 |
+| recordingStatus       | Recording status (unknown/standby/recording)    |
+| ptzAutoFraming        | PTZ Auto Framing (on/off)                       |
+| tallyRed              | Tally Red (on/off)                              |
+| tallyGreen            | Tally Green (on/off)                            |
+| presetSelector        | Preset Selection Variable                       |
+| lastPresetUsed        | Last Preset Recalled (1-64)                     |
+| viscaId               | Specific ViscaID to interact with (serial only) |
+| lastCmdSent           | Last Command Sent (hex values)                  |
+| panPosition           | Pan Position                                    |
+| tiltPosition          | Tilt Position                                   |
+| panDegrees            | Pan Position (degrees)                          |
+| tiltDegrees           | Tilt Position (degrees)                         |
+| panPositionBar        | Pan Position Bar                                |
+| tiltPositionBar       | Tilt Position Bar                               |
+| zoomRatio             | Zoom Ratio (e.g. 3.9x)                          |
+| zoomPositionBar       | Zoom Position Bar                               |
+| focusPositionBar      | Focus Position Bar                              |
+| irisPositionBar       | Iris Position Bar                               |
+| zoomPosition          | Zoom Position                                   |
+| focusPosition         | Focus Position                                  |
+| focusNearLimit        | Focus Near Limit                                |
+| afMode                | Auto Focus Mode                                 |
+| afSensitivity         | Auto Focus Sensitivity                          |
+| presetRecallExecuting | Preset Recall Executing                         |
+| focusCmdExecuting     | Focus Command Executing                         |
+| zoomCmdExecuting      | Zoom Command Executing                          |
+| wbMode                | White Balance Mode                              |
+| wbSpeed               | White Balance Speed                             |
+| detailLevel           | Detail Level                                    |
+| colorMatrix           | Color Matrix                                    |
+| irisLevel             | Iris Level                                      |
+| gainLevel             | Gain Level                                      |
+| shutterSpeed          | Shutter Speed                                   |
+| redGain               | Red Gain                                        |
+| blueGain              | Blue Gain                                       |
+| slowShutter           | Slow Shutter (auto/manual)                      |
+| highResolution        | High Resolution (on/off)                        |
+| ve                    | Visibility Enhancer (on/off)                    |
+| expCompLevel          | Exposure Compensation Level                     |
+| brightPosition        | Bright Position                                 |
+| wideDynamic           | Wide Dynamic Range (on/off)                     |
+| power                 | Power (on/off)                                  |
+| flickerCancel         | Flicker Cancel (on/off)                         |
+| IRCutFilterAuto       | IR Cut Filter Auto (auto/manual)                |
+| imageStabilizer       | Image Stabilization (on/off)                    |
+| IRCutFilter           | IR Cut Filter (on/off)                          |
+| pictureEffectOn       | Picture Effect                                  |
+| wbOffset              | White Balance Offset                            |
+| cameraIdReported      | Camera ID (reported)                            |
+| kneeMode              | Knee Mode (Manual/Auto)                         |
+| kneeSlope             | Knee Slope                                      |
+| kneeSetting           | Knee Setting (on/off)                           |
+| kneePoint             | Knee Point                                      |
+| afOpTime              | AF Operating Time                               |
+| afStayTime            | AF Stay Time                                    |
+| nr2dLevel             | 2D Noise Reduction Level                        |
+| nr3dLevel             | 3D Noise Reduction Level                        |
+| nrLevel               | Noise Reduction Level                           |
+| gamma                 | Gamma                                           |
+| imageFlip             | Image Flip (on/off)                             |
+| colorGain             | Color Gain                                      |
+| aeSpeed               | AE Speed                                        |
+| highSensitivity       | High Sensitivity (on/off)                       |
+| chromaSuppress        | Chroma Suppress Level                           |
+| gainLimit             | Max Gain Limit                                  |
+| blackLevel            | Black Level                                     |
+| veLevel               | Visibility Enhancer Level                       |
+| blackGammaLevel       | Black Gamma Level                               |
+| veBrightnessComp      | VE Brightness Compensation                      |
+| gammaLevel            | Gamma Level                                     |
+| veCompLevel           | VE Compensation Level                           |
+| blackGammaRange       | Black Gamma Range                               |
+| gammaOffset           | Gamma Offset                                    |
+| minShutterSpeed       | Min Shutter Speed                               |
+| maxShutterSpeed       | Max Shutter Speed                               |
+| detailHVBalance       | Detail H/V Balance                              |
+| detailCrispening      | Detail Crispening                               |
+| detailLimit           | Detail Limit                                    |
+| detailBWBalance       | Detail B/W Balance                              |
+| detailHighlightDetail | Detail Highlight Detail                         |
+| detailSuperLow        | Detail Super Low                                |
+| detailMode            | Detail Mode (Manual/Auto)                       |
+| detailBandwidth       | Detail Bandwidth                                |
+| colorHue              | Color Hue                                       |
+| colorRG               | Color Matrix R-G                                |
+| colorRB               | Color Matrix R-B                                |
+| colorGR               | Color Matrix G-R                                |
+| colorGB               | Color Matrix G-B                                |
+| colorBR               | Color Matrix B-R                                |
+| colorBG               | Color Matrix B-G                                |

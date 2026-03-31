@@ -11,7 +11,7 @@ import {
 	image_rotary_bg,
 } from './images.js'
 
-export function getPresetDefinitions(self, availableActionIds) {
+export function getPresetDefinitions(self, availableActionIds, availableFeedbackIds) {
 	const all = {
 		...panTiltPresets,
 		...lensPresets,
@@ -24,11 +24,19 @@ export function getPresetDefinitions(self, availableActionIds) {
 	if (!availableActionIds) return all
 	const filtered = {}
 	for (const [key, preset] of Object.entries(all)) {
-		if (presetActionsAvailable(preset, availableActionIds)) {
+		if (presetActionsAvailable(preset, availableActionIds) && presetFeedbacksAvailable(preset, availableFeedbackIds)) {
 			filtered[key] = preset
 		}
 	}
 	return filtered
+}
+
+function presetFeedbacksAvailable(preset, availableFeedbackIds) {
+	if (!availableFeedbackIds || !preset.feedbacks) return true
+	for (const feedback of preset.feedbacks) {
+		if (feedback.feedbackId && !availableFeedbackIds.has(feedback.feedbackId)) return false
+	}
+	return true
 }
 
 function presetActionsAvailable(preset, availableActionIds) {
@@ -521,6 +529,32 @@ const panTiltPresets = {
 		steps: [{ down: [{ actionId: 'ptRelative', options: { speed: 12, pan: -10, tilt: 0 } }] }],
 		feedbacks: [],
 	},
+	'panTilt-autoFraming': {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Auto Framing Toggle',
+		style: {
+			text: 'Auto\\nFraming\\n$(sony-visca:ptzAutoFraming)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [
+			{
+				down: [{ actionId: 'ptzAutoFraming', options: { val: '2' } }],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'ptzAutoFramingOn',
+				options: {},
+				style: {
+					color: COLORS.WHITE,
+					bgcolor: COLORS.DARK_ORANGE,
+				},
+			},
+		],
+	},
 }
 
 const lensPresets = {
@@ -722,6 +756,34 @@ const lensPresets = {
 					{
 						actionId: 'focusOpaf',
 						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
+	'lens-pushAfMf': {
+		type: 'button',
+		category: 'Lens',
+		name: 'Push AF/MF (FR7)',
+		style: {
+			text: 'Push\\nAF/MF',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'pushAfMf',
+						options: { val: '1' },
+					},
+				],
+				up: [
+					{
+						actionId: 'pushAfMf',
+						options: { val: '0' },
 					},
 				],
 			},
@@ -1502,6 +1564,63 @@ const colorPresets = {
 			},
 		],
 	},
+	'color-wbModeATW-FR7': {
+		type: 'button',
+		category: 'Color',
+		name: 'WB Mode - ATW (FR7)',
+		style: {
+			text: 'WB\\nATW',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'whiteBal', options: { val: '4' } }] }],
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: { mode: 'ATW' },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
+	},
+	'color-wbModeMemA-FR7': {
+		type: 'button',
+		category: 'Color',
+		name: 'WB Mode - Memory A (FR7)',
+		style: {
+			text: 'WB\\nMem A',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'whiteBal', options: { val: '5' } }] }],
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: { mode: 'Memory A' },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
+	},
+	'color-wbModePreset-FR7': {
+		type: 'button',
+		category: 'Color',
+		name: 'WB Mode - Preset (FR7)',
+		style: {
+			text: 'WB\\nPreset',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'whiteBal', options: { val: 'A' } }] }],
+		feedbacks: [
+			{
+				feedbackId: 'whiteBalanceMode',
+				options: { mode: 'Preset' },
+				style: { color: COLORS.WHITE, bgcolor: COLORS.DARK_ORANGE },
+			},
+		],
+	},
 	'color-wbRedGainUp': {
 		type: 'button',
 		category: 'Color',
@@ -1802,6 +1921,44 @@ const systemPresets = {
 					color: COLORS.WHITE,
 					bgcolor: COLORS.RED,
 				},
+			},
+		],
+	},
+	'system-tallyRed': {
+		type: 'button',
+		category: 'System',
+		name: 'Tally Red Toggle',
+		style: {
+			text: 'Tally\\nRed\\n$(sony-visca:tallyRed)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'tally', options: { mode: 'toggle', color: 'red' } }] }],
+		feedbacks: [
+			{
+				feedbackId: 'tallyRedOn',
+				options: {},
+				style: { color: COLORS.WHITE, bgcolor: COLORS.RED },
+			},
+		],
+	},
+	'system-tallyGreen': {
+		type: 'button',
+		category: 'System',
+		name: 'Tally Green Toggle (FR7)',
+		style: {
+			text: 'Tally\\nGreen\\n$(sony-visca:tallyGreen)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+		},
+		steps: [{ down: [{ actionId: 'tally', options: { mode: 'toggle', color: 'green' } }] }],
+		feedbacks: [
+			{
+				feedbackId: 'tallyGreenOn',
+				options: {},
+				style: { color: COLORS.WHITE, bgcolor: 0x00aa00 },
 			},
 		],
 	},

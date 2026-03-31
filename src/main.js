@@ -7,6 +7,7 @@ import { getActionDefinitions } from './actions.js'
 import { getPresetDefinitions } from './presets.js'
 import { initVariables, updateVariables } from './variables.js'
 import { MODELS } from './models.js'
+import { CAP_AUTO_FRAMING, CAP_TALLY } from './model-caps.js'
 import { getInquiryBlocks, parseInquiryResponse } from './inquiries.js'
 import { Visca } from './visca.js'
 
@@ -47,6 +48,7 @@ class SonyVISCAInstance extends InstanceBase {
 			presetSelector: 64,
 		}
 		this.speed = { pan: 0x0c, tilt: 0x0c, zoom: 1, focus: 1 }
+		this.tallyKeepaliveTimers = {}
 
 		this.registerDefinitions()
 		this.startRecordingPulseTimer()
@@ -55,11 +57,52 @@ class SonyVISCAInstance extends InstanceBase {
 		this.updateVariables()
 	}
 
+	sendTallyCommand(color, on) {
+		const camId = String.fromCharCode(parseInt(this.state.viscaId))
+		const colorCmd = color === 'green' ? '\x04\x1A' : '\x01\x0A'
+		const onOff = on ? '\x02' : '\x03'
+		this.VISCA.send(Buffer.from(camId + '\x01\x7E' + colorCmd + '\x00' + onOff + '\xFF', 'binary'))
+	}
+
+	startTallyKeepalive(color) {
+		this.stopTallyKeepalive(color, true)
+		this.sendTallyCommand(color, true)
+		const stateKey = color === 'green' ? 'tallyGreen' : 'tallyRed'
+		this.state[stateKey] = 'On'
+		this.updateVariables()
+		this.checkFeedbacks()
+		this.tallyKeepaliveTimers[color] = setInterval(() => {
+			this.sendTallyCommand(color, true)
+		}, 10000)
+	}
+
+	stopTallyKeepalive(color, skipOff = false) {
+		if (this.tallyKeepaliveTimers[color]) {
+			clearInterval(this.tallyKeepaliveTimers[color])
+			delete this.tallyKeepaliveTimers[color]
+		}
+		if (!skipOff) {
+			this.sendTallyCommand(color, false)
+			const stateKey = color === 'green' ? 'tallyGreen' : 'tallyRed'
+			this.state[stateKey] = 'Off'
+			this.updateVariables()
+			this.checkFeedbacks()
+		}
+	}
+
+	clearAllTallyKeepalives() {
+		for (const color of Object.keys(this.tallyKeepaliveTimers)) {
+			clearInterval(this.tallyKeepaliveTimers[color])
+		}
+		this.tallyKeepaliveTimers = {}
+	}
+
 	// When module gets deleted
 	async destroy() {
 		this.VISCA.stopPolling()
 		this.clearRecordingStatusPollTimer()
 		this.clearRecordingPulseTimer()
+		this.clearAllTallyKeepalives()
 		if (this.udpSocket) {
 			try {
 				this.udpSocket.close()
@@ -73,6 +116,7 @@ class SonyVISCAInstance extends InstanceBase {
 	async configUpdated(config) {
 		this.config = config
 		this.choices = getChoices(config, this)
+		this.clearAllTallyKeepalives()
 		this.registerDefinitions()
 		if (!this.isFr7Model()) {
 			this.updateRecordingStatus('Unknown')
@@ -85,10 +129,12 @@ class SonyVISCAInstance extends InstanceBase {
 	registerDefinitions() {
 		const actions = getActionDefinitions(this)
 		this.setActionDefinitions(actions)
+		const feedbacks = getFeedbackDefinitions(this)
+		this.setFeedbackDefinitions(feedbacks)
 
 		const actionIds = new Set(Object.keys(actions))
-		this.setPresetDefinitions(getPresetDefinitions(this, actionIds))
-		this.setFeedbackDefinitions(getFeedbackDefinitions(this))
+		const feedbackIds = new Set(Object.keys(feedbacks))
+		this.setPresetDefinitions(getPresetDefinitions(this, actionIds, feedbackIds))
 
 		const modelId = this.config.model
 		const model = MODELS.find((m) => m.id === modelId)
@@ -360,6 +406,31 @@ class SonyVISCAInstance extends InstanceBase {
 			callbacks['097e0454'] = onOffCallback('ndClear', 'Filtered', 'Clear')
 			// CAM_IMGFlipInq: 8x 09 04 66 FF → y0 50 0p FF (02=On/Ceiling, 03=Off/Desktop)
 			callbacks['090466'] = onOffCallback('imageFlip')
+		}
+
+		// PTZ Auto Framing inquiry — FR7 + SRG-A40/A12
+		if (CAP_AUTO_FRAMING.has(this.config.model)) {
+			// PTZAutoFramingInq: 8x 09 7E 04 3A FF → y0 50 0p FF (0=Off, 1=On)
+			callbacks['097e043a'] = (payload) => {
+				if (payload.length >= 4 && payload[1] === 0x50) {
+					const prev = this.state.ptzAutoFraming
+					this.state.ptzAutoFraming = (payload[2] & 0x0f) === 0x01 ? 'On' : 'Off'
+					if (this.state.ptzAutoFraming !== prev) {
+						this.updateVariables()
+						this.checkFeedbacks()
+					}
+				}
+			}
+		}
+
+		// Tally inquiries — all tally-capable models get red, FR7 also gets green
+		if (CAP_TALLY.has(this.config.model)) {
+			// TallyRedInq: 8x 09 7E 01 0A FF → y0 50 0p FF (02=On, 03=Off)
+			callbacks['097e010a'] = onOffCallback('tallyRed')
+			if (this.isFr7Model()) {
+				// TallyGreenInq: 8x 09 7E 04 1A FF → y0 50 0p FF (02=On, 03=Off)
+				callbacks['097e041a'] = onOffCallback('tallyGreen')
+			}
 		}
 
 		this.VISCA.initializeLowPriorityInquiries(callbacks)

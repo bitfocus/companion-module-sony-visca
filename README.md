@@ -90,6 +90,22 @@ Blocks 03-05 were recently added for legacy cameras. Please verify:
 
 ## Changes
 
+### v2.10.0
+
+- Added PTZ Auto Framing toggle action, variable, feedback, and preset for FR7 and SRG-A40/A12
+- Added FR7 White Balance Mode action with ATW / Memory A / Preset choices and presets
+- Added FR7 Push AF/MF preset (press-and-hold)
+- Added tally keepalive support for all tally-capable models (X400, X1000, 360SHE, FR7)
+- Added tally toggle/on/off action modes with 10-second keepalive timer
+- Added tally red variable and feedback for all tally-capable models
+- Added tally green variable, feedback, and preset for FR7
+- Added FR7 to CAP_TALLY capability set
+- Added CAP_AUTO_FRAMING capability set for FR7 + SRG-A40/A12
+- Added FR7 WB mode choices to White Balance Mode feedback
+- Added preset filtering by feedback availability (prevents model-filtered feedbacks from showing on wrong models)
+- Added optimistic state updates for tally and auto framing actions
+- Added low-priority inquiry polling for tally state and auto framing state
+
 ### v2.9.0
 
 - Added degree-based pan/tilt positioning with Raw/Degrees unit toggle on the Absolute Position action

@@ -82,8 +82,11 @@ export const CAP_WIDE_DYNAMIC = new Set([...FAMILY_X1000, ...FAMILY_120DH, ...FA
 // Brightness position: only legacy cameras have BRIGHTNESS choices
 export const CAP_BRIGHTNESS = new Set([...FAMILY_120DH, ...FAMILY_SE, ...FAMILY_360SHE])
 
-// Tally on/off: X400/X401 + X1000 + 360SHE (same 7E 01 0A command format)
-export const CAP_TALLY = new Set([...FAMILY_X400_CORE, ...FAMILY_X1000, ...FAMILY_360SHE])
+// Tally on/off: X400/X401 + X1000 + 360SHE + FR7 (red: 7E 01 0A, green FR7 only: 7E 04 1A)
+export const CAP_TALLY = new Set([...FAMILY_X400_CORE, ...FAMILY_X1000, ...FAMILY_360SHE, ...FAMILY_FR7])
+
+// PTZ Auto Framing: FR7 + SRG-A40/A12 (7E 04 3A)
+export const CAP_AUTO_FRAMING = new Set([...FAMILY_FR7, '0621', '0622'])
 
 /**
  * Filter definitions by model ID.

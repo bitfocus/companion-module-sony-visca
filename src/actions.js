@@ -5,6 +5,7 @@ import {
 	CAP_ADVANCED,
 	CAP_ADVANCED_LEGACY,
 	CAP_ALL_CAMERAS,
+	CAP_AUTO_FRAMING,
 	CAP_BRIGHTNESS,
 	CAP_FR7,
 	CAP_ICR,
@@ -2084,48 +2085,34 @@ function getColorActionDefinitions(self, camId) {
 	// const CHOICES = self.choices
 	return {
 		whiteBal: {
-			name: 'White Balance Mode (auto/indoor/outdoor/one push/ATW/manual)',
+			name: isFr7Model(self)
+				? 'White Balance Mode (ATW/Memory A/Preset)'
+				: 'White Balance Mode (auto/indoor/outdoor/one push/ATW/manual)',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'WB setting',
 					id: 'val',
-					choices: [
-						{ id: '0', label: 'Auto1 - Auto' },
-						{ id: '1', label: 'Indoor' },
-						{ id: '2', label: 'Outdoor' },
-						{ id: '3', label: 'One push WB' },
-						{ id: '4', label: 'Auto2 - ATW' },
-						{ id: '5', label: 'Manual' },
-					],
-					default: '0',
+					choices: isFr7Model(self)
+						? [
+								{ id: '4', label: 'ATW' },
+								{ id: '5', label: 'Memory A' },
+								{ id: 'A', label: 'Preset' },
+							]
+						: [
+								{ id: '0', label: 'Auto1 - Auto' },
+								{ id: '1', label: 'Indoor' },
+								{ id: '2', label: 'Outdoor' },
+								{ id: '3', label: 'One push WB' },
+								{ id: '4', label: 'Auto2 - ATW' },
+								{ id: '5', label: 'Manual' },
+							],
+					default: isFr7Model(self) ? '4' : '0',
 				},
 			],
 			callback: async (event) => {
-				if (event.options.val == 0) {
-					self.VISCA.send(camId + '\x01\x04\x35\x00\xFF')
-					return
-				}
-				if (event.options.val == 1) {
-					self.VISCA.send(camId + '\x01\x04\x35\x01\xFF')
-					return
-				}
-				if (event.options.val == 2) {
-					self.VISCA.send(camId + '\x01\x04\x35\x02\xFF')
-					return
-				}
-				if (event.options.val == 3) {
-					self.VISCA.send(camId + '\x01\x04\x35\x03\xFF')
-					return
-				}
-				if (event.options.val == 4) {
-					self.VISCA.send(camId + '\x01\x04\x35\x04\xFF')
-					return
-				}
-				if (event.options.val == 5) {
-					self.VISCA.send(camId + '\x01\x04\x35\x05\xFF')
-					return
-				}
+				const val = parseInt(event.options.val, 16)
+				self.VISCA.send(camId + '\x01\x04\x35' + String.fromCharCode(val & 0x0f) + '\xFF')
 			},
 		},
 		wbTrigger: {
@@ -3256,33 +3243,44 @@ function getMiscActionDefinitions(self, camId) {
 		},
 		tally: {
 			models: CAP_TALLY,
-			name: 'Tally (on/off)',
+			name: 'Tally',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'On / Off',
-					id: 'bol',
+					label: 'Mode',
+					id: 'mode',
 					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' },
+						{ id: 'toggle', label: 'Toggle' },
+						{ id: 'on', label: 'On (with keepalive)' },
+						{ id: 'off', label: 'Off' },
 					],
-					default: '0',
+					default: 'toggle',
 				},
 				{
 					type: 'dropdown',
 					label: 'Color',
 					id: 'color',
-					choices: [
-						{ id: '0', label: 'Red' },
-						{ id: '1', label: 'Green' },
-					],
-					default: '0',
+					choices: isFr7Model(self)
+						? [
+								{ id: 'red', label: 'Red' },
+								{ id: 'green', label: 'Green' },
+							]
+						: [{ id: 'red', label: 'Red' }],
+					default: 'red',
 				},
 			],
 			callback: async (event) => {
-				const color = event.options.color == '1' ? '\x04\x1A' : '\x01\x0A'
-				const onOff = event.options.bol == '1' ? '\x02' : '\x03'
-				self.VISCA.send(camId + '\x01\x7E' + color + '\x00' + onOff + '\xFF')
+				const color = event.options.color ?? 'red'
+				let mode = event.options.mode
+				if (mode === 'toggle') {
+					const stateKey = color === 'green' ? 'tallyGreen' : 'tallyRed'
+					mode = self.state[stateKey] === 'On' ? 'off' : 'on'
+				}
+				if (mode === 'on') {
+					self.startTallyKeepalive(color)
+				} else {
+					self.stopTallyKeepalive(color)
+				}
 			},
 		},
 		menu: {
@@ -4019,22 +4017,30 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		ptzAutoFraming: {
-			models: CAP_FR7,
-			name: 'PTZ Auto Framing (FR7)',
+			models: CAP_AUTO_FRAMING,
+			name: 'PTZ Auto Framing',
 			options: [
 				{
 					type: 'dropdown',
 					label: 'Auto Framing',
 					id: 'val',
 					choices: [
-						{ id: '1', label: 'On (Start)' },
-						{ id: '0', label: 'Off (Stop)' },
+						{ id: '2', label: 'Toggle' },
+						{ id: '1', label: 'On' },
+						{ id: '0', label: 'Off' },
 					],
-					default: '0',
+					default: '2',
 				},
 			],
 			callback: async (event) => {
-				self.VISCA.send(camId + '\x01\x7E\x04\x3A' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+				let val = parseInt(event.options.val)
+				if (val === 2) {
+					val = self.state.ptzAutoFraming === 'On' ? 0 : 1
+				}
+				self.VISCA.send(camId + '\x01\x7E\x04\x3A' + String.fromCharCode(val & 0x0f) + '\xFF')
+				self.state.ptzAutoFraming = val === 1 ? 'On' : 'Off'
+				self.updateVariables()
+				self.checkFeedbacks()
 			},
 		},
 		audioLevelControl: {
