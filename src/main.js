@@ -1,4 +1,5 @@
 import { InstanceBase, InstanceStatus, runEntrypoint } from '@companion-module/base'
+import { promises as dns } from 'dns'
 import { getChoices, CHOICES } from './choices.js'
 import { UpgradeScripts } from './upgrades.js'
 import { getConfigDefinitions } from './config.js'
@@ -53,7 +54,7 @@ class SonyVISCAInstance extends InstanceBase {
 		this.registerDefinitions()
 		this.startRecordingPulseTimer()
 		this.setupInquiries()
-		this.init_udp()
+		await this.init_udp()
 		this.updateVariables()
 	}
 
@@ -123,7 +124,7 @@ class SonyVISCAInstance extends InstanceBase {
 		}
 		this.VISCA.stopPolling()
 		this.setupInquiries()
-		this.init_udp()
+		await this.init_udp()
 	}
 
 	registerDefinitions() {
@@ -161,48 +162,59 @@ class SonyVISCAInstance extends InstanceBase {
 		return getConfigDefinitions(CHOICES)
 	}
 
-	init_udp() {
+	async init_udp() {
 		this.clearRecordingStatusPollTimer()
 		if (this.udpSocket) {
-			try {
-				this.udpSocket.close()
-			} catch {
-				// ignore
-			}
+			await new Promise((resolve) => {
+				try {
+					this.udpSocket.close(resolve)
+				} catch {
+					resolve()
+				}
+			})
 			this.udpSocket = null
 			this.updateStatus(InstanceStatus.Disconnected)
 		}
 
-		this.updateStatus(InstanceStatus.Connecting)
-
-		if (this.config.host) {
-			this.viscaHost = this.config.host
-			this.viscaPort = parseInt(this.config.port) || 52381
-
-			const msgHandler = (msg, rinfo) => {
-				if (rinfo.address === this.viscaHost) {
-					this.VISCA.handleResponse(msg)
-				}
-			}
-
-			this.udpSocket = this.createSharedUdpSocket('udp4', msgHandler)
-
-			this.udpSocket.on('error', (err) => {
-				this.updateStatus(InstanceStatus.ConnectionFailure, err.message)
-				this.log('error', 'Network error: ' + err.message)
-			})
-
-			this.udpSocket.bind(this.viscaPort, '', () => {
-				this.log('info', `SharedUDP listening on port ${this.viscaPort}`)
-				this.updateStatus(InstanceStatus.Ok)
-				this.startRecordingStatusPollTimer()
-				this.VISCA.resetSequenceNumber()
-				this.VISCA.startLowPriorityPolling()
-			})
-		} else {
+		if (!this.config.host) {
 			this.log('error', 'No host configured')
 			this.updateStatus(InstanceStatus.BadConfig)
+			return
 		}
+
+		this.updateStatus(InstanceStatus.Connecting)
+		this.viscaPort = parseInt(this.config.port) || 52381
+
+		// Resolve hostname to IPv4 address for response matching and shared socket
+		try {
+			const { address } = await dns.lookup(this.config.host, { family: 4 })
+			this.viscaHost = address
+		} catch (err) {
+			this.log('error', `DNS resolution failed for "${this.config.host}": ${err.message}`)
+			this.updateStatus(InstanceStatus.ConnectionFailure, `DNS resolution failed: ${err.message}`)
+			return
+		}
+
+		const msgHandler = (msg, rinfo) => {
+			if (rinfo.address === this.viscaHost) {
+				this.VISCA.handleResponse(msg)
+			}
+		}
+
+		this.udpSocket = this.createSharedUdpSocket('udp4', msgHandler)
+
+		this.udpSocket.on('error', (err) => {
+			this.updateStatus(InstanceStatus.ConnectionFailure, err.message)
+			this.log('error', 'Network error: ' + err.message)
+		})
+
+		this.udpSocket.bind(this.viscaPort, '', () => {
+			this.log('info', `SharedUDP listening on port ${this.viscaPort} → ${this.viscaHost}`)
+			this.updateStatus(InstanceStatus.Ok)
+			this.startRecordingStatusPollTimer()
+			this.VISCA.resetSequenceNumber()
+			this.VISCA.startLowPriorityPolling()
+		})
 		this.log('info', 'Connection Initialized')
 	}
 

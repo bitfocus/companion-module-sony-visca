@@ -13,9 +13,9 @@ export function getConfigDefinitions(CHOICES) {
 		{
 			type: 'textinput',
 			id: 'host',
-			label: 'Target IP',
+			label: 'Target IP or Hostname',
 			width: 3,
-			regex: Regex.IP,
+			regex: Regex.HOSTNAME,
 		},
 		{
 			type: 'textinput',
