@@ -1,7 +1,7 @@
 import {
 	CAP_BRIGHTNESS,
 	CAP_AUTO_FRAMING,
-	CAP_FR7,
+	CAP_FR7_AM7,
 	CAP_TALLY,
 	CAP_WIDE_DYNAMIC,
 	CAP_X400_CORE_X40UH,
@@ -19,6 +19,7 @@ const PT_RANGES = {
 	'051B': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0x52ef], tiltOn: [-0x52ef, 0x1ba5] }, // BRC-H780
 	'051E': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0xb3b0], tiltOn: [-0xc183, 0x0dd2] }, // ILME-FR7 (20-bit)
 	'051Ek': { pan: [-0x9ca7, 0x9ca7], tiltOff: [-0x1ba5, 0xb3b0], tiltOn: [-0xc183, 0x0dd2] }, // ILME-FR7K (20-bit)
+	'051F': { pan: [-0x2ab98, 0x2ab98], tiltOff: [-0x07530, 0x33450], tiltOn: [-0x33450, 0x07530] }, // BRC-AM7 (20-bit)
 	'0604': { pan: [-0x15400, 0x15400], tiltOff: [-0x3c00, 0x0b400], tiltOn: [-0x0b400, 0x03c00] }, // SRG-360SHE (20-bit)
 	'0605': { pan: [-0x15400, 0x15400], tiltOff: [-0x3c00, 0x0b400], tiltOn: [-0x0b400, 0x03c00] }, // SRG-280SHE (20-bit)
 }
@@ -38,6 +39,7 @@ const PT_DEGREE_RANGES = {
 	'051B': { pan: [-170, 170], tiltOff: [-30, 90], tiltOn: [-90, 30] }, // BRC-H780
 	'051E': { pan: [-170, 170], tiltOff: [-30, 195], tiltOn: [-210, 15] }, // ILME-FR7
 	'051Ek': { pan: [-170, 170], tiltOff: [-30, 195], tiltOn: [-210, 15] }, // ILME-FR7K
+	'051F': { pan: [-175, 175], tiltOff: [-30, 210], tiltOn: [-210, 30] }, // BRC-AM7
 	'0604': { pan: [-170, 170], tiltOff: [-30, 90], tiltOn: [-90, 30] }, // SRG-360SHE
 	'0605': { pan: [-170, 170], tiltOff: [-30, 90], tiltOn: [-90, 30] }, // SRG-280SHE
 }
@@ -168,6 +170,7 @@ const ZOOM_RATIO_TABLES = {
 	'0516a': ZOOM_20X_201SE, // SRG-201SE
 	'0516b': ZOOM_30X_300SE, // SRG-300SE
 	'0516c': ZOOM_30X_300SE, // SRG-301SE
+	'0513': ZOOM_30X_300SE, // SRG-300H (30x, same optical table as 300SE)
 	'0604': ZOOM_30X_300SE, // SRG-360SHE (30x, same optical table as 300SE)
 	'0605': ZOOM_26X_280SHE, // SRG-280SHE (26x)
 }
@@ -178,6 +181,7 @@ const FOCUS_RANGES = {
 	'0511': [0x1000, 0xe000], // SRG-120DH
 	'051E': [0x0000, 0xffff], // ILME-FR7
 	'051Ek': [0x0000, 0xffff], // ILME-FR7K
+	'051F': [0x0000, 0xf7ff], // BRC-AM7
 }
 const FOCUS_DEFAULT_RANGE = [0x1000, 0xf000]
 
@@ -244,10 +248,11 @@ const variables = [
 	{ variableId: 'expCompOnOff', name: 'Exposure Compensation (on/off)' },
 	{ variableId: 'backlightComp', name: 'Backlight Compensation (on/off)' },
 	{ variableId: 'spotlightComp', name: 'Spotlight Compensation (on/off)' },
-	{ variableId: 'recordingStatus', name: 'Recording status (unknown/standby/recording)', models: CAP_FR7 },
+	{ variableId: 'recordingStatus', name: 'Recording status (unknown/standby/recording)', models: CAP_FR7_AM7 },
 	{ variableId: 'ptzAutoFraming', name: 'PTZ Auto Framing (on/off)', models: CAP_AUTO_FRAMING },
 	{ variableId: 'tallyRed', name: 'Tally Red (on/off)', models: CAP_TALLY },
-	{ variableId: 'tallyGreen', name: 'Tally Green (on/off)', models: CAP_FR7 },
+	{ variableId: 'tallyGreen', name: 'Tally Green (on/off)', models: CAP_FR7_AM7 },
+	{ variableId: 'tallyYellow', name: 'Tally Yellow (on/off)', models: new Set(['051F']) },
 	{ variableId: 'presetSelector', name: 'Preset Selection Variable' },
 	{ variableId: 'lastPresetUsed', name: 'Last Preset Recalled (1-64)' },
 	{ variableId: 'viscaId', name: 'Specific ViscaID to interact with (serial only)' },
@@ -504,9 +509,19 @@ export async function updateVariables() {
 }
 
 function formatVariablesMarkdown(variables) {
-	let markdown = '| Id | Name |\n|----|------|\n'
+	let idWidth = 2
+	let nameWidth = 4
 	for (const variable in variables) {
-		markdown += `| ${variables[variable].variableId} | ${variables[variable].name} |\n`
+		idWidth = Math.max(idWidth, variables[variable].variableId.length)
+		nameWidth = Math.max(nameWidth, variables[variable].name.length)
+	}
+	const hdr = `| ${'Id'.padEnd(idWidth)} | ${'Name'.padEnd(nameWidth)} |\n`
+	const sep = `| ${'-'.repeat(idWidth)} | ${'-'.repeat(nameWidth)} |\n`
+	let markdown = hdr + sep
+	for (const variable in variables) {
+		const id = variables[variable].variableId.padEnd(idWidth)
+		const name = variables[variable].name.padEnd(nameWidth)
+		markdown += `| ${id} | ${name} |\n`
 	}
 	return markdown
 }

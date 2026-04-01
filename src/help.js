@@ -17,7 +17,7 @@ let markdown =
 	'- Type in the IP address of the device.\n' +
 	'- Type in the port of the device (default is 52381)\n' +
 	'- You can also specify the Camera ID  \n' +
-	'(In most cases **id 1** is the best choice)' +
+	'  (In most cases **id 1** is the best choice)\n' +
 	'\n' +
 	'## Enabling VISCA over IP on your camera\n' +
 	'\n' +

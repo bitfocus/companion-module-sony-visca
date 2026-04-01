@@ -342,6 +342,7 @@ _Rotation enabled presets are intended for devices like the Stream Deck+ and the
 | ptzAutoFraming        | PTZ Auto Framing (on/off)                       |
 | tallyRed              | Tally Red (on/off)                              |
 | tallyGreen            | Tally Green (on/off)                            |
+| tallyYellow           | Tally Yellow (on/off)                           |
 | presetSelector        | Preset Selection Variable                       |
 | lastPresetUsed        | Last Preset Recalled (1-64)                     |
 | viscaId               | Specific ViscaID to interact with (serial only) |

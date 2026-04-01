@@ -288,6 +288,41 @@ const BLOCK_01_LEGACY = {
 	],
 }
 
+// SRG-300H (group 3d) — like BLOCK_01_LEGACY but with apertureGain, wider shutter/gain masks
+// Response: y0 50 0p 0p 0q 0q 0r sd ce uu vv ww 0g 00 hz FF
+const BLOCK_01_300H = {
+	name: 'Camera Control',
+	minLength: 16,
+	fields: [
+		{ variable: 'redGain', type: 'nibbleConcat', bytes: [2, 3] },
+		{ variable: 'blueGain', type: 'nibbleConcat', bytes: [4, 5] },
+		{
+			variable: 'wbMode',
+			type: 'mapped',
+			extract: (r) => r[6] & 0x0f,
+			map: WB_MODES,
+		},
+		{ variable: 'apertureGain', type: 'bits', byte: 7, shift: 0, mask: 0x0f },
+		{
+			variable: 'exposureMode',
+			type: 'mapped',
+			extract: (r) => r[8] & 0x0f,
+			map: EXPOSURE_MODES,
+		},
+		{ variable: 'highResolution', type: 'flag', byte: 9, bit: 5, on: 'On', off: 'Off' },
+		{ variable: 'wideDynamic', type: 'flag', byte: 9, bit: 4, on: 'On', off: 'Off' },
+		{ variable: 'backlightComp', type: 'flag', byte: 9, bit: 2, on: 'On', off: 'Off' },
+		{ variable: 'expCompOnOff', type: 'flag', byte: 9, bit: 1, on: 'On', off: 'Off' },
+		{ variable: 'slowShutter', type: 'flag', byte: 9, bit: 0, on: 'Auto', off: 'Manual' },
+		{ variable: 'shutterSpeed', type: 'choiceLookup', byte: 10, mask: 0x3f, choiceKey: 'SHUTTER' },
+		{ variable: 'irisLevel', type: 'choiceLookup', byte: 11, mask: 0x1f, choiceKey: 'IRIS' },
+		{ variable: 'irisRaw', type: 'bits', byte: 11, shift: 0, mask: 0x1f },
+		{ variable: 'gainLevel', type: 'choiceLookup', byte: 12, mask: 0x1f, choiceKey: 'GAIN' },
+		{ variable: 'brightPosition', type: 'choiceLookup', byte: 13, mask: 0x1f, choiceKey: 'BRIGHTNESS' },
+		{ variable: 'expCompLevel', type: 'offset', byte: 14, mask: 0x0f, center: 7 },
+	],
+}
+
 // ==================== Block 02: Other (per-family, completely different layouts) ====================
 
 // BRC-X400 family (group 1a) — tested on hardware
@@ -393,6 +428,30 @@ const BLOCK_02_300SE = {
 		{ variable: 'IRCutFilterAuto', type: 'flag', byte: 2, bit: 2, on: 'Auto', off: 'Manual' },
 		{ variable: 'power', type: 'flag', byte: 2, bit: 0, on: 'On', off: 'Off' },
 		{ variable: 'imageStabilizer', type: 'flag', byte: 3, bit: 6, on: 'On', off: 'Off' },
+		{ variable: 'IRCutFilter', type: 'flag', byte: 3, bit: 4, on: 'On', off: 'Off' },
+		{
+			variable: 'pictureEffectOn',
+			type: 'custom',
+			extract: (r) => '0x' + (r[5] & 0x0f).toString(16).toUpperCase(),
+		},
+		{
+			variable: 'cameraIdReported',
+			type: 'custom',
+			extract: (r) => nibbleConcat(r, [8, 9, 10, 11]).toString(16).padStart(4, '0').toUpperCase(),
+		},
+	],
+}
+
+// SRG-300H (group 3d) — like BLOCK_02_300SE but with imageStabilizerHold
+// Response: y0 50 pp qq 00 0r 00 0s tt uu vv ww 00 xx yy FF
+const BLOCK_02_300H = {
+	name: 'Other',
+	minLength: 16,
+	fields: [
+		{ variable: 'IRCutFilterAuto', type: 'flag', byte: 2, bit: 2, on: 'Auto', off: 'Manual' },
+		{ variable: 'power', type: 'flag', byte: 2, bit: 0, on: 'On', off: 'Off' },
+		{ variable: 'imageStabilizer', type: 'flag', byte: 3, bit: 6, on: 'On', off: 'Off' },
+		{ variable: 'imageStabilizerHold', type: 'flag', byte: 3, bit: 5, on: 'Hold', off: 'Off' },
 		{ variable: 'IRCutFilter', type: 'flag', byte: 3, bit: 4, on: 'On', off: 'Off' },
 		{
 			variable: 'pictureEffectOn',
@@ -551,6 +610,28 @@ const BLOCK_03_LEGACY = {
 		{ variable: 'afOpTime', type: 'nibbleConcat', bytes: [4, 5] },
 		{ variable: 'afStayTime', type: 'nibbleConcat', bytes: [6, 7] },
 		{ variable: 'colorGain', type: 'bits', byte: 11, shift: 3, mask: 0x0f },
+		{
+			variable: 'gamma',
+			type: 'mapped',
+			extract: (r) => (r[13] >> 4) & 0x07,
+			map: GAMMA_VALUES,
+		},
+		{ variable: 'highSensitivity', type: 'flag', byte: 13, bit: 3, on: 'On', off: 'Off' },
+		{ variable: 'nrLevel', type: 'bits', byte: 13, shift: 0, mask: 0x07 },
+		{ variable: 'chromaSuppress', type: 'bits', byte: 14, shift: 4, mask: 0x07 },
+		{ variable: 'gainLimit', type: 'choiceLookup', byte: 14, mask: 0x0f, choiceKey: 'GAIN' },
+	],
+}
+
+// SRG-300H (group 3d) — like BLOCK_03_LEGACY but colorGain at byte11[3:0], no digitalZoomPos
+// Response: y0 50 00 00 0p 0q 0r 0s tt uu vv ww 0a bb cc FF
+const BLOCK_03_300H = {
+	name: 'Enlargement 1',
+	minLength: 16,
+	fields: [
+		{ variable: 'afOpTime', type: 'nibbleConcat', bytes: [4, 5] },
+		{ variable: 'afStayTime', type: 'nibbleConcat', bytes: [6, 7] },
+		{ variable: 'colorGain', type: 'bits', byte: 11, shift: 0, mask: 0x0f },
 		{
 			variable: 'gamma',
 			type: 'mapped',
@@ -774,6 +855,16 @@ const BLOCKS_360SHE = {
 	'097e7e03': BLOCK_03_LEGACY,
 }
 
+// SRG-300H (group 3d) — 6 blocks, custom 01/02/03, shared 00/04/05
+const BLOCKS_300H = {
+	'097e7e00': BLOCK_00_LENS,
+	'097e7e01': BLOCK_01_300H,
+	'097e7e02': BLOCK_02_300H,
+	'097e7e03': BLOCK_03_300H,
+	'097e7e04': BLOCK_04_LEGACY,
+	'097e7e05': BLOCK_05_LEGACY,
+}
+
 // ILME-FR7 (group 4) — individual inquiries only, no block inquiry support.
 // FR7 uses 02=On/03=Off instead of bit flags, and has unique WB mode values.
 const FR7_WB_MODES = {
@@ -829,8 +920,10 @@ const GROUP_TO_BLOCKS = {
 	'3a': BLOCKS_120DH,
 	'3b': BLOCKS_300SE,
 	'3c': BLOCKS_360SHE,
+	'3d': BLOCKS_300H,
 	4: BLOCKS_FR7,
 	5: BLOCKS_A40,
+	6: BLOCKS_FR7,
 }
 
 export function getInquiryBlocks(group) {

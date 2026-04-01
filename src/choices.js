@@ -1160,6 +1160,10 @@ const _choices = {
 }
 // Group 3c models: SRG-360SHE, SRG-280SHE — identical choice tables to group 3b
 _choices['3c'] = _choices['3b']
+// Group 3d models: SRG-300H — identical choice tables to group 3b (same lens/sensor specs)
+_choices['3d'] = _choices['3b']
+// Group 6 models: BRC-AM7 — identical choice tables to group 4 (FR7-style step controls)
+_choices['6'] = _choices[4]
 export const CHOICES = {
 	EXPOSURE_COMPENSATION: [
 		{ id: '0E', label: '+7' },

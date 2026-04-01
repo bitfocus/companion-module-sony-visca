@@ -1,5 +1,5 @@
 import { COLORS } from './colors.js'
-import { CAP_AUTO_FRAMING, CAP_FR7, CAP_TALLY, filterByModel } from './model-caps.js'
+import { CAP_AUTO_FRAMING, CAP_FR7_AM7, CAP_TALLY, filterByModel } from './model-caps.js'
 import { rawToDegrees } from './variables.js'
 
 export function getFeedbackDefinitions(self) {
@@ -157,7 +157,7 @@ export function getFeedbackDefinitions(self) {
 			},
 		},
 		recordingActive: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			type: 'boolean',
 			name: 'Recording Active',
 			description: 'Highlights when camera recording status is active',
@@ -171,7 +171,7 @@ export function getFeedbackDefinitions(self) {
 			},
 		},
 		recordingPulse: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			type: 'boolean',
 			name: 'Recording Active Pulse',
 			description: 'Pulse overlay for active recording state',
@@ -269,7 +269,7 @@ export function getFeedbackDefinitions(self) {
 			},
 		},
 		tallyGreenOn: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			type: 'boolean',
 			name: 'Tally Green Active (FR7)',
 			description: 'Highlights when green tally is on',
@@ -280,6 +280,20 @@ export function getFeedbackDefinitions(self) {
 			options: [],
 			callback: function () {
 				return self.state.tallyGreen === 'On'
+			},
+		},
+		tallyYellowOn: {
+			models: new Set(['051F']),
+			type: 'boolean',
+			name: 'Tally Yellow Active (AM7)',
+			description: 'Highlights when yellow tally is on',
+			defaultStyle: {
+				color: COLORS.BLACK,
+				bgcolor: 0xccaa00,
+			},
+			options: [],
+			callback: function () {
+				return self.state.tallyYellow === 'On'
 			},
 		},
 		ptzAutoFramingOn: {

@@ -8,6 +8,7 @@ import {
 	CAP_AUTO_FRAMING,
 	CAP_BRIGHTNESS,
 	CAP_FR7,
+	CAP_FR7_AM7,
 	CAP_ICR,
 	CAP_TELECONVERT,
 	CAP_X1000,
@@ -1901,7 +1902,7 @@ function getExposureActionDefinitions(self, camId) {
 		},
 		// FR7 ND controls
 		ndFilterMode: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'ND Filter Mode (FR7)',
 			options: [
 				{
@@ -1920,7 +1921,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		ndVariableAdjust: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'ND Variable Adjust (FR7)',
 			options: [
 				{
@@ -1939,7 +1940,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		ndVariableDirect: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'ND Variable Direct (FR7)',
 			options: [
 				{
@@ -1984,7 +1985,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		autoNdFilter: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Auto ND Filter (FR7)',
 			options: [
 				{
@@ -2003,7 +2004,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		ndClear: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'ND Clear/Filtered (FR7)',
 			options: [
 				{
@@ -2022,7 +2023,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		autoIris: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Auto Iris (FR7)',
 			options: [
 				{
@@ -2041,7 +2042,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		autoShutter: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Auto Shutter (FR7)',
 			options: [
 				{
@@ -2060,7 +2061,7 @@ function getExposureActionDefinitions(self, camId) {
 			},
 		},
 		agc: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'AGC (FR7)',
 			options: [
 				{
@@ -2812,7 +2813,7 @@ function getColorActionDefinitions(self, camId) {
 		},
 		// FR7 White Balance extended
 		presetWhiteDirect: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Preset White Direct (FR7)',
 			options: [
 				{
@@ -2835,7 +2836,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		tintDirect: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Tint Direct (FR7)',
 			options: [
 				{
@@ -2859,7 +2860,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		offsetColorTempDirect: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Offset Color Temp Direct (FR7)',
 			options: [
 				{
@@ -2883,7 +2884,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		offsetTintDirect: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Offset Tint Direct (FR7)',
 			options: [
 				{
@@ -2908,7 +2909,7 @@ function getColorActionDefinitions(self, camId) {
 		},
 		// FR7 Master/R/B Black and Gain
 		masterBlackDirect: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Master Black Direct (FR7)',
 			options: [
 				{
@@ -2933,7 +2934,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		rGainDirect: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'R Gain Direct (FR7)',
 			options: [
 				{
@@ -2957,7 +2958,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		bGainDirect: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'B Gain Direct (FR7)',
 			options: [
 				{
@@ -2981,7 +2982,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		rBlackDirect: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'R Black Direct (FR7)',
 			options: [
 				{
@@ -3005,7 +3006,7 @@ function getColorActionDefinitions(self, camId) {
 			},
 		},
 		bBlackDirect: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'B Black Direct (FR7)',
 			options: [
 				{
@@ -3261,10 +3262,16 @@ function getMiscActionDefinitions(self, camId) {
 					label: 'Color',
 					id: 'color',
 					choices: isFr7Model(self)
-						? [
-								{ id: 'red', label: 'Red' },
-								{ id: 'green', label: 'Green' },
-							]
+						? self?.config?.model === '051F'
+							? [
+									{ id: 'red', label: 'Red' },
+									{ id: 'green', label: 'Green' },
+									{ id: 'yellow', label: 'Yellow' },
+								]
+							: [
+									{ id: 'red', label: 'Red' },
+									{ id: 'green', label: 'Green' },
+								]
 						: [{ id: 'red', label: 'Red' }],
 					default: 'red',
 				},
@@ -3273,7 +3280,7 @@ function getMiscActionDefinitions(self, camId) {
 				const color = event.options.color ?? 'red'
 				let mode = event.options.mode
 				if (mode === 'toggle') {
-					const stateKey = color === 'green' ? 'tallyGreen' : 'tallyRed'
+					const stateKey = color === 'green' ? 'tallyGreen' : color === 'yellow' ? 'tallyYellow' : 'tallyRed'
 					mode = self.state[stateKey] === 'On' ? 'off' : 'on'
 				}
 				if (mode === 'on') {
@@ -3998,7 +4005,7 @@ function getMiscActionDefinitions(self, camId) {
 		},
 		// FR7 specific misc actions
 		pushAfMf: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Push AF / Push MF (FR7)',
 			options: [
 				{
@@ -4044,7 +4051,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		audioLevelControl: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Audio Level Control (FR7)',
 			options: [
 				{
@@ -4079,7 +4086,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		audioInputLevel: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Audio Input Level Direct (FR7)',
 			options: [
 				{
@@ -4117,7 +4124,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		audioInputLevelAdjust: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Audio Input Level Adjust (FR7)',
 			options: [
 				{
@@ -4166,7 +4173,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		displayButton: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Display Button (FR7)',
 			options: [
 				{
@@ -4185,7 +4192,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		assignableButton: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Assignable Button (FR7)',
 			options: [
 				{
@@ -4228,7 +4235,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		directMenu: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Direct Menu (FR7)',
 			options: [
 				{
@@ -4267,7 +4274,7 @@ function getMiscActionDefinitions(self, camId) {
 			},
 		},
 		presetSeparateDuration: {
-			models: CAP_FR7,
+			models: CAP_FR7_AM7,
 			name: 'Preset Separate Duration (FR7)',
 			options: [
 				{
@@ -4377,7 +4384,7 @@ export function getActionsMarkdown() {
 	markdown += formatActionsMarkdown('Miscellaneous', getMiscActionDefinitions(self))
 	markdown = markdown.replace(
 		'Custom Command',
-		'Custom Command - *If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)*',
+		'Custom Command - _If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)_',
 	)
 	return markdown
 }
@@ -4392,12 +4399,12 @@ function getIdOfDefault(props) {
 
 function isFr7Model(self) {
 	const model = self?.config?.model
-	return model === '051E' || model === '051Ek'
+	return model === '051E' || model === '051Ek' || model === '051F'
 }
 
 // Pan/tilt position encoding format per model:
 // 5+5 nibble (20-bit pan + 20-bit tilt): FR7, 360SHE/280SHE
-const PT_5_5_MODELS = new Set(['051E', '051Ek', '0604', '0605'])
+const PT_5_5_MODELS = new Set(['051E', '051Ek', '051F', '0604', '0605'])
 // 5+4 nibble (20-bit pan + 16-bit tilt): X1000, H780, H800
 const PT_5_4_MODELS = new Set(['0519', '051A', '051B'])
 

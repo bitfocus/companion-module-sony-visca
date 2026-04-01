@@ -45,6 +45,7 @@ class SonyVISCAInstance extends InstanceBase {
 			spotlightComp: 'Off',
 			recordingStatus: 'Unknown',
 			recordingPulsePhase: false,
+			tallyYellow: 'Off',
 			viscaId: this.config.id,
 			presetSelector: 64,
 		}
@@ -60,7 +61,7 @@ class SonyVISCAInstance extends InstanceBase {
 
 	sendTallyCommand(color, on) {
 		const camId = String.fromCharCode(parseInt(this.state.viscaId))
-		const colorCmd = color === 'green' ? '\x04\x1A' : '\x01\x0A'
+		const colorCmd = color === 'green' ? '\x04\x1A' : color === 'yellow' ? '\x04\x11' : '\x01\x0A'
 		const onOff = on ? '\x02' : '\x03'
 		this.VISCA.send(Buffer.from(camId + '\x01\x7E' + colorCmd + '\x00' + onOff + '\xFF', 'binary'))
 	}
@@ -68,7 +69,7 @@ class SonyVISCAInstance extends InstanceBase {
 	startTallyKeepalive(color) {
 		this.stopTallyKeepalive(color, true)
 		this.sendTallyCommand(color, true)
-		const stateKey = color === 'green' ? 'tallyGreen' : 'tallyRed'
+		const stateKey = color === 'green' ? 'tallyGreen' : color === 'yellow' ? 'tallyYellow' : 'tallyRed'
 		this.state[stateKey] = 'On'
 		this.updateVariables()
 		this.checkFeedbacks()
@@ -84,7 +85,7 @@ class SonyVISCAInstance extends InstanceBase {
 		}
 		if (!skipOff) {
 			this.sendTallyCommand(color, false)
-			const stateKey = color === 'green' ? 'tallyGreen' : 'tallyRed'
+			const stateKey = color === 'green' ? 'tallyGreen' : color === 'yellow' ? 'tallyYellow' : 'tallyRed'
 			this.state[stateKey] = 'Off'
 			this.updateVariables()
 			this.checkFeedbacks()
@@ -148,7 +149,7 @@ class SonyVISCAInstance extends InstanceBase {
 			const activeBlockKeys = new Set(Object.keys(blocks))
 			// FR7 uses individual inquiries instead of block inquiries.
 			// Add standard block keys so block-tagged variables are registered.
-			if (model?.group === '4') {
+			if (model?.group === '4' || model?.group === '6') {
 				activeBlockKeys.add('097e7e00')
 				activeBlockKeys.add('097e7e01')
 				activeBlockKeys.add('097e7e02')
@@ -219,7 +220,7 @@ class SonyVISCAInstance extends InstanceBase {
 	}
 
 	isFr7Model() {
-		return this.config.model === '051E' || this.config.model === '051Ek'
+		return this.config.model === '051E' || this.config.model === '051Ek' || this.config.model === '051F'
 	}
 
 	clearRecordingStatusPollTimer() {
@@ -442,6 +443,10 @@ class SonyVISCAInstance extends InstanceBase {
 			if (this.isFr7Model()) {
 				// TallyGreenInq: 8x 09 7E 04 1A FF → y0 50 0p FF (02=On, 03=Off)
 				callbacks['097e041a'] = onOffCallback('tallyGreen')
+			}
+			if (this.config.model === '051F') {
+				// TallyYellowInq: 8x 09 7E 04 11 FF → y0 50 0p FF (02=On, 03=Off)
+				callbacks['097e0411'] = onOffCallback('tallyYellow')
 			}
 		}
 

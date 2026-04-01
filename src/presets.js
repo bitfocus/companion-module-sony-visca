@@ -2725,12 +2725,12 @@ export function getPresetsMarkdown() {
 	markdown +=
 		'\n### Camera Presets\n\n' +
 		'- Presets 1-64 are available\n' +
-		'- Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.*\n' +
+		'- Tap to recall or hold for 2 seconds to save. When a camera preset button is held for 2 seconds, all camera preset buttons will highlight yellow indicating the preset is saved and you can let go.\\*\n' +
 		'- Presets using presetSelector variable\n' +
 		'- Preset Selector Set, Increment and Decrement\n'
 	markdown += formatPresetsMarkdown('Rotation Enabled', rotationEnabledPresets)
 	markdown +=
-		'\n*Rotation enabled presets are intended for devices like the Stream Deck+ and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Tapping the knob defaults the setting.*\n'
+		'\n_Rotation enabled presets are intended for devices like the Stream Deck+ and the Loupe Deck Live that have knobs. Rotate Left decreases the value, Rotate Right increases, and Tapping the knob defaults the setting._\n'
 
 	return markdown
 }
