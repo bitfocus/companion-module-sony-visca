@@ -1988,7 +1988,7 @@ function getCameraPresets(self) {
 						{
 							actionId: 'recallPset',
 							options: {
-								val: ('0' + i.toString(16)).slice(-2).toUpperCase(),
+								val: i + 1,
 							},
 							delay: 0,
 						},
@@ -2001,7 +2001,7 @@ function getCameraPresets(self) {
 							{
 								actionId: 'savePset',
 								options: {
-									val: ('0' + i.toString(16)).slice(-2).toUpperCase(),
+									val: i + 1,
 								},
 								delay: 0,
 							},

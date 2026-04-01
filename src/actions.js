@@ -3046,8 +3046,7 @@ function getPresetActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				const presetNumber =
-					event.options.val === 'ps' ? self.state.presetSelector - 1 : parseInt(event.options.val, 16)
+				const presetNumber = event.options.val === 'ps' ? self.state.presetSelector - 1 : event.options.val - 1
 				self.VISCA.send(camId + '\x01\x04\x3F\x01' + String.fromCharCode(presetNumber & 0xff) + '\xFF')
 			},
 		},
@@ -3062,8 +3061,7 @@ function getPresetActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				const presetNumber =
-					event.options.val === 'ps' ? self.state.presetSelector - 1 : parseInt(event.options.val, 16)
+				const presetNumber = event.options.val === 'ps' ? self.state.presetSelector - 1 : event.options.val - 1
 				self.VISCA.send(camId + '\x01\x04\x3F\x02' + String.fromCharCode(presetNumber & 0xff) + '\xFF')
 				self.state.lastPresetUsed = presetNumber + 1
 				self.updateVariables()
@@ -3087,8 +3085,7 @@ function getPresetActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				const presetNumber =
-					event.options.val === 'ps' ? self.state.presetSelector - 1 : parseInt(event.options.val, 16)
+				const presetNumber = event.options.val === 'ps' ? self.state.presetSelector - 1 : event.options.val - 1
 				self.VISCA.send(
 					camId +
 						'\x01\x7E\x01\x0B' +
@@ -3109,7 +3106,7 @@ function getPresetActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				self.state.presetSelector = parseInt(event.options.val)
+				self.state.presetSelector = event.options.val
 				self.updateVariables()
 				self.checkFeedbacks()
 			},
@@ -4282,7 +4279,7 @@ function getMiscActionDefinitions(self, camId) {
 					label: 'Preset Number',
 					id: 'preset',
 					choices: CHOICES.PRESET,
-					default: '00',
+					default: 1,
 				},
 				{
 					type: 'number',
@@ -4294,8 +4291,7 @@ function getMiscActionDefinitions(self, camId) {
 				},
 			],
 			callback: async (event) => {
-				const preset =
-					event.options.preset === 'ps' ? self.state.presetSelector - 1 : parseInt(event.options.preset, 16)
+				const preset = event.options.preset === 'ps' ? self.state.presetSelector - 1 : event.options.preset - 1
 				// Duration: 0x00A = 1 sec, 0x3DE = 99 sec, in 0.1 sec increments
 				const dur = Math.round(parseFloat(event.options.duration) * 10) & 0xfff
 				self.VISCA.send(

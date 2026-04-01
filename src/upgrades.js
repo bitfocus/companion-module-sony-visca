@@ -283,4 +283,35 @@ export const UpgradeScripts = [
 
 		return result
 	},
+
+	// Position 3 — v2.12.0 preset hex-to-integer migration (#100)
+	function v2120(_context, props) {
+		const result = { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
+
+		for (const action of props.actions) {
+			switch (action.actionId) {
+				case 'savePset':
+				case 'recallPset':
+				case 'speedPset':
+				case 'setPresetSelector': {
+					const val = action.options.val
+					if (val !== undefined && val !== 'ps' && typeof val === 'string') {
+						action.options.val = parseInt(val, 16) + 1
+						result.updatedActions.push(action)
+					}
+					break
+				}
+				case 'presetSeparateDuration': {
+					const preset = action.options.preset
+					if (preset !== undefined && preset !== 'ps' && typeof preset === 'string') {
+						action.options.preset = parseInt(preset, 16) + 1
+						result.updatedActions.push(action)
+					}
+					break
+				}
+			}
+		}
+
+		return result
+	},
 ]
