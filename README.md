@@ -32,6 +32,7 @@ If you have any of the following cameras, please test the module and report any 
 
 **Untested models:**
 
+- BRC-AM7
 - BRC-X1000
 - BRC-H780
 - BRC-H800
@@ -41,6 +42,7 @@ If you have any of the following cameras, please test the module and report any 
 - SRG-X40UH / SRG-H40UH
 - SRG-120DH
 - SRG-201SE / SRG-300SE / SRG-301SE
+- SRG-300H
 - SRG-X120 / SRG-X400 / SRG-X402
 - SRG-201M2 / SRG-HD1M2
 
@@ -73,6 +75,24 @@ All four blocks were corrected from protocol documentation. Please verify:
 2. Block 02 variables: spotlight, flicker cancel, IR cut filter, image stabilizer, WB offset, camera ID
 3. Block 03/04 variables: AF timing, NR levels, image flip, AE speed, detail settings, visibility enhancer
 
+**BRC-AM7 — New model support**
+Newly added model using FR7-like individual inquiries. Please verify:
+
+1. Basic connection and polling works
+2. ND filter, audio level, and recording controls function correctly
+3. Auto framing toggle works
+4. Red, green, and yellow tally commands work with keepalive
+5. 20-bit pan/tilt position variables and bars track correctly
+6. Tele convert and knee controls respond as expected
+
+**SRG-300H — New model support**
+Newly added model using legacy-style 6-block inquiries. Please verify:
+
+1. Basic connection and polling works
+2. All 6 inquiry blocks (00-05) return correct variable values
+3. ICR, wide dynamic range, and image stabilizer controls function correctly
+4. 16 camera presets work correctly (recall and save)
+
 **SRG-A40 / SRG-A12 — New model support**
 These are newly added models. Please verify:
 
@@ -89,6 +109,12 @@ Blocks 03-05 were recently added for legacy cameras. Please verify:
 3. Block 05: color hue
 
 ## Changes
+
+### v2.11.0
+
+- Added BRC-AM7 camera support (group 6) with FR7-like individual inquiries, 20-bit pan/tilt, ND filter, audio, recording, auto framing, tele convert, knee controls, and red/green/yellow tally
+- Added SRG-300H camera support (group 3d) with legacy-style 6-block inquiries, 16-bit pan/tilt, ICR, WD mode, image stabilizer, brightness, 30x zoom, and 16 presets
+- Added hostname support in Target IP config field with DNS resolution to IPv4
 
 ### v2.10.0
 
