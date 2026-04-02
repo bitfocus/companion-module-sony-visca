@@ -559,6 +559,60 @@ function getLensActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x04\x07\x00\xFF')
 			},
 		},
+		zoomInHighRes: {
+			models: CAP_FR7_AM7,
+			name: 'Zoom In - High Resolution Speed (FR7/AM7)',
+			options: [
+				{
+					type: 'number',
+					label: 'Speed (0-32766)',
+					id: 'speed',
+					min: 0,
+					max: 32766,
+					default: 16383,
+				},
+			],
+			callback: async (event) => {
+				const spd = Math.min(Math.max(parseInt(event.options.speed), 0), 0x7ffe)
+				const buf = Buffer.from(camId + '\x01\x7E\x04\x17\x02\x00\x00\x00\x00\xFF', 'binary')
+				buf[6] = (spd >> 12) & 0x0f
+				buf[7] = (spd >> 8) & 0x0f
+				buf[8] = (spd >> 4) & 0x0f
+				buf[9] = spd & 0x0f
+				self.VISCA.send(buf)
+			},
+		},
+		zoomOutHighRes: {
+			models: CAP_FR7_AM7,
+			name: 'Zoom Out - High Resolution Speed (FR7/AM7)',
+			options: [
+				{
+					type: 'number',
+					label: 'Speed (0-32766)',
+					id: 'speed',
+					min: 0,
+					max: 32766,
+					default: 16383,
+				},
+			],
+			callback: async (event) => {
+				const spd = Math.min(Math.max(parseInt(event.options.speed), 0), 0x7ffe)
+				const buf = Buffer.from(camId + '\x01\x7E\x04\x17\x03\x00\x00\x00\x00\xFF', 'binary')
+				buf[6] = (spd >> 12) & 0x0f
+				buf[7] = (spd >> 8) & 0x0f
+				buf[8] = (spd >> 4) & 0x0f
+				buf[9] = spd & 0x0f
+				self.VISCA.send(buf)
+			},
+		},
+		zoomStopHighRes: {
+			models: CAP_FR7_AM7,
+			name: 'Zoom Stop - High Resolution (FR7/AM7)',
+			options: [],
+			callback: async () => {
+				self.VISCA.send(Buffer.from(camId + '\x01\x7E\x04\x17\x00\x00\x00\x00\x00\xFF', 'binary'))
+			},
+		},
 		// TODO: Add variable rework feedback
 		zoomMode: {
 			name: 'Zoom Mode (digital/optical/clear image)',
@@ -2609,6 +2663,36 @@ function getColorActionDefinitions(self, camId) {
 				self.VISCA.send(cmd)
 			},
 		},
+		detailSettingOnOff: {
+			models: CAP_FR7_AM7,
+			name: 'Detail Setting (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off (Auto)' },
+						{ id: '1', label: 'On (Manual)' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.detailMode === 'Manual' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x7E\x01\x60\x02\xFF')
+					self.state.detailMode = 'Manual'
+				} else {
+					self.VISCA.send(camId + '\x01\x7E\x01\x60\x03\xFF')
+					self.state.detailMode = 'Auto'
+				}
+				self.updateVariables()
+				self.VISCA.sendLowPriorityInquiry('097e0160')
+			},
+		},
 		detailSettings: {
 			models: CAP_ADVANCED,
 			name: 'Detail Sub-settings',
@@ -4382,6 +4466,36 @@ function getMiscActionDefinitions(self, camId) {
 						String.fromCharCode((dur >> 4) & 0x0f) +
 						String.fromCharCode(dur & 0x0f) +
 						'\xFF',
+				)
+			},
+		},
+		presetSeparateMode: {
+			models: CAP_FR7_AM7,
+			name: 'Preset Separate Mode (Speed/Duration)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Preset Number',
+					id: 'preset',
+					choices: CHOICES.PRESET,
+					default: 1,
+				},
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					choices: [
+						{ id: '0', label: 'Speed' },
+						{ id: '1', label: 'Duration' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				const preset = event.options.preset === 'ps' ? self.state.presetSelector - 1 : event.options.preset - 1
+				const mode = parseInt(event.options.mode) & 0x0f
+				self.VISCA.send(
+					camId + '\x01\x7E\x04\x27' + String.fromCharCode(preset & 0xff) + String.fromCharCode(mode) + '\xFF',
 				)
 			},
 		},
