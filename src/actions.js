@@ -10,6 +10,7 @@ import {
 	CAP_FR7,
 	CAP_FR7_AM7,
 	CAP_ICR,
+	CAP_PICTURE_EFFECT,
 	CAP_RAMP_CURVE,
 	CAP_TELECONVERT,
 	CAP_X1000,
@@ -2381,6 +2382,39 @@ function getColorActionDefinitions(self, camId) {
 				}
 			},
 		},
+		wbOffsetDirect: {
+			models: CAP_ADVANCED,
+			name: 'White Balance - Offset Direct',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'WB Offset (-7 to +7)',
+					id: 'val',
+					choices: [
+						{ id: '0E', label: '+7' },
+						{ id: '0D', label: '+6' },
+						{ id: '0C', label: '+5' },
+						{ id: '0B', label: '+4' },
+						{ id: '0A', label: '+3' },
+						{ id: '09', label: '+2' },
+						{ id: '08', label: '+1' },
+						{ id: '07', label: '0' },
+						{ id: '06', label: '-1' },
+						{ id: '05', label: '-2' },
+						{ id: '04', label: '-3' },
+						{ id: '03', label: '-4' },
+						{ id: '02', label: '-5' },
+						{ id: '01', label: '-6' },
+						{ id: '00', label: '-7' },
+					],
+					default: '07',
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val, 16) & 0x0f
+				self.VISCA.send(camId + '\x01\x7E\x01\x2E\x01' + String.fromCharCode(val) + '\xFF')
+			},
+		},
 		wbSpeedDirect: {
 			models: CAP_ADVANCED,
 			name: 'White Balance Speed Direct',
@@ -4081,6 +4115,65 @@ function getMiscActionDefinitions(self, camId) {
 				self.VISCA.send(
 					camId + '\x01\x7E\x01\x03\x00' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF',
 				)
+			},
+		},
+		videoFormatSelect: {
+			models: CAP_X400_X40UH,
+			name: 'Video Format Select',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Format code (hex, e.g. 03 = 1080/59.94i)',
+					id: 'val',
+					default: '00',
+					regex: '/^[0-9A-Fa-f]{1,2}$/',
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val, 16) & 0xff
+				const buf = Buffer.from(camId + '\x01\x7E\x04\x32\x00\x00\xFF', 'binary')
+				buf[5] = (val >> 4) & 0x0f
+				buf[6] = val & 0x0f
+				self.VISCA.send(buf)
+			},
+		},
+		standbyMode: {
+			models: CAP_X400_X40UH,
+			name: 'Standby Mode',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'Side' },
+						{ id: '3', label: 'Neutral' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x04\x50' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
+		pictureEffect: {
+			models: CAP_PICTURE_EFFECT,
+			name: 'Picture Effect',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Effect',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '2', label: 'Neg. Art' },
+						{ id: '4', label: 'Black & White' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x04\x63' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
 			},
 		},
 		irReceive: {
