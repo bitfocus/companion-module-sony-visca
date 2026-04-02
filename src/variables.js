@@ -1,7 +1,9 @@
 import {
+	CAP_ADVANCED,
 	CAP_BRIGHTNESS,
 	CAP_AUTO_FRAMING,
 	CAP_FR7_AM7,
+	CAP_RAMP_CURVE,
 	CAP_TALLY,
 	CAP_WIDE_DYNAMIC,
 	CAP_X400_CORE_X40UH,
@@ -238,6 +240,9 @@ function normalizePct(val, low, high) {
 const variables = [
 	// Existing variables
 	{ variableId: 'ptSlowMode', name: 'Pan/Tilt Slow mode (slow/normal)' },
+	{ variableId: 'rampCurve', name: 'Ramp Curve (1-9)', models: CAP_RAMP_CURVE },
+	{ variableId: 'lowLightBasisBrightness', name: 'Low Light Basis Brightness (on/off)', models: CAP_ADVANCED },
+	{ variableId: 'basisBrightnessLevel', name: 'Basis Brightness Level (4-10)', models: CAP_ADVANCED },
 	{ variableId: 'panSpeed', name: 'Pan Speed' },
 	{ variableId: 'tiltSpeed', name: 'Tilt Speed' },
 	{ variableId: 'zoomSpeed', name: 'Zoom Speed' },
@@ -398,6 +403,9 @@ export async function updateVariables() {
 		// Existing
 		panSpeed: this.speed.pan,
 		ptSlowMode: this.state.ptSlowMode,
+		rampCurve: this.state.rampCurve,
+		lowLightBasisBrightness: this.state.lowLightBasisBrightness,
+		basisBrightnessLevel: this.state.basisBrightnessLevel,
 		tiltSpeed: this.speed.tilt,
 		zoomSpeed: this.speed.zoom,
 		focusSpeed: this.speed.focus,

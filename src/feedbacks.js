@@ -1,5 +1,5 @@
 import { COLORS } from './colors.js'
-import { CAP_AUTO_FRAMING, CAP_FR7_AM7, CAP_TALLY, filterByModel } from './model-caps.js'
+import { CAP_ADVANCED, CAP_AUTO_FRAMING, CAP_FR7_AM7, CAP_TALLY, filterByModel } from './model-caps.js'
 import { rawToDegrees } from './variables.js'
 
 export function getFeedbackDefinitions(self) {
@@ -195,6 +195,20 @@ export function getFeedbackDefinitions(self) {
 			options: [],
 			callback: function () {
 				return self.state.ptSlowMode === 'Slow'
+			},
+		},
+		lowLightBasisBrightnessOn: {
+			models: CAP_ADVANCED,
+			type: 'boolean',
+			name: 'Low Light Basis Brightness On',
+			description: 'Highlights if Low Light Basis Brightness is On',
+			defaultStyle: {
+				color: COLORS.WHITE,
+				bgcolor: COLORS.DARK_ORANGE,
+			},
+			options: [],
+			callback: function () {
+				return self.state.lowLightBasisBrightness === 'On'
 			},
 		},
 		autoFocusOn: {

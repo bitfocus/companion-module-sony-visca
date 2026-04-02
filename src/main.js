@@ -8,7 +8,7 @@ import { getActionDefinitions } from './actions.js'
 import { getPresetDefinitions } from './presets.js'
 import { initVariables, updateVariables } from './variables.js'
 import { MODELS } from './models.js'
-import { CAP_AUTO_FRAMING, CAP_TALLY } from './model-caps.js'
+import { CAP_ADVANCED, CAP_AUTO_FRAMING, CAP_RAMP_CURVE, CAP_TALLY } from './model-caps.js'
 import { getInquiryBlocks, parseInquiryResponse } from './inquiries.js'
 import { Visca } from './visca.js'
 
@@ -46,6 +46,9 @@ class SonyVISCAInstance extends InstanceBase {
 			recordingStatus: 'Unknown',
 			recordingPulsePhase: false,
 			tallyYellow: 'Off',
+			rampCurve: 2,
+			lowLightBasisBrightness: 'Off',
+			basisBrightnessLevel: 7,
 			viscaId: this.config.id,
 			presetSelector: 64,
 		}
@@ -376,6 +379,34 @@ class SonyVISCAInstance extends InstanceBase {
 					}
 				}
 			},
+		}
+
+		// RampCurveInq: 8x 09 06 31 FF → y0 50 0p FF (p: 1-9)
+		if (CAP_RAMP_CURVE.has(this.config.model)) {
+			callbacks['090631'] = (payload) => {
+				if (payload.length >= 4 && payload[1] === 0x50) {
+					const val = payload[2] & 0x0f
+					if (this.state.rampCurve !== val) {
+						this.state.rampCurve = val
+						this.updateVariables()
+					}
+				}
+			}
+		}
+
+		// LowLightBasisBrightnessOnOffInq: 8x 09 05 39 FF → y0 50 0p FF (02=On, 03=Off)
+		// BasisBrightnessLevelInq: 8x 09 05 49 FF → y0 50 0p FF (p: 4-A)
+		if (CAP_ADVANCED.has(this.config.model)) {
+			callbacks['090539'] = onOffCallback('lowLightBasisBrightness')
+			callbacks['090549'] = (payload) => {
+				if (payload.length >= 4 && payload[1] === 0x50) {
+					const val = payload[2] & 0x0f
+					if (this.state.basisBrightnessLevel !== val) {
+						this.state.basisBrightnessLevel = val
+						this.updateVariables()
+					}
+				}
+			}
 		}
 
 		// FR7-specific individual inquiries — FR7 has no block inquiries, so

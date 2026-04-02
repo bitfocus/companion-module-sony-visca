@@ -106,6 +106,9 @@ export const CAP_BRIGHTNESS = new Set([...FAMILY_120DH, ...FAMILY_300H, ...FAMIL
 // Tally on/off: X400/X401 + X1000 + 360SHE + FR7 (red: 7E 01 0A, green FR7 only: 7E 04 1A)
 export const CAP_TALLY = new Set([...FAMILY_X400_CORE, ...FAMILY_X1000, ...FAMILY_360SHE, ...FAMILY_FR7, ...FAMILY_AM7])
 
+// Ramp Curve: X400 + X40UH + X1000 + FR7 + AM7 (06 31)
+export const CAP_RAMP_CURVE = new Set([...FAMILY_X400, ...FAMILY_X40UH, ...FAMILY_X1000, ...FAMILY_FR7, ...FAMILY_AM7])
+
 // PTZ Auto Framing: FR7 + SRG-A40/A12 (7E 04 3A)
 export const CAP_AUTO_FRAMING = new Set([...FAMILY_FR7, ...FAMILY_AM7, '0621', '0622'])
 

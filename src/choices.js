@@ -1188,6 +1188,18 @@ export const CHOICES = {
 		{ id: 'ps', label: 'Use presetSelector Variable' },
 	],
 
+	RAMP_CURVE: [
+		{ id: '1', label: '1 - Sharpness' },
+		{ id: '2', label: '2 - Standard' },
+		{ id: '3', label: '3 - Gentle' },
+		{ id: '4', label: '4 (FR7/AM7)' },
+		{ id: '5', label: '5 (FR7/AM7)' },
+		{ id: '6', label: '6 (FR7/AM7)' },
+		{ id: '7', label: '7 (FR7/AM7)' },
+		{ id: '8', label: '8 (FR7/AM7)' },
+		{ id: '9', label: '9 (FR7/AM7)' },
+	],
+
 	SPEED: [
 		{ id: '18', label: 'Speed 24 (fast)' },
 		{ id: '17', label: 'Speed 23' },

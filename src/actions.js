@@ -10,6 +10,7 @@ import {
 	CAP_FR7,
 	CAP_FR7_AM7,
 	CAP_ICR,
+	CAP_RAMP_CURVE,
 	CAP_TELECONVERT,
 	CAP_X1000,
 	CAP_X1000_FR7,
@@ -413,6 +414,26 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 			],
 			callback: async (event) => {
 				self.VISCA.send(camId + '\x01\x06\x45' + String.fromCharCode(parseInt(event.options.val, 16) & 0xff) + '\xFF')
+			},
+		},
+		rampCurve: {
+			models: CAP_RAMP_CURVE,
+			name: 'Ramp Curve',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Ramp Curve',
+					id: 'val',
+					choices: CHOICES.RAMP_CURVE,
+					default: '2',
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0x0f
+				self.VISCA.send(camId + '\x01\x06\x31' + String.fromCharCode(val) + '\xFF')
+				self.state.rampCurve = val
+				self.updateVariables()
+				self.VISCA.sendLowPriorityInquiry('090631')
 			},
 		},
 		panReverse: {
@@ -1614,6 +1635,65 @@ function getExposureActionDefinitions(self, camId) {
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
+			},
+		},
+		lowLightBasisBrightness: {
+			models: CAP_ADVANCED,
+			name: 'Low Light Basis Brightness (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On/Off',
+					id: 'bol',
+					choices: [
+						{ id: '0', label: 'Off' },
+						{ id: '1', label: 'On' },
+						{ id: '2', label: 'Toggle' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				let val = event.options.bol
+				if (val == '2') val = self.state.lowLightBasisBrightness === 'On' ? '0' : '1'
+				if (val == '1') {
+					self.VISCA.send(camId + '\x01\x05\x39\x02\xFF')
+					self.state.lowLightBasisBrightness = 'On'
+				} else {
+					self.VISCA.send(camId + '\x01\x05\x39\x03\xFF')
+					self.state.lowLightBasisBrightness = 'Off'
+				}
+				self.updateVariables()
+				self.checkFeedbacks()
+				self.VISCA.sendLowPriorityInquiry('090539')
+			},
+		},
+		basisBrightnessLevel: {
+			models: CAP_ADVANCED,
+			name: 'Basis Brightness Level',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Level',
+					id: 'val',
+					choices: [
+						{ id: '4', label: 'Level 4 (dark)' },
+						{ id: '5', label: 'Level 5' },
+						{ id: '6', label: 'Level 6' },
+						{ id: '7', label: 'Level 7 (default)' },
+						{ id: '8', label: 'Level 8' },
+						{ id: '9', label: 'Level 9' },
+						{ id: '10', label: 'Level 10 (bright)' },
+					],
+					default: '7',
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val) & 0x0f
+				self.VISCA.send(camId + '\x01\x05\x49' + String.fromCharCode(val) + '\xFF')
+				self.state.basisBrightnessLevel = val
+				self.updateVariables()
+				self.VISCA.sendLowPriorityInquiry('090549')
 			},
 		},
 		gainLimitSet: {

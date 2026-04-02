@@ -427,6 +427,29 @@ const panTiltPresets = {
 			},
 		],
 	},
+	'panTilt-rampCurve': {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Ramp Curve',
+		style: {
+			text: 'Ramp\\nCurve\\n$(sony-visca:rampCurve)',
+			size: '18',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'rampCurve',
+						options: { val: '2' },
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	},
 	'panTilt-center': {
 		type: 'button',
 		category: 'Pan/Tilt',
@@ -1334,6 +1357,38 @@ const exposurePresets = {
 		feedbacks: [
 			{
 				feedbackId: 'spotlightCompOn',
+				options: {},
+				style: {
+					color: COLORS.WHITE,
+					bgcolor: COLORS.DARK_ORANGE,
+				},
+			},
+		],
+	},
+	'exposure-LowLightBasisBrightness': {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Low Light Basis Brightness On/Off',
+		style: {
+			text: 'LowLight\\nBasis\\n$(sony-visca:lowLightBasisBrightness)',
+			size: '14',
+			color: COLORS.WHITE,
+			bgcolor: COLORS.BLACK,
+			show_topbar: false,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'lowLightBasisBrightness',
+						options: { bol: '2' },
+					},
+				],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'lowLightBasisBrightnessOn',
 				options: {},
 				style: {
 					color: COLORS.WHITE,
