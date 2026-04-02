@@ -4195,6 +4195,48 @@ function getMiscActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x06\x08' + String.fromCharCode(parseInt(event.options.val, 16) & 0xff) + '\xFF')
 			},
 		},
+		colorSystem: {
+			models: new Set(['0511', '0604', '0605', '0513']),
+			name: 'Color System (HDMI/DVI)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Color System',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'HDMI YUV' },
+						{ id: '1', label: 'HDMI GBR' },
+						{ id: '2', label: 'DVI GBR' },
+						{ id: '3', label: 'DVI YUV' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(
+					camId + '\x01\x7E\x01\x03\x00' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF',
+				)
+			},
+		},
+		infoDisplay: {
+			models: CAP_BRIGHTNESS,
+			name: 'Information Display (on/off)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'On/Off',
+					id: 'val',
+					choices: [
+						{ id: '2', label: 'On' },
+						{ id: '3', label: 'Off' },
+					],
+					default: '3',
+				},
+			],
+			callback: async (event) => {
+				self.VISCA.send(camId + '\x01\x7E\x01\x18' + String.fromCharCode(parseInt(event.options.val) & 0x0f) + '\xFF')
+			},
+		},
 		callMode: {
 			models: CAP_X400_ONLY,
 			name: 'Preset Call Mode (Freeze/Normal)',
@@ -4597,6 +4639,107 @@ function getMiscActionDefinitions(self, camId) {
 						'\x01\x7E\x04\x72' +
 						String.fromCharCode(parseInt(event.options.item, 16) & 0xff) +
 						String.fromCharCode(parseInt(event.options.action) & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		multiSelector: {
+			models: CAP_FR7_AM7,
+			name: 'Multi Selector (FR7/AM7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Direction',
+					id: 'dir',
+					choices: [
+						{ id: '31', label: 'Up' },
+						{ id: '32', label: 'Down' },
+						{ id: '13', label: 'Left' },
+						{ id: '23', label: 'Right' },
+						{ id: '11', label: 'Up-Left' },
+						{ id: '21', label: 'Up-Right' },
+						{ id: '12', label: 'Down-Left' },
+						{ id: '22', label: 'Down-Right' },
+						{ id: '70', label: 'Set (Enter)' },
+						{ id: '71', label: 'Cancel / Back' },
+					],
+					default: '70',
+				},
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'action',
+					choices: [
+						{ id: '1', label: 'Press' },
+						{ id: '0', label: 'Release' },
+					],
+					default: '1',
+				},
+			],
+			callback: async (event) => {
+				const dir = parseInt(event.options.dir, 16) & 0xff
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x04\x40' +
+						String.fromCharCode((dir >> 4) & 0x0f) +
+						String.fromCharCode(dir & 0x0f) +
+						String.fromCharCode(parseInt(event.options.action) & 0x0f) +
+						'\xFF',
+				)
+			},
+		},
+		multiFunctionDialSet: {
+			models: CAP_FR7_AM7,
+			name: 'Multi Function Dial - Set (FR7/AM7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'action',
+					choices: [
+						{ id: '01', label: 'Press' },
+						{ id: '00', label: 'Release' },
+					],
+					default: '01',
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.action, 16) & 0x0f
+				self.VISCA.send(camId + '\x01\x7E\x04\x74\x01' + String.fromCharCode(0) + String.fromCharCode(val) + '\xFF')
+			},
+		},
+		multiFunctionDialRotate: {
+			models: CAP_FR7_AM7,
+			name: 'Multi Function Dial - Rotate (FR7/AM7)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Direction',
+					id: 'dir',
+					choices: [
+						{ id: '2', label: 'CW (Clockwise)' },
+						{ id: '3', label: 'CCW (Counter-clockwise)' },
+					],
+					default: '2',
+				},
+				{
+					type: 'number',
+					label: 'Steps (1-255)',
+					id: 'steps',
+					min: 1,
+					max: 255,
+					default: 1,
+				},
+			],
+			callback: async (event) => {
+				const dir = parseInt(event.options.dir) & 0x0f
+				const steps = Math.min(Math.max(parseInt(event.options.steps), 1), 255)
+				self.VISCA.send(
+					camId +
+						'\x01\x7E\x04\x41' +
+						String.fromCharCode(dir) +
+						String.fromCharCode((steps >> 4) & 0x0f) +
+						String.fromCharCode(steps & 0x0f) +
 						'\xFF',
 				)
 			},
