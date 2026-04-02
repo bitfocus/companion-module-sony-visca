@@ -2491,6 +2491,40 @@ function getColorActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x04\x49\x00\x00\x00' + String.fromCharCode(val) + '\xFF')
 			},
 		},
+		colorGainDirect: {
+			models: CAP_BRIGHTNESS,
+			name: 'Color Gain Direct (per-color)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Color',
+					id: 'color',
+					choices: [
+						{ id: '0', label: 'Master' },
+						{ id: '1', label: 'R' },
+						{ id: '2', label: 'G' },
+						{ id: '3', label: 'B' },
+						{ id: '4', label: 'Cyan' },
+						{ id: '5', label: 'Magenta' },
+						{ id: '6', label: 'Yellow' },
+					],
+					default: '0',
+				},
+				{
+					type: 'number',
+					label: 'Gain (0-14, default 7)',
+					id: 'val',
+					min: 0,
+					max: 14,
+					default: 7,
+				},
+			],
+			callback: async (event) => {
+				const color = parseInt(event.options.color) & 0x0f
+				const val = parseInt(event.options.val) & 0x0f
+				self.VISCA.send(camId + '\x01\x04\x49\x00\x00' + String.fromCharCode(color) + String.fromCharCode(val) + '\xFF')
+			},
+		},
 		colorPhaseAdjust: {
 			models: CAP_X400_X1000,
 			name: 'Color Phase Adjust (up/down/reset)',
@@ -2542,6 +2576,40 @@ function getColorActionDefinitions(self, camId) {
 			callback: async (event) => {
 				const val = parseInt(event.options.val, 16) & 0x0f
 				self.VISCA.send(camId + '\x01\x04\x4F\x00\x00\x00' + String.fromCharCode(val) + '\xFF')
+			},
+		},
+		colorHueDirect: {
+			models: CAP_BRIGHTNESS,
+			name: 'Color Hue Direct (per-color)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Color',
+					id: 'color',
+					choices: [
+						{ id: '0', label: 'Master' },
+						{ id: '1', label: 'R' },
+						{ id: '2', label: 'G' },
+						{ id: '3', label: 'B' },
+						{ id: '4', label: 'Cyan' },
+						{ id: '5', label: 'Magenta' },
+						{ id: '6', label: 'Yellow' },
+					],
+					default: '0',
+				},
+				{
+					type: 'number',
+					label: 'Hue (0-14, default 7)',
+					id: 'val',
+					min: 0,
+					max: 14,
+					default: 7,
+				},
+			],
+			callback: async (event) => {
+				const color = parseInt(event.options.color) & 0x0f
+				const val = parseInt(event.options.val) & 0x0f
+				self.VISCA.send(camId + '\x01\x04\x4F\x00\x00' + String.fromCharCode(color) + String.fromCharCode(val) + '\xFF')
 			},
 		},
 		gammaSelect: {
@@ -3602,16 +3670,17 @@ function getMiscActionDefinitions(self, camId) {
 		},
 		imageStabilizer: {
 			models: CAP_X400_X40UH_SE,
-			name: 'Image Stabilizer (on/off)',
+			name: 'Image Stabilizer (on/off/hold)',
 			options: [
 				{
 					type: 'dropdown',
-					label: 'Image Stabilizer On/Off',
+					label: 'Image Stabilizer',
 					id: 'bol',
 					choices: [
 						{ id: '0', label: 'Off' },
 						{ id: '1', label: 'On' },
 						{ id: '2', label: 'Toggle' },
+						{ id: '3', label: 'Hold (SRG-300H)' },
 					],
 					default: '0',
 				},
@@ -3619,12 +3688,17 @@ function getMiscActionDefinitions(self, camId) {
 			callback: async (event) => {
 				let val = event.options.bol
 				if (val == '2') val = self.state.imageStabilizer === 'On' ? '0' : '1'
-				if (val == '1') {
+				if (val == '3') {
+					self.VISCA.send(camId + '\x01\x04\x34\x00\xFF')
+					self.state.imageStabilizerHold = 'Hold'
+				} else if (val == '1') {
 					self.VISCA.send(camId + '\x01\x04\x34\x02\xFF')
 					self.state.imageStabilizer = 'On'
+					self.state.imageStabilizerHold = 'Off'
 				} else {
 					self.VISCA.send(camId + '\x01\x04\x34\x03\xFF')
 					self.state.imageStabilizer = 'Off'
+					self.state.imageStabilizerHold = 'Off'
 				}
 				self.updateVariables()
 				self.checkFeedbacks()
