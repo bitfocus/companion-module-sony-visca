@@ -111,6 +111,11 @@ Blocks 03-05 were recently added for legacy cameras. Please verify:
 
 ## Changes
 
+### v2.12.1
+
+- Fixed WB mode presets (Auto, Indoor, Outdoor, One Push, Manual, Auto2) appearing on FR7/AM7 cameras that don't support those modes
+- Fixed FR7/AM7 WB mode presets (ATW, Memory A, Preset) appearing on non-FR7 cameras
+
 ### v2.12.0
 
 - Achieved full protocol command coverage across all 10 Sony VISCA protocol documents

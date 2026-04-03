@@ -2253,6 +2253,7 @@ function getColorActionDefinitions(self, camId) {
 		},
 		wbModeStandard: {
 			name: 'White Balance Mode (auto/indoor/outdoor/one push/ATW/manual)',
+			hideFromHelp: true,
 			models: CAP_ADVANCED_LEGACY,
 			options: [
 				{
@@ -2277,6 +2278,7 @@ function getColorActionDefinitions(self, camId) {
 		},
 		wbModeFr7: {
 			name: 'White Balance Mode (ATW/Memory A/Preset)',
+			hideFromHelp: true,
 			models: CAP_FR7_AM7,
 			options: [
 				{
@@ -4897,7 +4899,7 @@ function getSpeedCodes(self) {
 function formatActionsMarkdown(title, actions) {
 	let markdown = `\n### ${title} Actions\n\n`
 	for (const action in actions) {
-		// if (actions[action].name.slice(-10) != 'deprecated')
+		if (actions[action].hideFromHelp) continue
 		markdown += `- ${actions[action].name}\n`
 	}
 	return markdown
