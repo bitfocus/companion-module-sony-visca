@@ -111,6 +111,27 @@ Blocks 03-05 were recently added for legacy cameras. Please verify:
 
 ## Changes
 
+### v2.12.0
+
+- Achieved full protocol command coverage across all 10 Sony VISCA protocol documents
+- Added Ramp Curve action, variable, preset, and polling (X400/X40UH/X1000/FR7/AM7)
+- Added Low Light Basis Brightness on/off/toggle, level, feedback, variable, and polling (X400/X40UH/X1000)
+- Added Detail Setting on/off with toggle for FR7/AM7
+- Added Preset Separate Mode (Speed/Duration) for FR7/AM7
+- Added High-Res Zoom In/Out/Stop with 16-bit speed for FR7/AM7
+- Added per-color Color Gain Direct and Color Hue Direct (master + R/G/B/Cyan/Magenta/Yellow) for legacy cameras
+- Added Image Stabilizer Hold mode for SRG-300H
+- Added Video Format Select for X400/X40UH
+- Added Standby Mode (Side/Neutral) for X400/X40UH
+- Added Picture Effect (Off/Neg.Art/B&W) for X400/X40UH/legacy cameras
+- Added White Balance Offset Direct (-7 to +7) for advanced cameras
+- Added Multi Selector (10 directions + press/release) for FR7/AM7
+- Added Multi Function Dial Set and Rotate (CW/CCW with steps) for FR7/AM7
+- Added Color System (HDMI/DVI YUV/GBR) for 120DH/360SHE/300H
+- Added Info Display on/off for legacy cameras
+- Fixed preset IDs using hex strings instead of 1-based integers, which caused silent failures on alphanumeric values (#100)
+- Updated development build install instructions for Companion v4.2+
+
 ### v2.11.0
 
 - Added BRC-AM7 camera support (group 6) with FR7-like individual inquiries, 20-bit pan/tilt, ND filter, audio, recording, auto framing, tele convert, knee controls, and red/green/yellow tally

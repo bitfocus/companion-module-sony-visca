@@ -54,6 +54,9 @@ Please refer to the manual for your camera for specific instructions.
 - Zoom In - variable speed
 - Zoom Out - variable speed
 - Zoom Stop
+- Zoom In - High Resolution Speed (FR7/AM7)
+- Zoom Out - High Resolution Speed (FR7/AM7)
+- Zoom Stop - High Resolution (FR7/AM7)
 - Zoom Mode (digital/optical/clear image)
 - Zoom Mode Toggle (up to three modes)
 - Zoom Speed (up/down/default)
@@ -127,18 +130,22 @@ Please refer to the manual for your camera for specific instructions.
 - White Balance Adjust (red/blue - up/down/reset)
 - White Balance - Set custom values
 - White Balance - Offset Adjust (up/down/reset)
+- White Balance - Offset Direct
 - White Balance Speed Direct
 - Chroma Suppress
 - Color Matrix Select
 - Color Level Adjust (up/down/reset)
 - Color Level Direct
+- Color Gain Direct (per-color)
 - Color Phase Adjust (up/down/reset)
 - Color Phase Direct
+- Color Hue Direct (per-color)
 - Gamma Select
 - Gamma Level Direct
 - Knee Setting (on/off)
 - Knee Mode (Auto/Manual)
 - Detail Level Direct
+- Detail Setting (on/off)
 - Detail Sub-settings
 - Black Level Adjust (up/down/reset)
 - Black Level Direct
@@ -181,7 +188,7 @@ Please refer to the manual for your camera for specific instructions.
 - Recording Button (press/release)
 - Override VISCA ID (serial only)
 - Flicker Cancel (on/off)
-- Image Stabilizer (on/off)
+- Image Stabilizer (on/off/hold)
 - High Resolution (on/off)
 - ICR / Night Mode (on/off)
 - Auto ICR (on/off)
@@ -194,7 +201,12 @@ Please refer to the manual for your camera for specific instructions.
 - OSD On/Off
 - Camera ID Direct
 - HDMI Color Space
+- Video Format Select
+- Standby Mode
+- Picture Effect
 - IR Receive (on/off/toggle)
+- Color System (HDMI/DVI)
+- Information Display (on/off)
 - Preset Call Mode (Freeze/Normal)
 - Color Bar Overlay Name (on/off)
 - Auto ICR Threshold Direct
@@ -209,7 +221,11 @@ Please refer to the manual for your camera for specific instructions.
 - Display Button (FR7)
 - Assignable Button (FR7)
 - Direct Menu (FR7)
+- Multi Selector (FR7/AM7)
+- Multi Function Dial - Set (FR7/AM7)
+- Multi Function Dial - Rotate (FR7/AM7)
 - Preset Separate Duration (FR7)
+- Preset Separate Mode (Speed/Duration)
 - Custom Command - _If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)_
 
 ## Presets Implemented
