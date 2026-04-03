@@ -18,9 +18,10 @@ This module uses the Sony Visca protocol to control PTZ cameras. While it is foc
 2. Find the latest workflow run for the branch you want to test
 3. Download the **pkg** artifact (it will save as `pkg.zip` containing the module `.tgz`)
 4. Extract the `.tgz` file from the zip
-5. In Companion, go to **Connections** and click the **Developer modules** button (bottom of the page, you may need to enable developer mode in the settings)
-6. Install the `.tgz` file
-7. Restart Companion if prompted
+5. In Companion, go to the **Modules** tab and click **Import module package**
+6. Select the `.tgz` file to install it
+7. Go to the **Connections** tab and open your Sony VISCA connection's config
+8. Click the pencil icon next to **Module Version** and select the imported version from the dropdown
 
 ## Testing Needed
 
