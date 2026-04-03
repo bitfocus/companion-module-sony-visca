@@ -1414,7 +1414,7 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'whiteBal',
+						actionId: 'wbModeStandard',
 						options: {
 							val: '0',
 						},
@@ -1444,7 +1444,7 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'whiteBal',
+						actionId: 'wbModeStandard',
 						options: {
 							val: '4',
 						},
@@ -1474,7 +1474,7 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'whiteBal',
+						actionId: 'wbModeStandard',
 						options: {
 							val: '1',
 						},
@@ -1504,7 +1504,7 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'whiteBal',
+						actionId: 'wbModeStandard',
 						options: {
 							val: '2',
 						},
@@ -1534,7 +1534,7 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'whiteBal',
+						actionId: 'wbModeStandard',
 						options: {
 							val: '5',
 						},
@@ -1591,7 +1591,7 @@ const colorPresets = {
 			{
 				down: [
 					{
-						actionId: 'whiteBal',
+						actionId: 'wbModeStandard',
 						options: {
 							val: '3',
 						},
@@ -1629,7 +1629,7 @@ const colorPresets = {
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
-		steps: [{ down: [{ actionId: 'whiteBal', options: { val: '4' } }] }],
+		steps: [{ down: [{ actionId: 'wbModeFr7', options: { val: '4' } }] }],
 		feedbacks: [
 			{
 				feedbackId: 'whiteBalanceMode',
@@ -1648,7 +1648,7 @@ const colorPresets = {
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
-		steps: [{ down: [{ actionId: 'whiteBal', options: { val: '5' } }] }],
+		steps: [{ down: [{ actionId: 'wbModeFr7', options: { val: '5' } }] }],
 		feedbacks: [
 			{
 				feedbackId: 'whiteBalanceMode',
@@ -1667,7 +1667,7 @@ const colorPresets = {
 			color: COLORS.WHITE,
 			bgcolor: COLORS.BLACK,
 		},
-		steps: [{ down: [{ actionId: 'whiteBal', options: { val: 'A' } }] }],
+		steps: [{ down: [{ actionId: 'wbModeFr7', options: { val: 'A' } }] }],
 		feedbacks: [
 			{
 				feedbackId: 'whiteBalanceMode',

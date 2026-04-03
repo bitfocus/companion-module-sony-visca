@@ -2251,6 +2251,51 @@ function getColorActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x04\x35' + String.fromCharCode(val & 0x0f) + '\xFF')
 			},
 		},
+		wbModeStandard: {
+			name: 'White Balance Mode (auto/indoor/outdoor/one push/ATW/manual)',
+			models: CAP_ADVANCED_LEGACY,
+			options: [
+				{
+					type: 'dropdown',
+					label: 'WB setting',
+					id: 'val',
+					choices: [
+						{ id: '0', label: 'Auto1 - Auto' },
+						{ id: '1', label: 'Indoor' },
+						{ id: '2', label: 'Outdoor' },
+						{ id: '3', label: 'One push WB' },
+						{ id: '4', label: 'Auto2 - ATW' },
+						{ id: '5', label: 'Manual' },
+					],
+					default: '0',
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val, 16)
+				self.VISCA.send(camId + '\x01\x04\x35' + String.fromCharCode(val & 0x0f) + '\xFF')
+			},
+		},
+		wbModeFr7: {
+			name: 'White Balance Mode (ATW/Memory A/Preset)',
+			models: CAP_FR7_AM7,
+			options: [
+				{
+					type: 'dropdown',
+					label: 'WB setting',
+					id: 'val',
+					choices: [
+						{ id: '4', label: 'ATW' },
+						{ id: '5', label: 'Memory A' },
+						{ id: 'A', label: 'Preset' },
+					],
+					default: '4',
+				},
+			],
+			callback: async (event) => {
+				const val = parseInt(event.options.val, 16)
+				self.VISCA.send(camId + '\x01\x04\x35' + String.fromCharCode(val & 0x0f) + '\xFF')
+			},
+		},
 		wbTrigger: {
 			name: 'One push WB trigger',
 			options: [],
