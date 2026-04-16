@@ -38,8 +38,8 @@ export class Visca {
 		return INQUIRY
 	}
 
-	send(payload, type = COMMAND, callback = null) {
-		const packet = { payload, type, callback }
+	send(payload, type = COMMAND, callback = null, inquiryKey = null) {
+		const packet = { payload, type, callback, inquiryKey }
 		if (this.#cts) {
 			this.#sendPacket(packet)
 		} else {
@@ -65,9 +65,10 @@ export class Visca {
 
 		if (payload[0] !== 0x90) return
 
-		// Log errors regardless of correlation
+		// Log errors
 		if ((payload[1] & 0xf0) === 0x60 && payload.length >= 3) {
-			this.#logError(payload)
+			const ap = this.#activePackets[seq]
+			this.#logError(payload, ap?.inquiryKey)
 		}
 
 		const ap = this.#activePackets[seq]
@@ -176,7 +177,7 @@ export class Visca {
 		payload[0] = camId
 		keyBytes.copy(payload, 1)
 		payload[payload.length - 1] = 0xff
-		this.send(payload, INQUIRY, callback)
+		this.send(payload, INQUIRY, callback, key)
 	}
 
 	stopPolling() {
@@ -357,16 +358,23 @@ export class Visca {
 			this.#inquiryTelemetry[key].failed++
 		}
 		const t = this.#inquiryTelemetry[key]
-		if (t.failed > 10 && t.success === 0 && this.#totalSuccesses > 50) {
+		if (t.failed > 5 && t.success === 0 && this.#totalSuccesses > 20) {
+			// Remove from main inquiries
 			const idx = this.#inquiryKeys.indexOf(key)
 			if (idx !== -1) {
 				this.#inquiryKeys.splice(idx, 1)
-				this.#instance.log('warn', `Removed unsupported inquiry block ${key}`)
+				this.#instance.log('info', `Removed unsupported inquiry block ${key}`)
+			}
+			// Remove from low-priority inquiries
+			const lpIdx = this.#lowPriorityKeys.indexOf(key)
+			if (lpIdx !== -1) {
+				this.#lowPriorityKeys.splice(lpIdx, 1)
+				this.#instance.log('info', `Removed unsupported low-priority inquiry ${key}`)
 			}
 		}
 	}
 
-	#logError(payload) {
+	#logError(payload, inquiryKey = null) {
 		if (payload.length < 3) return
 		const errorCode = payload[2]
 		const errors = {
@@ -378,7 +386,8 @@ export class Visca {
 			0x41: 'Command not executable',
 		}
 		const errorText = errors[errorCode] ?? 'Unknown VISCA error'
-		this.#instance.log('warn', `VISCA error 0x${errorCode.toString(16).padStart(2, '0')}: ${errorText}`)
+		const level = inquiryKey ? 'debug' : 'warn'
+		this.#instance.log(level, `VISCA error 0x${errorCode.toString(16).padStart(2, '0')}: ${errorText}`)
 		this.#instance.log('debug', `VISCA error payload: ${this.msgToString(payload, false)}`)
 	}
 }

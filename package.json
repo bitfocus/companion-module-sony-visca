@@ -1,6 +1,6 @@
 {
 	"name": "sony-visca",
-	"version": "2.12.1",
+	"version": "2.13.2",
 	"main": "src/main.js",
 	"type": "module",
 	"scripts": {
@@ -21,7 +21,7 @@
 		"node": ">=22 <23"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.11.0"
+		"@companion-module/base": "^2.0.3"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^2.6.1",

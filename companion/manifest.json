@@ -1,9 +1,9 @@
 {
 	"id": "sony-visca",
-	"name": "sony-visca",
-	"shortname": "VISCA",
-	"description": "Module to control PTZ cameras with Sony VISCA protocol over IP",
-	"version": "0.0.0",
+	"name": "Sony VISCA (Master/Enhanced)",
+	"shortname": "VISCA-M",
+	"description": "Enhanced Sony VISCA module with v2 Expression support",
+	"version": "2.13.2",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-sony-visca.git",
 	"bugs": "https://github.com/bitfocus/companion-module-sony-visca/issues",
@@ -25,7 +25,7 @@
 	"runtime": {
 		"type": "node22",
 		"api": "nodejs-ipc",
-		"apiVersion": "0.0.0",
+		"apiVersion": "2.0.3",
 		"entrypoint": "../src/main.js"
 	},
 	"manufacturer": "Sony",

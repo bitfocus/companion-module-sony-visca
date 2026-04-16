@@ -26,15 +26,16 @@ import {
 } from './model-caps.js'
 
 export function getActionDefinitions(self) {
+	self.log('info', 'Generating action definitions...')
 	const camId = String.fromCharCode(parseInt(self.state.viscaId))
 	let speed = getSpeedCodes(self)
 	const all = {
+		...getMiscActionDefinitions(self, camId),
 		...getPanTiltActionDefinitions(self, camId, speed),
 		...getLensActionDefinitions(self, camId, speed),
 		...getExposureActionDefinitions(self, camId),
 		...getColorActionDefinitions(self, camId),
 		...getPresetActionDefinitions(self, camId),
-		...getMiscActionDefinitions(self, camId),
 	}
 	return filterByModel(all, self.config.model)
 }
@@ -137,7 +138,7 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 					self.state.ptSlowMode = 'Slow'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 				self.VISCA.sendLowPriorityInquiry('090644')
 			},
 		},
@@ -644,7 +645,7 @@ function getLensActionDefinitions(self, camId) {
 						break
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		zoomModeToggle: {
@@ -698,7 +699,7 @@ function getLensActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x04\x06' + viscaCmds[target] + '\xFF')
 				self.state.zoomMode = stateNames[target]
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		zoomSpeedAdjust: {
@@ -807,7 +808,7 @@ function getLensActionDefinitions(self, camId) {
 					self.state.focusMode = 'Auto'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		focusN: {
@@ -1130,7 +1131,7 @@ function getExposureActionDefinitions(self, camId) {
 					self.VISCA.send(camId + '\x01\x04\x39' + viscaCmds[val] + '\xFF')
 					self.state.exposureMode = stateNames[val]
 					self.updateVariables()
-					self.checkFeedbacks()
+					self.checkAllFeedbacks()
 				}
 			},
 		},
@@ -1175,7 +1176,7 @@ function getExposureActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x04\x39' + viscaCmds[target] + '\xFF')
 				self.state.exposureMode = stateNames[target]
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		irisAdjust: {
@@ -1435,7 +1436,7 @@ function getExposureActionDefinitions(self, camId) {
 					self.state.expCompOnOff = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		exposureComp: {
@@ -1601,7 +1602,7 @@ function getExposureActionDefinitions(self, camId) {
 					self.state.backlightComp = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		spotlightComp: {
@@ -1630,7 +1631,7 @@ function getExposureActionDefinitions(self, camId) {
 					self.state.spotlightComp = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		autoSlowShutter: {
@@ -1659,7 +1660,7 @@ function getExposureActionDefinitions(self, camId) {
 					self.state.slowShutter = 'Manual'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		highSensitivity: {
@@ -1689,7 +1690,7 @@ function getExposureActionDefinitions(self, camId) {
 					self.state.highSensitivity = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		lowLightBasisBrightness: {
@@ -1719,7 +1720,7 @@ function getExposureActionDefinitions(self, camId) {
 					self.state.lowLightBasisBrightness = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 				self.VISCA.sendLowPriorityInquiry('090539')
 			},
 		},
@@ -1832,7 +1833,7 @@ function getExposureActionDefinitions(self, camId) {
 					self.state.ve = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		veSettings: {
@@ -3378,7 +3379,7 @@ function getPresetActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x04\x3F\x02' + String.fromCharCode(presetNumber & 0xff) + '\xFF')
 				self.state.lastPresetUsed = presetNumber + 1
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		speedPset: {
@@ -3421,7 +3422,7 @@ function getPresetActionDefinitions(self, camId) {
 			callback: async (event) => {
 				self.state.presetSelector = event.options.val
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		modifyPresetSelector: {
@@ -3461,7 +3462,7 @@ function getPresetActionDefinitions(self, camId) {
 					self.state.presetSelector = r
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		presetSpeedSelect: {
@@ -3532,6 +3533,36 @@ function getPresetActionDefinitions(self, camId) {
 function getMiscActionDefinitions(self, camId) {
 	const CHOICES = self.choices
 	return {
+		customCommand: {
+			name: 'Custom Command',
+			description:
+				'Request additional actions at https://github.com/bitfocus/companion-module-sony-visca-master/issues/35',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Hex Sequence',
+					tooltip: 'Format: 81 01 ... FF. Supports variables and expressions.',
+					id: 'command_hex',
+					useVariables: true,
+					default: '',
+				},
+			],
+			callback: async (event, context) => {
+				const rawCmd = await context.parseVariablesInString(String(event.options.command_hex))
+				const hexData = rawCmd.replace(/\s+/g, '')
+				if (!/^[0-9a-fA-F]+$/.test(hexData) || hexData.length % 2 !== 0) {
+					self.log('warn', `Custom Command: Invalid hex data "${rawCmd}"`)
+					return
+				}
+				const tempBuffer = Buffer.from(hexData, 'hex')
+				self.log('info', 'Custom Command: ' + self.VISCA.msgToString(tempBuffer, false))
+				self.log(
+					'info',
+					'Please consider requesting this command to be added to the module at https://github.com/bitfocus/companion-module-sony-visca-master/issues/35',
+				)
+				self.VISCA.send(tempBuffer)
+			},
+		},
 		cameraPower: {
 			name: 'Camera Power (on/off)',
 			options: [
@@ -3656,7 +3687,7 @@ function getMiscActionDefinitions(self, camId) {
 			],
 			callback: async (event) => {
 				self.state.heldThresholdReached = parseInt(event.options.bol)
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		internalRecording: {
@@ -3746,7 +3777,7 @@ function getMiscActionDefinitions(self, camId) {
 					self.state.flickerCancel = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		imageStabilizer: {
@@ -3782,7 +3813,7 @@ function getMiscActionDefinitions(self, camId) {
 					self.state.imageStabilizerHold = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		highResolution: {
@@ -3812,7 +3843,7 @@ function getMiscActionDefinitions(self, camId) {
 					self.state.highResolution = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		ICR: {
@@ -3842,7 +3873,7 @@ function getMiscActionDefinitions(self, camId) {
 					self.state.IRCutFilter = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		autoICR: {
@@ -3872,7 +3903,7 @@ function getMiscActionDefinitions(self, camId) {
 					self.state.IRCutFilterAuto = 'Manual'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		imgFlip: {
@@ -3900,7 +3931,7 @@ function getMiscActionDefinitions(self, camId) {
 					self.state.imageFlip = 'Off'
 				}
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		colorBar: {
@@ -4464,7 +4495,7 @@ function getMiscActionDefinitions(self, camId) {
 				self.VISCA.send(camId + '\x01\x7E\x04\x3A' + String.fromCharCode(val & 0x0f) + '\xFF')
 				self.state.ptzAutoFraming = val === 1 ? 'On' : 'Off'
 				self.updateVariables()
-				self.checkFeedbacks()
+				self.checkAllFeedbacks()
 			},
 		},
 		audioLevelControl: {
@@ -4854,31 +4885,6 @@ function getMiscActionDefinitions(self, camId) {
 				self.VISCA.send(
 					camId + '\x01\x7E\x04\x27' + String.fromCharCode(preset & 0xff) + String.fromCharCode(mode) + '\xFF',
 				)
-			},
-		},
-		customCommand: {
-			name: 'Custom Command',
-			description: 'Request additional actions at https://github.com/bitfocus/companion-module-sony-visca/issues/35',
-			options: [
-				{
-					type: 'textinput',
-					label: 'Command example: 81 01 06 06 10 FF',
-					id: 'cmd',
-					regex:
-						'/^(\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)|((8[0-7]|\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)) ?((([0-9a-fA-F]{2})|\\$\\([a-zA-Z0-9_]+:[a-zA-Z0-9_]+\\)) ?){1,13}))$/',
-					useVariables: true,
-				},
-			],
-			callback: async (event, context) => {
-				event.options.cmd = await context.parseVariablesInString(event.options.cmd)
-				const hexData = event.options.cmd.replace(/\s+/g, '')
-				const tempBuffer = Buffer.from(hexData, 'hex')
-				self.log('info', 'Custom Command: ' + self.VISCA.msgToString(tempBuffer, false))
-				self.log(
-					'info',
-					'Please consider requesting this command to be added to the module at https://github.com/bitfocus/companion-module-sony-visca/issues/35',
-				)
-				self.VISCA.send(tempBuffer)
 			},
 		},
 	}

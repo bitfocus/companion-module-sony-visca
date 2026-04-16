@@ -1,7 +1,11 @@
 import { MODELS } from './models.js'
 
 export function getChoices(config, self) {
-	const model = MODELS.filter((model) => model.id === config.model)[0]
+	let model = MODELS.find((m) => m.id === config.model)
+	if (!model) {
+		self.log('warn', `Unknown model "${config.model}", falling back to "other"`)
+		model = MODELS.find((m) => m.id === 'other')
+	}
 	const group = model.group
 	const c = CHOICES
 	c.IRIS = _choices[group].IRIS

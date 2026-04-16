@@ -355,10 +355,15 @@ const variables = [
 
 export function initVariables(activeBlocks, modelId) {
 	let filtered = activeBlocks ? variables.filter((v) => !v.block || activeBlocks.has(v.block)) : variables
-	if (modelId && modelId !== 'other_all') {
+	if (modelId && modelId !== 'other') {
 		filtered = filtered.filter((v) => !v.models || (modelId !== 'other_min' && v.models.has(modelId)))
 	}
-	this.setVariableDefinitions(filtered)
+
+	const definitions = {}
+	for (const v of filtered) {
+		definitions[v.variableId] = { name: v.name }
+	}
+	this.setVariableDefinitions(definitions)
 	this.activeVariableIds = new Set(filtered.map((v) => v.variableId))
 }
 

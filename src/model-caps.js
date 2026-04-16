@@ -125,12 +125,12 @@ export const CAP_AUTO_FRAMING = new Set([...FAMILY_FR7, ...FAMILY_AM7, '0621', '
 /**
  * Filter definitions by model ID.
  * - Definitions without a `models` property are universal (always included).
- * - `other_all` gets everything.
+ * - `other` gets everything.
  * - `other_min` only gets universal definitions.
  * - Real model IDs get universal + definitions whose `models` Set contains that ID.
  */
 export function filterByModel(definitions, modelId) {
-	if (modelId === 'other_all') return definitions
+	if (modelId === 'other') return definitions
 	const filtered = {}
 	for (const [key, def] of Object.entries(definitions)) {
 		if (!def.models || (modelId !== 'other_min' && def.models.has(modelId))) {

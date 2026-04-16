@@ -65,7 +65,7 @@ function presetActionsAvailable(preset, availableActionIds) {
 
 const panTiltPresets = {
 	'panTilt-up': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Up',
 		style: {
@@ -95,7 +95,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-down': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Down',
 		style: {
@@ -125,7 +125,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-left': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Left',
 		style: {
@@ -155,7 +155,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-right': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Right',
 		style: {
@@ -185,7 +185,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-upLeft': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Up Left',
 		style: {
@@ -215,7 +215,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-upRight': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Up Right',
 		style: {
@@ -245,7 +245,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-downLeft': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Down Left',
 		style: {
@@ -275,7 +275,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-downright': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Down Right',
 		style: {
@@ -305,7 +305,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-home': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Home',
 		style: {
@@ -327,7 +327,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-speedUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Pan/Tilt Speed Up',
 		style: {
@@ -350,7 +350,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-speedDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Pan/Tilt Speed Down',
 		style: {
@@ -373,7 +373,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-speedDefault': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Pan/Tilt Speed Default',
 		style: {
@@ -396,7 +396,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-slowMode': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Pan/Tilt Slow Mode (normal/slow)',
 		style: {
@@ -428,7 +428,7 @@ const panTiltPresets = {
 		],
 	},
 	'panTilt-rampCurve': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Ramp Curve',
 		style: {
@@ -451,7 +451,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-center': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Go To Center (0°/0°)',
 		style: {
@@ -470,7 +470,7 @@ const panTiltPresets = {
 		],
 	},
 	'panTilt-left90': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Pan Left 90°',
 		style: {
@@ -489,7 +489,7 @@ const panTiltPresets = {
 		],
 	},
 	'panTilt-right90': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Pan Right 90°',
 		style: {
@@ -508,7 +508,7 @@ const panTiltPresets = {
 		],
 	},
 	'panTilt-tiltUp45': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Tilt Up 45°',
 		style: {
@@ -527,7 +527,7 @@ const panTiltPresets = {
 		],
 	},
 	'panTilt-relPanRight10': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Pan +10°',
 		style: {
@@ -540,7 +540,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-relPanLeft10': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Pan -10°',
 		style: {
@@ -553,7 +553,7 @@ const panTiltPresets = {
 		feedbacks: [],
 	},
 	'panTilt-autoFraming': {
-		type: 'button',
+		type: 'simple',
 		category: 'Pan/Tilt',
 		name: 'Auto Framing Toggle',
 		style: {
@@ -582,7 +582,7 @@ const panTiltPresets = {
 
 const lensPresets = {
 	'lens-zoomIn': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Zoom In (variable speed)',
 		style: {
@@ -612,7 +612,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-zoomOut': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Zoom Out (variable speed)',
 		style: {
@@ -642,7 +642,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-zoomModeToggle': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Zoom Mode Toggle',
 		style: {
@@ -674,7 +674,7 @@ const lensPresets = {
 		],
 	},
 	'lens-focusFar': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Focus Far (variable speed)',
 		style: {
@@ -704,7 +704,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-focusNear': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Focus Near (variable speed)',
 		style: {
@@ -734,7 +734,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-focusAuto': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Focus Mode - Auto/Manual',
 		style: {
@@ -764,7 +764,7 @@ const lensPresets = {
 		],
 	},
 	'lens-opaf': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'One Push Auto Focus',
 		style: {
@@ -786,7 +786,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-pushAfMf': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Push AF/MF (FR7)',
 		style: {
@@ -814,7 +814,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-zoomSpeedUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Zoom Speed Faster',
 		style: {
@@ -837,7 +837,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-zoomSpeedDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Zoom Speed Slower',
 		style: {
@@ -860,7 +860,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-zoomSpeedDefault': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Zoom Speed Default (1)',
 		style: {
@@ -883,7 +883,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-focusSpeedUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Focus Speed Faster',
 		style: {
@@ -906,7 +906,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-focusSpeedDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Focus Speed Slower',
 		style: {
@@ -929,7 +929,7 @@ const lensPresets = {
 		feedbacks: [],
 	},
 	'lens-focusSpeedDefault': {
-		type: 'button',
+		type: 'simple',
 		category: 'Lens',
 		name: 'Focus Speed Default (1)',
 		style: {
@@ -955,7 +955,7 @@ const lensPresets = {
 
 const exposurePresets = {
 	'exposure-autoManual': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Exposure Mode Toggle',
 		style: {
@@ -990,7 +990,7 @@ const exposurePresets = {
 		],
 	},
 	'exposure-brightMode': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Bright Mode (toggle with Auto)',
 		style: {
@@ -1025,7 +1025,7 @@ const exposurePresets = {
 		],
 	},
 	'exposure-irisUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Iris Up',
 		style: {
@@ -1047,7 +1047,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-irisDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Iris Down',
 		style: {
@@ -1069,7 +1069,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-gainUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Gain Up',
 		style: {
@@ -1091,7 +1091,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-gainDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Gain Down',
 		style: {
@@ -1113,7 +1113,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-shutterUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Shutter Up',
 		style: {
@@ -1135,7 +1135,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-shutterDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Shutter Down',
 		style: {
@@ -1157,7 +1157,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-brightnessUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Brightness Up',
 		style: {
@@ -1179,7 +1179,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-brightnessDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Brightness Down',
 		style: {
@@ -1201,7 +1201,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-ExposureCompOnOff': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Exposure Compensation On/Off',
 		style: {
@@ -1233,7 +1233,7 @@ const exposurePresets = {
 		],
 	},
 	'exposure-CompensationUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Exposure Compensation Up',
 		style: {
@@ -1256,7 +1256,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-CompensationDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Exposure Compensation Down',
 		style: {
@@ -1279,7 +1279,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-CompensationReset': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Exposure Compensation Reset',
 		style: {
@@ -1302,7 +1302,7 @@ const exposurePresets = {
 		feedbacks: [],
 	},
 	'exposure-BacklightCompOnOff': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Backlight Compensation On/Off',
 		style: {
@@ -1334,7 +1334,7 @@ const exposurePresets = {
 		],
 	},
 	'exposure-SpotlightCompOnOff': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Spotlight Compensation On/Off',
 		style: {
@@ -1366,7 +1366,7 @@ const exposurePresets = {
 		],
 	},
 	'exposure-LowLightBasisBrightness': {
-		type: 'button',
+		type: 'simple',
 		category: 'Exposure',
 		name: 'Low Light Basis Brightness On/Off',
 		style: {
@@ -1401,7 +1401,7 @@ const exposurePresets = {
 
 const colorPresets = {
 	'color-wbModeAuto': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance Mode - Auto1',
 		style: {
@@ -1431,7 +1431,7 @@ const colorPresets = {
 		],
 	},
 	'color-wbModeAuto2': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance Mode - Auto2 (ATW)',
 		style: {
@@ -1461,7 +1461,7 @@ const colorPresets = {
 		],
 	},
 	'color-wbModeIndoor': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance Mode - Indoor',
 		style: {
@@ -1491,7 +1491,7 @@ const colorPresets = {
 		],
 	},
 	'color-wbModeOutdoor': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance Mode - Outdoor',
 		style: {
@@ -1521,7 +1521,7 @@ const colorPresets = {
 		],
 	},
 	'color-wbModeManual': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance Mode - Manual',
 		style: {
@@ -1551,7 +1551,7 @@ const colorPresets = {
 		],
 	},
 	'color-wbModeCustom': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance Mode - Custom',
 		style: {
@@ -1578,7 +1578,7 @@ const colorPresets = {
 		feedbacks: [],
 	},
 	'color-wbModeOPWB': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance Mode - One push WB',
 		style: {
@@ -1620,7 +1620,7 @@ const colorPresets = {
 		],
 	},
 	'color-wbModeATW-FR7': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'WB Mode - ATW (FR7)',
 		style: {
@@ -1639,7 +1639,7 @@ const colorPresets = {
 		],
 	},
 	'color-wbModeMemA-FR7': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'WB Mode - Memory A (FR7)',
 		style: {
@@ -1658,7 +1658,7 @@ const colorPresets = {
 		],
 	},
 	'color-wbModePreset-FR7': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'WB Mode - Preset (FR7)',
 		style: {
@@ -1677,7 +1677,7 @@ const colorPresets = {
 		],
 	},
 	'color-wbRedGainUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance - Red Gain Up (must be in WB Manual)',
 		style: {
@@ -1702,7 +1702,7 @@ const colorPresets = {
 		feedbacks: [],
 	},
 	'color-wbRedGainDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance - Red Gain Down (must be in WB Manual)',
 		style: {
@@ -1727,7 +1727,7 @@ const colorPresets = {
 		feedbacks: [],
 	},
 	'color-wbBlueGainUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance - Blue Gain Up (must be in WB Manual)',
 		style: {
@@ -1752,7 +1752,7 @@ const colorPresets = {
 		feedbacks: [],
 	},
 	'color-wbBlueGainDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance - Blue Gain Down (must be in WB Manual)',
 		style: {
@@ -1777,7 +1777,7 @@ const colorPresets = {
 		feedbacks: [],
 	},
 	'color-wbOffsetUp': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance - Offset Up (more red)',
 		style: {
@@ -1799,7 +1799,7 @@ const colorPresets = {
 		feedbacks: [],
 	},
 	'color-wbOffsetDown': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance - Offset Down (more blue)',
 		style: {
@@ -1821,7 +1821,7 @@ const colorPresets = {
 		feedbacks: [],
 	},
 	'color-wbOffsetReset': {
-		type: 'button',
+		type: 'simple',
 		category: 'Color',
 		name: 'White Balance - Offset Reset',
 		style: {
@@ -1846,7 +1846,7 @@ const colorPresets = {
 
 const systemPresets = {
 	'system-powerOn': {
-		type: 'button',
+		type: 'simple',
 		category: 'System',
 		name: 'Camera Power On',
 		style: {
@@ -1868,7 +1868,7 @@ const systemPresets = {
 		feedbacks: [],
 	},
 	'system-powerOff': {
-		type: 'button',
+		type: 'simple',
 		category: 'System',
 		name: 'Camera Power Off',
 		style: {
@@ -1890,7 +1890,7 @@ const systemPresets = {
 		feedbacks: [],
 	},
 	'system-menuBack': {
-		type: 'button',
+		type: 'simple',
 		category: 'System',
 		name: 'Menu/Back Button',
 		style: {
@@ -1912,7 +1912,7 @@ const systemPresets = {
 		feedbacks: [],
 	},
 	'system-menuEnter': {
-		type: 'button',
+		type: 'simple',
 		category: 'System',
 		name: 'Menu Enter Button',
 		style: {
@@ -1934,7 +1934,7 @@ const systemPresets = {
 		feedbacks: [],
 	},
 	'system-startStopRecording': {
-		type: 'button',
+		type: 'simple',
 		category: 'System',
 		name: 'Recording Button (press/release)',
 		style: {
@@ -1980,7 +1980,7 @@ const systemPresets = {
 		],
 	},
 	'system-tallyRed': {
-		type: 'button',
+		type: 'simple',
 		category: 'System',
 		name: 'Tally Red Toggle',
 		style: {
@@ -1999,7 +1999,7 @@ const systemPresets = {
 		],
 	},
 	'system-tallyGreen': {
-		type: 'button',
+		type: 'simple',
 		category: 'System',
 		name: 'Tally Green Toggle (FR7)',
 		style: {
@@ -2027,7 +2027,7 @@ function getCameraPresets(self) {
 	const presets = {}
 	for (let i = 0; i < 64; i++) {
 		presets['presets-Preset' + i] = {
-			type: 'button',
+			type: 'simple',
 			category: 'Presets',
 			name: 'Preset ' + (i + 1),
 			style: {
@@ -2105,7 +2105,7 @@ function getCameraPresets(self) {
 	}
 	for (let i = 1; i < 65; i++) {
 		presets['presets-PresetSelector' + i] = {
-			type: 'button',
+			type: 'simple',
 			category: 'Presets',
 			name: 'Set presetSelector variable',
 			style: {
@@ -2138,7 +2138,7 @@ function getCameraPresets(self) {
 		}
 	}
 	presets['presets-PresetPS'] = {
-		type: 'button',
+		type: 'simple',
 		category: 'Presets',
 		name: 'Preset using variable presetSelector',
 		style: {
@@ -2199,7 +2199,7 @@ function getCameraPresets(self) {
 		],
 	}
 	presets['presets-PresetInc'] = {
-		type: 'button',
+		type: 'simple',
 		category: 'Presets',
 		name: 'Increment presetSelector variable',
 		style: {
@@ -2222,7 +2222,7 @@ function getCameraPresets(self) {
 		feedbacks: [],
 	}
 	presets['presets-PresetDec'] = {
-		type: 'button',
+		type: 'simple',
 		category: 'Presets',
 		name: 'Decrement presetSelector variable',
 		style: {
@@ -2249,7 +2249,7 @@ function getCameraPresets(self) {
 
 const rotationEnabledPresets = {
 	'exposure-iris': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'Iris - tap to open iris',
 		style: {
@@ -2290,7 +2290,7 @@ const rotationEnabledPresets = {
 		feedbacks: [],
 	},
 	'exposure-gain': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'Gain - tap to set to 0dB',
 		style: {
@@ -2331,7 +2331,7 @@ const rotationEnabledPresets = {
 		feedbacks: [],
 	},
 	'exposure-shutter': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'Shutter - tap for default (1/60 or 1/50)',
 		style: {
@@ -2372,7 +2372,7 @@ const rotationEnabledPresets = {
 		feedbacks: [],
 	},
 	'exposure-brightness': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'Brightness - tap for default (1/60 or 1/50)',
 		style: {
@@ -2413,7 +2413,7 @@ const rotationEnabledPresets = {
 		feedbacks: [],
 	},
 	'exposure-Compensation': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'Exposure Compensation - tap to reset, hold to toggle',
 		style: {
@@ -2472,7 +2472,7 @@ const rotationEnabledPresets = {
 		],
 	},
 	'color-wbRedGain': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'Red Gain - tap for default (192)',
 		style: {
@@ -2521,7 +2521,7 @@ const rotationEnabledPresets = {
 		feedbacks: [],
 	},
 	'color-wbBlueGain': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'Blue Gain - tap for default (192)',
 		style: {
@@ -2570,7 +2570,7 @@ const rotationEnabledPresets = {
 		feedbacks: [],
 	},
 	'color-wbOffset': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'White Balance Offset - tap to reset',
 		style: {
@@ -2608,7 +2608,7 @@ const rotationEnabledPresets = {
 		feedbacks: [],
 	},
 	'panTilt-speed': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'Pan/Tilt Speed - tap for default',
 		style: {
@@ -2671,7 +2671,7 @@ const rotationEnabledPresets = {
 		feedbacks: [],
 	},
 	'lens-zoomSpeed': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'Zoom Speed - tap for standard (1)',
 		style: {
@@ -2716,7 +2716,7 @@ const rotationEnabledPresets = {
 		feedbacks: [],
 	},
 	'lens-focusSpeed': {
-		type: 'button',
+		type: 'simple',
 		category: 'Rotation Enabled',
 		name: 'Focus Speed - tap for standard (1)',
 		style: {

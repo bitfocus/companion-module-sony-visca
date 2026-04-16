@@ -1,4 +1,4 @@
-import { InstanceBase, InstanceStatus, runEntrypoint } from '@companion-module/base'
+import { InstanceBase, InstanceStatus } from '@companion-module/base'
 import { promises as dns } from 'dns'
 import { getChoices, CHOICES } from './choices.js'
 import { UpgradeScripts } from './upgrades.js'
@@ -28,7 +28,7 @@ class SonyVISCAInstance extends InstanceBase {
 	async init(config) {
 		this.updateStatus(InstanceStatus.Disconnected)
 		if (!config.model) {
-			config.model = 'other_all'
+			config.model = 'other'
 		}
 		if (!config.frameRate) {
 			config.frameRate = '60'
@@ -75,7 +75,7 @@ class SonyVISCAInstance extends InstanceBase {
 		const stateKey = color === 'green' ? 'tallyGreen' : color === 'yellow' ? 'tallyYellow' : 'tallyRed'
 		this.state[stateKey] = 'On'
 		this.updateVariables()
-		this.checkFeedbacks()
+		this.checkAllFeedbacks()
 		this.tallyKeepaliveTimers[color] = setInterval(() => {
 			this.sendTallyCommand(color, true)
 		}, 10000)
@@ -91,7 +91,7 @@ class SonyVISCAInstance extends InstanceBase {
 			const stateKey = color === 'green' ? 'tallyGreen' : color === 'yellow' ? 'tallyYellow' : 'tallyRed'
 			this.state[stateKey] = 'Off'
 			this.updateVariables()
-			this.checkFeedbacks()
+			this.checkAllFeedbacks()
 		}
 	}
 
@@ -139,13 +139,49 @@ class SonyVISCAInstance extends InstanceBase {
 
 		const actionIds = new Set(Object.keys(actions))
 		const feedbackIds = new Set(Object.keys(feedbacks))
-		this.setPresetDefinitions(getPresetDefinitions(this, actionIds, feedbackIds))
+		const presets = getPresetDefinitions(this, actionIds, feedbackIds)
+
+		const structure = []
+		const cats = {}
+		const presetKeys = Object.keys(presets)
+		for (const id of presetKeys) {
+			const cat = presets[id].category || 'Other'
+			if (!cats[cat]) cats[cat] = []
+			cats[cat].push(id)
+		}
+
+		const order = ['Pan/Tilt', 'Lens', 'Exposure', 'Color', 'System', 'Camera', 'Presets', 'Rotation Enabled']
+		let sectionCount = 0
+		for (const name of order) {
+			if (cats[name]) {
+				structure.push({
+					id: `section-${sectionCount++}`,
+					name: name,
+					definitions: cats[name],
+				})
+				delete cats[name]
+			}
+		}
+		for (const name of Object.keys(cats).sort()) {
+			structure.push({
+				id: `section-${sectionCount++}`,
+				name: name,
+				definitions: cats[name],
+			})
+		}
+
+		this.setPresetDefinitions(structure, presets)
+
+		// Initial check for feedbacks if any are registered
+		if (feedbackIds.size > 0) {
+			this.checkAllFeedbacks()
+		}
 
 		const modelId = this.config.model
 		const model = MODELS.find((m) => m.id === modelId)
 		if (modelId === 'other_min') {
 			this.initVariables(new Set(), modelId)
-		} else if (modelId === 'other_all') {
+		} else if (modelId === 'other') {
 			this.initVariables(undefined, modelId)
 		} else {
 			const blocks = getInquiryBlocks(model?.group)
@@ -257,12 +293,12 @@ class SonyVISCAInstance extends InstanceBase {
 			if (this.state.recordingStatus !== 'Recording') {
 				if (this.state.recordingPulsePhase) {
 					this.state.recordingPulsePhase = false
-					this.checkFeedbacks()
+					this.checkAllFeedbacks()
 				}
 				return
 			}
 			this.state.recordingPulsePhase = !this.state.recordingPulsePhase
-			this.checkFeedbacks()
+			this.checkAllFeedbacks()
 		}, 500)
 	}
 
@@ -288,7 +324,7 @@ class SonyVISCAInstance extends InstanceBase {
 			callbacks[key] = (payload) => {
 				if (parseInquiryResponse(blockDef, payload, this.state, this.choices)) {
 					this.updateVariables()
-					this.checkFeedbacks()
+					this.checkAllFeedbacks()
 				}
 			}
 		}
@@ -343,7 +379,7 @@ class SonyVISCAInstance extends InstanceBase {
 			this.state.panPosition = panRaw >= panSign ? panRaw - (panSign << 1) : panRaw
 			this.state.tiltPosition = tiltRaw >= tiltSign ? tiltRaw - (tiltSign << 1) : tiltRaw
 			this.updateVariables()
-			this.checkFeedbacks()
+			this.checkAllFeedbacks()
 		}
 		this.VISCA.initializeInquiries(callbacks)
 		this.setupLowPriorityInquiries()
@@ -359,7 +395,7 @@ class SonyVISCAInstance extends InstanceBase {
 					this.state[stateKey] = payload[2] === 0x02 ? on : off
 					if (this.state[stateKey] !== prev) {
 						this.updateVariables()
-						this.checkFeedbacks()
+						this.checkAllFeedbacks()
 					}
 				}
 			}
@@ -421,7 +457,7 @@ class SonyVISCAInstance extends InstanceBase {
 					this.state.kneeMode = payload[2] === 0x04 ? 'Manual' : 'Auto'
 					if (this.state.kneeMode !== prev) {
 						this.updateVariables()
-						this.checkFeedbacks()
+						this.checkAllFeedbacks()
 					}
 				}
 			}
@@ -440,7 +476,7 @@ class SonyVISCAInstance extends InstanceBase {
 					this.state.ndFilterMode = (payload[2] & 0x0f) === 0x01 ? 'Variable' : 'Preset'
 					if (this.state.ndFilterMode !== prev) {
 						this.updateVariables()
-						this.checkFeedbacks()
+						this.checkAllFeedbacks()
 					}
 				}
 			}
@@ -461,7 +497,7 @@ class SonyVISCAInstance extends InstanceBase {
 					this.state.ptzAutoFraming = (payload[2] & 0x0f) === 0x01 ? 'On' : 'Off'
 					if (this.state.ptzAutoFraming !== prev) {
 						this.updateVariables()
-						this.checkFeedbacks()
+						this.checkAllFeedbacks()
 					}
 				}
 			}
@@ -495,8 +531,9 @@ class SonyVISCAInstance extends InstanceBase {
 		if (this.activeVariableIds?.has('recordingStatus')) {
 			this.setVariableValues({ recordingStatus: status })
 		}
-		this.checkFeedbacks()
+		this.checkAllFeedbacks()
 	}
 }
 
-runEntrypoint(SonyVISCAInstance, UpgradeScripts)
+export default SonyVISCAInstance
+export { UpgradeScripts }

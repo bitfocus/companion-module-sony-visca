@@ -180,6 +180,7 @@ Please refer to the manual for your camera for specific instructions.
 
 ### Miscellaneous Actions
 
+- Custom Command - _If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)_
 - Camera Power (on/off)
 - Tally
 - Menu (on/off/enter)
@@ -226,7 +227,6 @@ Please refer to the manual for your camera for specific instructions.
 - Multi Function Dial - Rotate (FR7/AM7)
 - Preset Separate Duration (FR7)
 - Preset Separate Mode (Speed/Duration)
-- Custom Command - _If you use a custom command that may be a useful action for others please let us know at [Issues - Custom Commands #35](https://github.com/bitfocus/companion-module-sony-visca/issues/35)_
 
 ## Presets Implemented
 

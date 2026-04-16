@@ -243,9 +243,9 @@ export const UpgradeScripts = [
 	function v280(_context, props) {
 		const result = { updatedActions: [], updatedConfig: null, updatedFeedbacks: [] }
 
-		// Migrate 'other' model to 'other_all'
-		if (props.config?.model === 'other') {
-			props.config.model = 'other_all'
+		// Migrate 'other_all' model back to 'other' for backward compatibility
+		if (props.config?.model === 'other_all') {
+			props.config.model = 'other'
 			result.updatedConfig = { ...props.config }
 		}
 

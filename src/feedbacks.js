@@ -47,7 +47,16 @@ export function getFeedbackDefinitions(self) {
 				color: COLORS.WHITE,
 				bgcolor: 0x777788,
 			},
-			options: [],
+			options: [
+				{
+					type: 'number',
+					label: 'Preset Number (1-64)',
+					id: 'preset',
+					default: 1,
+					min: 1,
+					max: 64,
+				},
+			],
 			callback: function (feedback) {
 				return feedback.options.preset === self.state.presetSelector
 			},
