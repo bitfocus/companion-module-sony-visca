@@ -11,6 +11,7 @@ import {
 	CAP_FR7_AM7,
 	CAP_ICR,
 	CAP_PICTURE_EFFECT,
+	CAP_PT_SLOW,
 	CAP_RAMP_CURVE,
 	CAP_TELECONVERT,
 	CAP_X1000,
@@ -113,6 +114,7 @@ function getPanTiltActionDefinitions(self, camId, speed) {
 		},
 		ptSlow: {
 			name: 'Pan/Tilt Slow Mode',
+			models: CAP_PT_SLOW,
 			options: [
 				{
 					type: 'dropdown',

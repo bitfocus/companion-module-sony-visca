@@ -5,6 +5,7 @@ const CONTROL = Buffer.from([0x02, 0x00])
 const INQUIRY = Buffer.from([0x01, 0x10])
 
 const TIMEOUT_MS = 2000
+const COMMAND_COMPLETION_TIMEOUT_MS = 30000
 
 export class Visca {
 	#instance
@@ -38,8 +39,12 @@ export class Visca {
 		return INQUIRY
 	}
 
-	send(payload, type = COMMAND, callback = null) {
-		const packet = { payload, type, callback }
+	send(payload, type = COMMAND, callback = null, inquiryKey = null) {
+		if (!inquiryKey && this.#pollTimer) {
+			clearTimeout(this.#pollTimer)
+			this.#pollTimer = null
+		}
+		const packet = { payload, type, callback, inquiryKey }
 		if (this.#cts) {
 			this.#sendPacket(packet)
 		} else {
@@ -79,7 +84,10 @@ export class Visca {
 		if (responseType === 4) {
 			// ACK — command accepted into a buffer slot
 			clearTimeout(ap.timer)
-			ap.timer = setTimeout(() => this.#handleTimeout(seq), TIMEOUT_MS)
+			ap.timer = setTimeout(
+				() => this.#handleTimeout(seq),
+				ap.isCommand ? COMMAND_COMPLETION_TIMEOUT_MS : TIMEOUT_MS,
+			)
 			this.#onSuccessfulResponse()
 			if (isInitialResponse) {
 				this.#pendingSeq = null
@@ -176,7 +184,7 @@ export class Visca {
 		payload[0] = camId
 		keyBytes.copy(payload, 1)
 		payload[payload.length - 1] = 0xff
-		this.send(payload, INQUIRY, callback)
+		this.send(payload, INQUIRY, callback, key)
 	}
 
 	stopPolling() {
@@ -242,6 +250,7 @@ export class Visca {
 		this.#activePackets[seq] = {
 			callback,
 			inquiryKey,
+			isCommand: type[0] === 0x01 && type[1] === 0x00,
 			timer: setTimeout(() => this.#handleTimeout(seq), TIMEOUT_MS),
 		}
 
@@ -302,8 +311,13 @@ export class Visca {
 		}
 	}
 
+	#hasInFlightCommands() {
+		return Object.values(this.#activePackets).some((ap) => ap.isCommand)
+	}
+
 	#schedulePoll() {
 		if (this.#pollTimer) clearTimeout(this.#pollTimer)
+		if (this.#hasInFlightCommands()) return
 		if (this.#inquiryKeys.length > 0) {
 			this.#pollTimer = setTimeout(() => this.#sendNextInquiry(), 200)
 		}
@@ -312,6 +326,7 @@ export class Visca {
 	#schedulePollWithBackoff() {
 		if (this.#pollTimer) clearTimeout(this.#pollTimer)
 		if (this.#inquiryKeys.length === 0) return
+		if (this.#hasInFlightCommands()) return
 		const baseDelay = 200
 		const maxDelay = 10000
 		const delay = Math.min(baseDelay * Math.pow(2, this.#consecutiveTimeouts), maxDelay)
@@ -322,6 +337,7 @@ export class Visca {
 		this.#pollTimer = null
 		if (this.#inquiryKeys.length === 0 || !this.#cts) return
 		if (!this.#instance.udpSocket) return
+		if (this.#hasInFlightCommands()) return
 
 		// At the end of each main cycle, interleave one low-priority inquiry
 		if (this.#nextInquiry >= this.#inquiryKeys.length) {
@@ -362,6 +378,11 @@ export class Visca {
 			if (idx !== -1) {
 				this.#inquiryKeys.splice(idx, 1)
 				this.#instance.log('warn', `Removed unsupported inquiry block ${key}`)
+			}
+			const lpIdx = this.#lowPriorityKeys.indexOf(key)
+			if (lpIdx !== -1) {
+				this.#lowPriorityKeys.splice(lpIdx, 1)
+				this.#instance.log('warn', `Removed unsupported inquiry ${key}`)
 			}
 		}
 	}
