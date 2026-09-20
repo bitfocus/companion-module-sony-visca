@@ -119,6 +119,18 @@ export const CAP_PICTURE_EFFECT = new Set([
 // Ramp Curve: X400 + X40UH + X1000 + FR7 + AM7 (06 31)
 export const CAP_RAMP_CURVE = new Set([...FAMILY_X400, ...FAMILY_X40UH, ...FAMILY_X1000, ...FAMILY_FR7, ...FAMILY_AM7])
 
+// Pan/Tilt Slow Mode (06 44): all cameras except SRG-120DH, which has no Slow Mode command or inquiry
+export const CAP_PT_SLOW = new Set([
+	...FAMILY_X400,
+	...FAMILY_X40UH,
+	...FAMILY_X1000,
+	...FAMILY_FR7,
+	...FAMILY_AM7,
+	...FAMILY_300H,
+	...FAMILY_SE,
+	...FAMILY_360SHE,
+])
+
 // PTZ Auto Framing: FR7 + SRG-A40/A12 (7E 04 3A)
 export const CAP_AUTO_FRAMING = new Set([...FAMILY_FR7, ...FAMILY_AM7, '0621', '0622'])
 

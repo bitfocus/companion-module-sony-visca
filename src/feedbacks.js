@@ -1,5 +1,5 @@
 import { COLORS } from './colors.js'
-import { CAP_ADVANCED, CAP_AUTO_FRAMING, CAP_FR7_AM7, CAP_TALLY, filterByModel } from './model-caps.js'
+import { CAP_ADVANCED, CAP_AUTO_FRAMING, CAP_FR7_AM7, CAP_PT_SLOW, CAP_TALLY, filterByModel } from './model-caps.js'
 import { rawToDegrees } from './variables.js'
 
 export function getFeedbackDefinitions(self) {
@@ -185,6 +185,7 @@ export function getFeedbackDefinitions(self) {
 			},
 		},
 		ptSlowModeOn: {
+			models: CAP_PT_SLOW,
 			type: 'boolean',
 			name: 'Pan/Tilt Slow Mode On',
 			description: 'Highlights if Pan/Tilt Slow Mode is On',
