@@ -903,22 +903,30 @@ function getLensActionDefinitions(self, camId) {
 			name: 'Focus Direct Position',
 			options: [
 				{
-					type: 'number',
+					type: 'textinput',
 					label: 'Focus Position (0-65535)',
 					id: 'val',
-					min: 0,
-					max: 65535,
 					default: 32768,
+					useVariables: true,
 				},
 			],
-			callback: async (event) => {
-				const pos = parseInt(event.options.val) & 0xffff
+			callback: async (event, context) => {
+				const parsed = await context.parseVariablesInString(String(event.options.val ?? ''))
+				const num = Number(parsed)
+				if (!Number.isFinite(num)) {
+        			self.log('warn', `Focus Direct: invalid value "${parsed}"`)
+        			return
+    			}
+				const pos = Math.max(0, Math.min(0xffff, Math.round(num)))
 				let cmd = Buffer.from(camId + '\x01\x04\x48\x00\x00\x00\x00\xFF', 'binary')
 				cmd.writeUInt8((pos >> 12) & 0x0f, 4)
 				cmd.writeUInt8((pos >> 8) & 0x0f, 5)
 				cmd.writeUInt8((pos >> 4) & 0x0f, 6)
 				cmd.writeUInt8(pos & 0x0f, 7)
 				self.VISCA.send(cmd)
+				
+				self.state.focusPosition = pos
+    			self.updateVariables()
 			},
 		},
 		zoomDirect: {
