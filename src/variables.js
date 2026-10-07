@@ -3,6 +3,7 @@ import {
 	CAP_BRIGHTNESS,
 	CAP_AUTO_FRAMING,
 	CAP_FR7_AM7,
+	CAP_PT_SLOW,
 	CAP_RAMP_CURVE,
 	CAP_TALLY,
 	CAP_WIDE_DYNAMIC,
@@ -239,7 +240,7 @@ function normalizePct(val, low, high) {
 
 const variables = [
 	// Existing variables
-	{ variableId: 'ptSlowMode', name: 'Pan/Tilt Slow mode (slow/normal)' },
+	{ variableId: 'ptSlowMode', name: 'Pan/Tilt Slow mode (slow/normal)', models: CAP_PT_SLOW },
 	{ variableId: 'rampCurve', name: 'Ramp Curve (1-9)', models: CAP_RAMP_CURVE },
 	{ variableId: 'lowLightBasisBrightness', name: 'Low Light Basis Brightness (on/off)', models: CAP_ADVANCED },
 	{ variableId: 'basisBrightnessLevel', name: 'Basis Brightness Level (4-10)', models: CAP_ADVANCED },

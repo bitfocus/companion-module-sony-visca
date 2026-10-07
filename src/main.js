@@ -8,7 +8,7 @@ import { getActionDefinitions } from './actions.js'
 import { getPresetDefinitions } from './presets.js'
 import { initVariables, updateVariables } from './variables.js'
 import { MODELS } from './models.js'
-import { CAP_ADVANCED, CAP_AUTO_FRAMING, CAP_RAMP_CURVE, CAP_TALLY } from './model-caps.js'
+import { CAP_ADVANCED, CAP_AUTO_FRAMING, CAP_PT_SLOW, CAP_RAMP_CURVE, CAP_TALLY } from './model-caps.js'
 import { getInquiryBlocks, parseInquiryResponse } from './inquiries.js'
 import { Visca } from './visca.js'
 
@@ -365,8 +365,6 @@ class SonyVISCAInstance extends InstanceBase {
 			}
 
 		const callbacks = {
-			// CAM_PanTiltSlowInq: 8x 09 06 44 FF → y0 50 0p FF (02=Slow, 03=Normal)
-			'090644': onOffCallback('ptSlowMode', 'Slow', 'Normal'),
 			// CAM_FocusNearLimitInq: 8x 09 04 28 FF → y0 50 0p 0p 0p 0p FF (16-bit position)
 			// Block 00 only returns 2 nibbles (8-bit); this gives full 16-bit precision
 			'090428': (payload) => {
@@ -379,6 +377,12 @@ class SonyVISCAInstance extends InstanceBase {
 					}
 				}
 			},
+		}
+
+		// CAM_PanTiltSlowInq: 8x 09 06 44 FF → y0 50 0p FF (02=Slow, 03=Normal)
+		// SRG-120DH has no Slow Mode command or inquiry (protocol returns syntax error 0x02)
+		if (CAP_PT_SLOW.has(this.config.model)) {
+			callbacks['090644'] = onOffCallback('ptSlowMode', 'Slow', 'Normal')
 		}
 
 		// RampCurveInq: 8x 09 06 31 FF → y0 50 0p FF (p: 1-9)
