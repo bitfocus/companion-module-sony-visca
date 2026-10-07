@@ -911,6 +911,16 @@ const BLOCKS_FR7 = {
 	'090433': fr7OnOff('backlightComp'),
 	// SpotlightCompInq: y0 50 0p FF (02=On, 03=Off)
 	'09043a': fr7OnOff('spotlightComp'),
+	// RGainInq: y0 50 0r 0r 0r 0r FF</td> (rrrr: R Gain 0000 (-99.0) to 03DE (0.0) to 07BC (+99.0)
+	'097e044602': {
+		minLength: 7,
+		fields: [{ variable: 'redGain', type: 'nibbleConcat', bytes: [2, 3, 4, 5] }],
+	},
+	// BGainInq: y0 50 0r 0r 0r 0r FF</td> (rrrr: B Gain 0000 (-99.0) to 03DE (0.0) to 07BC (+99.0)
+	'097e045602': {
+		minLength: 7,
+		fields: [{ variable: 'blueGain', type: 'nibbleConcat', bytes: [2, 3, 4, 5] }],
+	},
 }
 
 const GROUP_TO_BLOCKS = {
